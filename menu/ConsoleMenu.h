@@ -10,6 +10,7 @@
 #include "MenuItem.h"
 #include "../structures/graphs/IGraph.h"
 #include "../structures/graphs/ListGraph.h"
+#include "../utilities/GraphUtils.h"
 
 using std::cout;
 using std::endl;
@@ -22,7 +23,7 @@ class ConsoleMenu {
 public:
     ConsoleMenu();
 
-    ~ConsoleMenu() = default;
+    ~ConsoleMenu();
 
     void start(const std::string &menuCode = "");
 
@@ -63,7 +64,7 @@ private:
     ProgramState chooseMenuOperation(const std::string &menuCode, int menuControlVariable);
 
     // Data
-    // -- empty--
+    IGraph *tspInstance;
 
 };
 

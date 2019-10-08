@@ -3,6 +3,11 @@
 
 ConsoleMenu::ConsoleMenu() : nextFreeMenuOperation(0) {
     prepareMenuOperations();
+    tspInstance = nullptr;
+}
+
+ConsoleMenu::~ConsoleMenu() {
+    delete tspInstance;
 }
 
 void ConsoleMenu::addMenuOperation(const ConsoleMenu::MenuOperation &menuOperation) {
@@ -87,7 +92,35 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         //// Minimal spanning tree - operations
         /////////////////////////////////////////////////////////////////
     } else if (operationCode == "1") {
-        cout << "--- Load ATSP choice ---" << endl;
+        std::string tspTypeChoice, path, instanceName;
+        GraphUtils::TSPType tspType;
+
+        cout << "Choose type of TSP problem [(s)ymetric, (a)symetric]:" << endl;
+        cin >> tspTypeChoice;
+        if (tspTypeChoice == "s") {
+            tspType = GraphUtils::TSPType::Symetric;
+        } else if (tspTypeChoice == "a") {
+            tspType = GraphUtils::TSPType::Asymetric;
+        } else {
+            cout << "There is no such type. Try again." << endl;
+            return ProgramState::RUNNING;
+        }
+        cout << "Enter path to the instance:" << endl;
+        cin >> path;
+
+        IGraph *tmpTSPInstance = tspInstance;
+        try {
+            instanceName = GraphUtils::loadTSPInstance(&tspInstance, tspType, path);
+        } catch (const std::invalid_argument &e) {
+            cout << e.what() << endl;
+            cout << "Invalid path. Try again." << endl;
+            return ProgramState::RUNNING;
+        }
+        delete tmpTSPInstance;
+
+        cout << "Instance \"" + instanceName + "\" has been loaded!" << endl;
+        cout << tspInstance->toString() << endl;
+
     } else if (operationCode == "2") {
         cout << "--- Calculate target function choice ---" << endl;
     }
