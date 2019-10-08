@@ -15,4 +15,6 @@ add_executable(PEA_p1 main.cpp
         tests/ListGraphTest.h tests/ListGraphTest.cpp
 
         menu/MenuItem.h menu/MenuItem.cpp menu/ConsoleMenu.h menu/ConsoleMenu.cpp
+
+        utilities/GraphUtils.h utilities/GraphUtils.cpp
         )
