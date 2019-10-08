@@ -47,7 +47,8 @@ void ListGraph::addEdge(int startVertexID, int endVertexID, int edgeParameter) {
         throw std::invalid_argument("addEdge() error: invalid vertex's index");
     }
     if (startVertexID == endVertexID) {
-        throw std::invalid_argument("addEdge() error: loops are disallowed");
+        // TODO
+        ////   throw std::invalid_argument("addEdge() error: loops are disallowed");
     }
     // Multiple edges are not represented in this graph's structure
     if (this->getEdgeParameter(startVertexID, endVertexID) != std::numeric_limits<int>::max()) {
