@@ -89,13 +89,13 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
     if (this->getMenuOperation(operationCode).menuItem.operationType == MenuItem::OperationType::SUBMENU) {
         this->start(operationCode);
         /////////////////////////////////////////////////////////////////
-        //// Minimal spanning tree - operations
+        //// Operations
         /////////////////////////////////////////////////////////////////
     } else if (operationCode == "1") {
         std::string tspTypeChoice, path, instanceName;
         GraphUtils::TSPType tspType;
 
-        cout << "Choose type of TSP problem [(s)ymetric, (a)symetric]:" << endl;
+        cout << "Choose type of TSP problem [(s)ymetric, (a)symetric]:";
         cin >> tspTypeChoice;
         if (tspTypeChoice == "s") {
             tspType = GraphUtils::TSPType::Symetric;
@@ -105,7 +105,7 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
             cout << "There is no such type. Try again." << endl;
             return ProgramState::RUNNING;
         }
-        cout << "Enter path to the instance:" << endl;
+        cout << "Enter path to the instance:";
         cin >> path;
 
         IGraph *tmpTSPInstance = tspInstance;

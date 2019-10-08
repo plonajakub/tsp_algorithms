@@ -5,7 +5,7 @@ std::string GraphUtils::loadTSPInstance(IGraph **pGraph, GraphUtils::TSPType tsp
     std::fstream file("../input_data/" + path);
     std::string instanceName;
     if (!file.is_open()) {
-        throw std::invalid_argument("File with /input_data/" + path + " does not exist.");
+        throw std::invalid_argument("File with path /input_data/" + path + " does not exist.");
     }
 
     int nVertex, edgeParameter;
@@ -16,6 +16,9 @@ std::string GraphUtils::loadTSPInstance(IGraph **pGraph, GraphUtils::TSPType tsp
         for (int i = 0; i < nVertex; ++i) {
             for (int j = 0; j < nVertex; ++j) {
                 file >> edgeParameter;
+                if (i == j) {
+                    continue;
+                }
                 try {
                     (*pGraph)->addEdge(i, j, edgeParameter);
                 } catch (const std::invalid_argument &e) {
@@ -28,7 +31,7 @@ std::string GraphUtils::loadTSPInstance(IGraph **pGraph, GraphUtils::TSPType tsp
         for (int i = 0; i < nVertex; ++i) {
             for (int j = 0; j < nVertex; ++j) {
                 file >> edgeParameter;
-                if (i > j) {
+                if (i >= j) {
                     continue;
                 }
                 try {
