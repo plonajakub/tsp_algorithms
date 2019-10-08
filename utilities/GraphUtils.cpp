@@ -5,8 +5,7 @@ std::string GraphUtils::loadTSPInstance(IGraph **pGraph, GraphUtils::TSPType tsp
     std::fstream file("../input_data/" + path);
     std::string instanceName;
     if (!file.is_open()) {
-        std::cout << "Error during opening the file: " << path << std::endl;
-        return instanceName;
+        throw std::invalid_argument("File with /input_data/" + path + " does not exist.");
     }
 
     int nVertex, edgeParameter;
