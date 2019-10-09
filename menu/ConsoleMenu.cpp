@@ -113,7 +113,6 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
             instanceName = GraphUtils::loadTSPInstance(&tspInstance, tspType, path);
         } catch (const std::invalid_argument &e) {
             cout << e.what() << endl;
-            cout << "Invalid path. Try again." << endl;
             return ProgramState::RUNNING;
         }
         delete tmpTSPInstance;
@@ -130,7 +129,7 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         for(int v = 0; v < tspInstance->getVertexCount(); ++v) {
             choosenPermutation.insertAtEnd(v);
         }
-        cout << "Target function for permutation: " << choosenPermutation << " has value: " +
+        cout << "Target function for permutation: " << choosenPermutation << " has value: " <<
         std::to_string(GraphUtils::getTargetFunctionValue(tspInstance, choosenPermutation)) << std::endl;
 
     } else if (operationCode == "3") {
@@ -140,6 +139,7 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         }
         cout << endl << "----- Loaded instance of TSP -----";
         cout << tspInstance->toString() << endl;
+
     }
     return ProgramState::RUNNING;
 }
