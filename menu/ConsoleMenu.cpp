@@ -130,14 +130,9 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         for(int v = 0; v < tspInstance->getVertexCount(); ++v) {
             choosenPermutation.insertAtEnd(v);
         }
-        cout << "Target function for permutation: ";
-        cout << "[";
-        for (auto it = choosenPermutation.getIterator(); it != choosenPermutation.getEndIt(); ++it) {
-            cout << it.getData() << ", ";
-        }
-        cout << "]";
-        cout << " has value: " +
+        cout << "Target function for permutation: " << choosenPermutation << " has value: " +
         std::to_string(GraphUtils::getTargetFunctionValue(tspInstance, choosenPermutation)) << std::endl;
+
     } else if (operationCode == "3") {
         if (tspInstance == nullptr) {
             cout << "No instance of TSP has been loaded. Load an instance first." << endl;

@@ -2,6 +2,7 @@
 #define PEA_P1_DOUBLYLINKEDLIST_H
 
 #include <stdexcept>
+#include <iostream>
 
 // Represents single node of the list
 template<class T>
@@ -332,5 +333,8 @@ private:
     int size;
 
 };
+
+std::ostream &operator<<(std::ostream &ostr, const DoublyLinkedList<int> &dll);
+
 
 #endif //PEA_P1_DOUBLYLINKEDLIST_H

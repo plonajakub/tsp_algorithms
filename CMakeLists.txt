@@ -17,4 +17,4 @@ add_executable(PEA_p1 main.cpp
         menu/MenuItem.h menu/MenuItem.cpp menu/ConsoleMenu.h menu/ConsoleMenu.cpp
 
         utilities/GraphUtils.h utilities/GraphUtils.cpp
-        )
+        structures/DoublyLinkedList.cpp)

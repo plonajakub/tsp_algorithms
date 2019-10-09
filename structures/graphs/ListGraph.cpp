@@ -143,12 +143,7 @@ std::string ListGraph::toString() const {
     graphString << std::setw(2) << "V" << std::endl;
     for (int i = 0; i < vertexCount; ++i) {
         graphString << std::setw(2) << i << ": ";
-        graphString << "[";
-        for (auto it = successorsLists[i].getIterator(); it != successorsLists[i].getEndIt(); ++it) {
-            graphString << it.getData() << ", ";
-        }
-        graphString << "]";
-        graphString << std::endl;
+        graphString << successorsLists[i] << std::endl;
     }
     graphString << std::endl;
 
