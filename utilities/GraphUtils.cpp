@@ -11,7 +11,7 @@ std::string GraphUtils::loadTSPInstance(IGraph **pGraph, GraphUtils::TSPType tsp
     int nVertex, edgeParameter;
     file >> instanceName >> nVertex;
 
-    if (tspType == GraphUtils::TSPType::Asymetric) {
+    if (tspType == GraphUtils::TSPType::Asymmetric) {
         *pGraph = new ListGraph(IGraph::GraphType::Directed, nVertex);
         for (int i = 0; i < nVertex; ++i) {
             for (int j = 0; j < nVertex; ++j) {
@@ -43,11 +43,52 @@ std::string GraphUtils::loadTSPInstance(IGraph **pGraph, GraphUtils::TSPType tsp
         }
     }
     file.close();
-    return  instanceName;
+    return instanceName;
 }
 
-int GraphUtils::getRand(int leftLimit, int rightLimit) {
-    return leftLimit + rand() % (rightLimit - leftLimit);
+GraphUtils::TSPType GraphUtils::getTSPType(const std::string &path) {
+    std::fstream file("../input_data/" + path);
+    if (!file.is_open()) {
+        throw std::invalid_argument("File with path /input_data/" + path + " does not exist.");
+    }
+
+    std::string instanceName;
+    int nVertex;
+    file >> instanceName >> nVertex;
+
+    Table<Table<int>> instance;
+    int edgeValue;
+    for (int i = 0; i < nVertex; ++i) {
+        instance.insertAtEnd(Table<int>());
+        for (int j = 0; j < nVertex; ++j) {
+            file >> edgeValue;
+            instance[i].insertAtEnd(edgeValue);
+        }
+    }
+    file.close();
+
+    if (instance.getSize() != nVertex) {
+        throw std::logic_error("Error: provided data does not represent an instance of TSP");
+    }
+    for (int i = 0; i < instance.getSize(); ++i) {
+        if (instance[i].getSize() != nVertex) {
+            throw std::logic_error("Error: provided data does not represent an instance of TSP");
+        }
+    }
+    for (int i = 0; i < instance.getSize(); ++i) {
+        if (instance[i][i] != -1) {
+            throw std::logic_error("Error: provided data does not represent an instance of TSP");
+        }
+    }
+
+    for (int i = 0; i < nVertex; ++i) {
+        for (int j = i + 1; j < nVertex; ++j) {
+            if (instance[i][j] != instance[j][i]) {
+                return TSPType::Asymmetric;
+            }
+        }
+    }
+    return TSPType::Symmetric;
 }
 
 int GraphUtils::getTargetFunctionValue(const IGraph *tspInstance, const DoublyLinkedList<int> &vertexPermutation) {
@@ -69,4 +110,8 @@ int GraphUtils::getTargetFunctionValue(const IGraph *tspInstance, const DoublyLi
     }
     sum += tspInstance->getEdgeParameter(v2, vStart);
     return sum;
+}
+
+int GraphUtils::getRand(int leftLimit, int rightLimit) {
+    return leftLimit + rand() % (rightLimit - leftLimit);
 }

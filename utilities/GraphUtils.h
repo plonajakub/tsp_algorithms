@@ -8,6 +8,7 @@
 #include <string>
 
 #include "../structures/DoublyLinkedList.h"
+#include "../structures/Table.h"
 #include "../structures/graphs/IGraph.h"
 #include "../structures/graphs/ListGraph.h"
 
@@ -16,11 +17,12 @@ class GraphUtils {
 public:
 
     enum TSPType {
-        Symetric, Asymetric
+        Symmetric, Asymmetric
     };
 
     static std::string loadTSPInstance(IGraph **pGraph, TSPType tspType, const std::string &path);
 
+    static TSPType getTSPType(const std::string &path);
 
     static int getTargetFunctionValue(const IGraph *tspInstance, const DoublyLinkedList<int> &vertexPermutation);
 

@@ -92,21 +92,31 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         //// Operations
         /////////////////////////////////////////////////////////////////
     } else if (operationCode == "1") {
-        std::string tspTypeChoice, path, instanceName;
+        std::string path, instanceName;
         GraphUtils::TSPType tspType;
 
-        cout << "Choose type of TSP problem [(s)ymetric, (a)symetric]:";
-        cin >> tspTypeChoice;
-        if (tspTypeChoice == "s") {
-            tspType = GraphUtils::TSPType::Symetric;
-        } else if (tspTypeChoice == "a") {
-            tspType = GraphUtils::TSPType::Asymetric;
-        } else {
-            cout << "There is no such type. Try again." << endl;
-            return ProgramState::RUNNING;
-        }
         cout << "Enter path to the instance:";
         cin >> path;
+
+        try {
+            tspType = GraphUtils::getTSPType(path);
+        } catch (const std::invalid_argument &e) {
+            cout << e.what() << endl;
+            return ProgramState::RUNNING;
+        } catch (const std::logic_error &e) {
+            cout << e.what() << endl;
+            return ProgramState::RUNNING;
+        }
+        cout << "Instance has type: ";
+        switch (tspType) {
+            case GraphUtils::Symmetric:
+                cout << "symmetric";
+                break;
+            case GraphUtils::Asymmetric:
+                cout << "asymmetric";
+                break;
+        }
+        cout << endl;
 
         IGraph *tmpTSPInstance = tspInstance;
         try {
@@ -126,11 +136,11 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
             return ProgramState::RUNNING;
         }
         DoublyLinkedList<int> choosenPermutation;
-        for(int v = 0; v < tspInstance->getVertexCount(); ++v) {
+        for (int v = 0; v < tspInstance->getVertexCount(); ++v) {
             choosenPermutation.insertAtEnd(v);
         }
         cout << "Target function for permutation: " << choosenPermutation << " has value: " <<
-        std::to_string(GraphUtils::getTargetFunctionValue(tspInstance, choosenPermutation)) << std::endl;
+             std::to_string(GraphUtils::getTargetFunctionValue(tspInstance, choosenPermutation)) << std::endl;
 
     } else if (operationCode == "3") {
         if (tspInstance == nullptr) {
