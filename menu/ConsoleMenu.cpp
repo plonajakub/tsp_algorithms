@@ -138,6 +138,13 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         cout << "]";
         cout << " has value: " +
         std::to_string(GraphUtils::getTargetFunctionValue(tspInstance, choosenPermutation)) << std::endl;
+    } else if (operationCode == "3") {
+        if (tspInstance == nullptr) {
+            cout << "No instance of TSP has been loaded. Load an instance first." << endl;
+            return ProgramState::RUNNING;
+        }
+        cout << endl << "----- Loaded instance of TSP -----";
+        cout << tspInstance->toString() << endl;
     }
     return ProgramState::RUNNING;
 }
@@ -161,6 +168,10 @@ void ConsoleMenu::prepareMenuOperations() {
     menuOption.description = "Calculate the target function for a cycle";
     menuItem.addMenuOption(menuOption);
 
+    menuOption.ID = "3";
+    menuOption.description = "Show loaded instance of TSP";
+    menuItem.addMenuOption(menuOption);
+
     menuOperation.menuItem = menuItem;
     this->addMenuOperation(menuOperation);
 
@@ -174,6 +185,11 @@ void ConsoleMenu::prepareMenuOperations() {
 
     menuOperation.ID = "2";
     menuItem = MenuItem(MenuItem::OperationType::FUNCTION, "Calculate the target function for a cycle");
+    menuOperation.menuItem = menuItem;
+    this->addMenuOperation(menuOperation);
+
+    menuOperation.ID = "3";
+    menuItem = MenuItem(MenuItem::OperationType::FUNCTION, "Show loaded instance of TSP");
     menuOperation.menuItem = menuItem;
     this->addMenuOperation(menuOperation);
 }
