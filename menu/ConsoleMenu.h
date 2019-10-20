@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <limits>
+#include <vector>
 
 #include "MenuItem.h"
 #include "../structures/graphs/IGraph.h"

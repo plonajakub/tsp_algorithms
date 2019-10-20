@@ -114,12 +114,15 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
             cout << "No instance of TSP has been loaded. Load an instance first." << endl;
             return ProgramState::RUNNING;
         }
-        DoublyLinkedList<int> choosenPermutation;
+        DoublyLinkedList<int> selectedPermutation;
+        int input;
+        cout << "Enter permutation in form [x y z] without braces: " << endl;
         for (int v = 0; v < tspInstance->getVertexCount(); ++v) {
-            choosenPermutation.insertAtEnd(v);
+            cin >> input;
+            selectedPermutation.insertAtEnd(input);
         }
-        cout << "Target function for permutation: " << choosenPermutation << " has value: " <<
-             std::to_string(TSPUtils::calculateTargetFunctionValue(tspInstance, choosenPermutation)) << std::endl;
+        cout << "Target function for permutation: " << selectedPermutation << " has value: " <<
+             std::to_string(TSPUtils::calculateTargetFunctionValue(tspInstance, selectedPermutation)) << std::endl;
 
     } else if (operationCode == "3") {
         if (tspInstance == nullptr) {
