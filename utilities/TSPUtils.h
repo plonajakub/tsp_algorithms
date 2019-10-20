@@ -21,7 +21,7 @@ public:
         Symmetric, Asymmetric
     };
 
-    static std::string loadTSPInstance(IGraph **pGraph, const std::string &path, TSPUtils::TSPType tspType);
+    static std::string loadTSPInstance(IGraph **pGraph, const std::string &path, TSPUtils::TSPType tspType = Asymmetric);
 
     static TSPType getTSPType(const std::string &path);
 

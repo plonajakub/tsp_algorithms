@@ -1,7 +1,7 @@
 #include "TSPUtils.h"
 
 
-std::string TSPUtils::loadTSPInstance(IGraph **pGraph, const std::string &path, TSPUtils::TSPType tspType = Asymmetric) {
+std::string TSPUtils::loadTSPInstance(IGraph **pGraph, const std::string &path, TSPUtils::TSPType tspType) {
     std::fstream file("../input_data/" + path);
     std::string instanceName;
     if (!file.is_open()) {
