@@ -12,6 +12,7 @@
 #include "../structures/graphs/IGraph.h"
 #include "../structures/graphs/ListGraph.h"
 #include "../utilities/TSPUtils.h"
+#include "../algorithms/TSPAlgorithms.h"
 
 using std::cout;
 using std::endl;

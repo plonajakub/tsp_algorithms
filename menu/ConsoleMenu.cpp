@@ -132,6 +132,14 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         cout << endl << "----- Loaded instance of TSP -----";
         cout << tspInstance->toString() << endl;
 
+    } else if (operationCode == "4") {
+        if (tspInstance == nullptr) {
+            cout << "No instance of TSP has been loaded. Load an instance first." << endl;
+            return ProgramState::RUNNING;
+        }
+        std::vector<int> atspSolution = TSPAlgorithms::bruteForce(tspInstance);
+        cout << "The shortest path of ATSP has value of: " <<
+            TSPUtils::calculateTargetFunctionValue(tspInstance, atspSolution) << endl;
     }
     return ProgramState::RUNNING;
 }
@@ -148,7 +156,7 @@ void ConsoleMenu::prepareMenuOperations() {
     menuItem = MenuItem(MenuItem::OperationType::SUBMENU, "Main menu");
 
     menuOption.ID = "1";
-    menuOption.description = "Load an instance of (A)TSP";
+    menuOption.description = "Load an instance of ATSP";
     menuItem.addMenuOption(menuOption);
 
     menuOption.ID = "2";
@@ -156,7 +164,11 @@ void ConsoleMenu::prepareMenuOperations() {
     menuItem.addMenuOption(menuOption);
 
     menuOption.ID = "3";
-    menuOption.description = "Show loaded instance of TSP";
+    menuOption.description = "Show loaded instance of ATSP";
+    menuItem.addMenuOption(menuOption);
+
+    menuOption.ID = "4";
+    menuOption.description = "Solve ATSP with brute force algorithm";
     menuItem.addMenuOption(menuOption);
 
     menuOperation.menuItem = menuItem;
@@ -177,6 +189,11 @@ void ConsoleMenu::prepareMenuOperations() {
 
     menuOperation.ID = "3";
     menuItem = MenuItem(MenuItem::OperationType::FUNCTION, "Show loaded instance of TSP");
+    menuOperation.menuItem = menuItem;
+    this->addMenuOperation(menuOperation);
+
+    menuOperation.ID = "4";
+    menuItem = MenuItem(MenuItem::OperationType::FUNCTION, "Solve ATSP with brute force algorithm");
     menuOperation.menuItem = menuItem;
     this->addMenuOperation(menuOperation);
 }
