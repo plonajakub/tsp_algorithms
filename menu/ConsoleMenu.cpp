@@ -93,13 +93,13 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         /////////////////////////////////////////////////////////////////
     } else if (operationCode == "1") {
         std::string path, instanceName;
-        GraphUtils::TSPType tspType;
+        TSPUtils::TSPType tspType;
 
         cout << "Enter path to the instance:";
         cin >> path;
 
         try {
-            tspType = GraphUtils::getTSPType(path);
+            tspType = TSPUtils::getTSPType(path);
         } catch (const std::invalid_argument &e) {
             cout << e.what() << endl;
             return ProgramState::RUNNING;
@@ -109,10 +109,10 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         }
         cout << "Instance has type: ";
         switch (tspType) {
-            case GraphUtils::Symmetric:
+            case TSPUtils::Symmetric:
                 cout << "symmetric";
                 break;
-            case GraphUtils::Asymmetric:
+            case TSPUtils::Asymmetric:
                 cout << "asymmetric";
                 break;
         }
@@ -120,7 +120,7 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
 
         IGraph *tmpTSPInstance = tspInstance;
         try {
-            instanceName = GraphUtils::loadTSPInstance(&tspInstance, tspType, path);
+            instanceName = TSPUtils::loadTSPInstance(&tspInstance, path, tspType);
         } catch (const std::invalid_argument &e) {
             cout << e.what() << endl;
             return ProgramState::RUNNING;
@@ -140,7 +140,7 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
             choosenPermutation.insertAtEnd(v);
         }
         cout << "Target function for permutation: " << choosenPermutation << " has value: " <<
-             std::to_string(GraphUtils::getTargetFunctionValue(tspInstance, choosenPermutation)) << std::endl;
+             std::to_string(TSPUtils::calculateTargetFunctionValue(tspInstance, choosenPermutation)) << std::endl;
 
     } else if (operationCode == "3") {
         if (tspInstance == nullptr) {

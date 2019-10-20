@@ -1,7 +1,7 @@
-#include "GraphUtils.h"
+#include "TSPUtils.h"
 
 
-std::string GraphUtils::loadTSPInstance(IGraph **pGraph, GraphUtils::TSPType tspType, const std::string &path) {
+std::string TSPUtils::loadTSPInstance(IGraph **pGraph, const std::string &path, TSPUtils::TSPType tspType = Asymmetric) {
     std::fstream file("../input_data/" + path);
     std::string instanceName;
     if (!file.is_open()) {
@@ -11,7 +11,7 @@ std::string GraphUtils::loadTSPInstance(IGraph **pGraph, GraphUtils::TSPType tsp
     int nVertex, edgeParameter;
     file >> instanceName >> nVertex;
 
-    if (tspType == GraphUtils::TSPType::Asymmetric) {
+    if (tspType == TSPUtils::TSPType::Asymmetric) {
         *pGraph = new ListGraph(IGraph::GraphType::Directed, nVertex);
         for (int i = 0; i < nVertex; ++i) {
             for (int j = 0; j < nVertex; ++j) {
@@ -46,7 +46,7 @@ std::string GraphUtils::loadTSPInstance(IGraph **pGraph, GraphUtils::TSPType tsp
     return instanceName;
 }
 
-GraphUtils::TSPType GraphUtils::getTSPType(const std::string &path) {
+TSPUtils::TSPType TSPUtils::getTSPType(const std::string &path) {
     std::fstream file("../input_data/" + path);
     if (!file.is_open()) {
         throw std::invalid_argument("File with path /input_data/" + path + " does not exist.");
@@ -91,7 +91,28 @@ GraphUtils::TSPType GraphUtils::getTSPType(const std::string &path) {
     return TSPType::Symmetric;
 }
 
-int GraphUtils::getTargetFunctionValue(const IGraph *tspInstance, const DoublyLinkedList<int> &vertexPermutation) {
+int TSPUtils::calculateTargetFunctionValue(const IGraph *tspInstance, const std::vector<int> &vertexPermutation) {
+    int sum = 0;
+    int permutationSize = vertexPermutation.size();
+    if (permutationSize == 0 || permutationSize == 1) {
+        return sum;
+    }
+
+    auto it = vertexPermutation.begin();
+    int vStart = *it;
+    int v1 = vStart;
+    ++it;
+    int v2 = -1;
+    for (; it != vertexPermutation.end(); ++it) {
+        v2 = *it;
+        sum += tspInstance->getEdgeParameter(v1, v2);
+        v1 = v2;
+    }
+    sum += tspInstance->getEdgeParameter(v2, vStart);
+    return sum;
+}
+
+int TSPUtils::calculateTargetFunctionValue(const IGraph *tspInstance, const DoublyLinkedList<int> &vertexPermutation) {
     int sum = 0;
     int permutationSize = vertexPermutation.getSize();
     if (permutationSize == 0 || permutationSize == 1) {
@@ -112,6 +133,6 @@ int GraphUtils::getTargetFunctionValue(const IGraph *tspInstance, const DoublyLi
     return sum;
 }
 
-int GraphUtils::getRand(int leftLimit, int rightLimit) {
+int TSPUtils::getRand(int leftLimit, int rightLimit) {
     return leftLimit + rand() % (rightLimit - leftLimit);
 }

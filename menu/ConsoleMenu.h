@@ -10,7 +10,7 @@
 #include "MenuItem.h"
 #include "../structures/graphs/IGraph.h"
 #include "../structures/graphs/ListGraph.h"
-#include "../utilities/GraphUtils.h"
+#include "../utilities/TSPUtils.h"
 
 using std::cout;
 using std::endl;

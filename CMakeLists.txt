@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(PEA_p1 main.cpp
 
-        structures/Table.h structures/DoublyLinkedList.h structures/Stack.h
+        structures/Table.h structures/DoublyLinkedList.h structures/DoublyLinkedList.cpp structures/Stack.h
         structures/graphs/IGraph.h structures/graphs/IGraph.cpp
         structures/graphs/misc/Edge.h
         structures/graphs/MatrixGraph.h structures/graphs/MatrixGraph.cpp
@@ -16,5 +16,6 @@ add_executable(PEA_p1 main.cpp
 
         menu/MenuItem.h menu/MenuItem.cpp menu/ConsoleMenu.h menu/ConsoleMenu.cpp
 
-        utilities/GraphUtils.h utilities/GraphUtils.cpp
-        structures/DoublyLinkedList.cpp)
+        utilities/TSPUtils.h utilities/TSPUtils.cpp
+
+        algorithms/TSPAlgorithms.cpp algorithms/TSPAlgorithms.h)
