@@ -107,7 +107,9 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         delete tmpTSPInstance;
 
         cout << "Instance \"" + instanceName + "\" has been loaded!" << endl;
-        cout << tspInstance->toString() << endl;
+        cout << "TSP type: "
+             << ((TSPUtils::getTSPType(path) == TSPUtils::TSPType::Asymmetric) ? "Asymmetric" : "Symmetric") << endl;
+//        cout << tspInstance->toString() << endl;
 
     } else if (operationCode == "2") {
         if (tspInstance == nullptr) {
@@ -137,7 +139,15 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
             cout << "No instance of TSP has been loaded. Load an instance first." << endl;
             return ProgramState::RUNNING;
         }
-        cout << "The shortest path of ATSP has value of: " << TSPAlgorithms::bruteForce(tspInstance) << endl;
+        cout << "The shortest path of ATSP has value of: " << TSPAlgorithms::bruteForce(tspInstance)
+             << " [BF]" << endl;
+    } else if (operationCode == "5") {
+        if (tspInstance == nullptr) {
+            cout << "No instance of TSP has been loaded. Load an instance first." << endl;
+            return ProgramState::RUNNING;
+        }
+        cout << "The shortest path of ATSP has value of: " <<
+             TSPAlgorithms::dynamicProgrammingHeldKarp(tspInstance) << " [DP]" << endl;
     }
     return ProgramState::RUNNING;
 }
@@ -169,6 +179,10 @@ void ConsoleMenu::prepareMenuOperations() {
     menuOption.description = "Solve ATSP with brute force algorithm";
     menuItem.addMenuOption(menuOption);
 
+    menuOption.ID = "5";
+    menuOption.description = "Solve ATSP with dynamic programming (Held-Karp) algorithm";
+    menuItem.addMenuOption(menuOption);
+
     menuOperation.menuItem = menuItem;
     this->addMenuOperation(menuOperation);
 
@@ -192,6 +206,11 @@ void ConsoleMenu::prepareMenuOperations() {
 
     menuOperation.ID = "4";
     menuItem = MenuItem(MenuItem::OperationType::FUNCTION, "Solve ATSP with brute force algorithm");
+    menuOperation.menuItem = menuItem;
+    this->addMenuOperation(menuOperation);
+
+    menuOperation.ID = "5";
+    menuItem = MenuItem(MenuItem::OperationType::FUNCTION, "Solve ATSP with dynamic programming (Held-Karp) algorithm");
     menuOperation.menuItem = menuItem;
     this->addMenuOperation(menuOperation);
 }
