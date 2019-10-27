@@ -137,9 +137,7 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
             cout << "No instance of TSP has been loaded. Load an instance first." << endl;
             return ProgramState::RUNNING;
         }
-        std::vector<int> atspSolution = TSPAlgorithms::bruteForce(tspInstance);
-        cout << "The shortest path of ATSP has value of: " <<
-            TSPUtils::calculateTargetFunctionValue(tspInstance, atspSolution) << endl;
+        cout << "The shortest path of ATSP has value of: " << TSPAlgorithms::bruteForce(tspInstance) << endl;
     }
     return ProgramState::RUNNING;
 }

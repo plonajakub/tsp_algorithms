@@ -8,7 +8,7 @@
 class TSPAlgorithms {
 
 public:
-    static std::vector<int> bruteForce(const IGraph *tspInstance);
+    static int bruteForce(const IGraph *tspInstance);
 };
 
 

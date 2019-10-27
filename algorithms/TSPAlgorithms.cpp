@@ -1,8 +1,11 @@
 #include "TSPAlgorithms.h"
 
-std::vector<int> TSPAlgorithms::bruteForce(const IGraph *tspInstance) {
+int TSPAlgorithms::bruteForce(const IGraph *tspInstance) {
     // Get size of the ATSP instance
-    const int permutationSize = tspInstance->getVertexCount();
+    int permutationSize = tspInstance->getVertexCount();
+
+    // (permutationSize - 1) is an index of the fixed start vertex
+    --permutationSize;
 
     // Initialize natural permutation
     std::vector<int> permutation(permutationSize);
@@ -20,8 +23,8 @@ std::vector<int> TSPAlgorithms::bruteForce(const IGraph *tspInstance) {
     int currentPathTargetFunctionValue;
 
     // Check target function value for natural permutation and take as best for now
-    std::vector<int> bestPath = permutation;
-    int bestPathTargetFunctionValue = TSPUtils::calculateTargetFunctionValue(tspInstance, permutation);
+    int bestPathTargetFunctionValue = TSPUtils::calculateTargetFunctionValue(tspInstance, permutationSize,
+                                                                             permutation);
     do {
         // Test if there are still available swaps in (sub)permutation to be performed
         // (stackSlotIndex + 1) is a position (not index) of stack's slot
@@ -40,9 +43,9 @@ std::vector<int> TSPAlgorithms::bruteForce(const IGraph *tspInstance) {
             stackSlotIndex = 1;
 
             // Compare with current best permutation and update if better solution was found
-            currentPathTargetFunctionValue = TSPUtils::calculateTargetFunctionValue(tspInstance, permutation);
+            currentPathTargetFunctionValue = TSPUtils::calculateTargetFunctionValue(tspInstance, permutationSize,
+                                                                                    permutation);
             if (currentPathTargetFunctionValue < bestPathTargetFunctionValue) {
-                bestPath = permutation;
                 bestPathTargetFunctionValue = currentPathTargetFunctionValue;
             }
         } else {
@@ -54,5 +57,5 @@ std::vector<int> TSPAlgorithms::bruteForce(const IGraph *tspInstance) {
         // Repeat until all permutations are processed
     } while ((stackSlotIndex + 1) <= permutationSize);
 
-    return bestPath;
+    return bestPathTargetFunctionValue;
 }
