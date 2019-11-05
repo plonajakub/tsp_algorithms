@@ -1,17 +1,14 @@
 #include "tests/ListGraphTest.h"
-#include "tests/MatrixGraphTest.h"
+#include "tests/TSPAlgorithmsTest.h"
 #include "menu/ConsoleMenu.h"
-#include "utilities/TSPUtils.h"
 
 int main() {
 
 //    ListGraphTest lgt;
 //    lgt.run();
 
-//    MatrixGraphTest mg;
-//    mg.run();
-
-    TSPUtils::performTests();
+    TSPAlgorithmsTest tspAlgorithmsTest;
+    tspAlgorithmsTest.run();
 
 //    ConsoleMenu cm;
 //    cm.start();

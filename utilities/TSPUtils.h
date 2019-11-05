@@ -38,14 +38,6 @@ public:
     static int calculateTargetFunctionValue(const IGraph *tspInstance, int fixedStartVertex,
                                             const std::vector<int> &vertexPermutation);
 
-    // instanceFiles: map with paths to the instances in form {<directory of instances>, <vector with instance file names>}
-    // first file name in the vector is a name of a solution file for instances in the directory
-    static void testAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,
-                              int (*tspAlgorithm)(const IGraph *),
-                              const std::string &testName);
-
-    static void performTests();
-
     // Returns random value from [leftLimit, rightLimit) interval
     static int getRand(int leftLimit, int rightLimit);
 

@@ -1,0 +1,157 @@
+#include "TSPAlgorithmsTest.h"
+
+void TSPAlgorithmsTest::run() const {
+    bruteForceTest();
+    dynamicProgrammingHeldKarpTest();
+}
+
+void TSPAlgorithmsTest::bruteForceTest() const {
+    std::map<std::string, std::vector<std::string>> fileGroups;
+    std::vector<std::string> filePaths;
+
+    // ATSP
+//    filePaths.emplace_back("best.txt");
+//    filePaths.emplace_back("data17.txt");
+//    filePaths.emplace_back("data34.txt");
+//    filePaths.emplace_back("data36.txt");
+//    filePaths.emplace_back("data39.txt");
+//    filePaths.emplace_back("data43.txt");
+//    filePaths.emplace_back("data45.txt");
+//    filePaths.emplace_back("data48.txt");
+//    filePaths.emplace_back("data53.txt");
+//    filePaths.emplace_back("data56.txt");
+//    filePaths.emplace_back("data65txt");
+//    filePaths.emplace_back("data70.txt");
+//    filePaths.emplace_back("data71.txt");
+//    filePaths.emplace_back("data100.txt");
+//    filePaths.emplace_back("data171.txt");
+//    filePaths.emplace_back("data323.txt");
+//    filePaths.emplace_back("data358.txt");
+//    filePaths.emplace_back("data403.txt");
+//    filePaths.emplace_back("data443.txt");
+
+    fileGroups.insert({"ATSP", filePaths});
+
+    filePaths.clear();
+    // SMALL
+    filePaths.emplace_back("opt.txt");
+    filePaths.emplace_back("data10.txt");
+    filePaths.emplace_back("data11.txt");
+    filePaths.emplace_back("data12.txt");
+//    filePaths.emplace_back("data13.txt");
+//    filePaths.emplace_back("data14.txt");
+//    filePaths.emplace_back("data15.txt");
+//    filePaths.emplace_back("data16.txt");
+//    filePaths.emplace_back("data17.txt");
+//    filePaths.emplace_back("data18.txt");
+
+    fileGroups.insert({"SMALL", filePaths});
+
+    filePaths.clear();
+    //TSP
+//    filePaths.emplace_back("best.txt");
+//    filePaths.emplace_back("data17.txt");
+//    filePaths.emplace_back("data21.txt");
+//    filePaths.emplace_back("data24.txt");
+//    filePaths.emplace_back("data26.txt");
+//    filePaths.emplace_back("data29.txt");
+//    filePaths.emplace_back("data42.txt");
+//    filePaths.emplace_back("data58.txt");
+//    filePaths.emplace_back("data120.txt");
+
+    fileGroups.insert({"TSP", filePaths});
+
+    testAlgorithm(fileGroups, TSPAlgorithms::bruteForce, "bruteForce");
+}
+
+void TSPAlgorithmsTest::dynamicProgrammingHeldKarpTest() const {
+    std::map<std::string, std::vector<std::string>> fileGroups;
+    std::vector<std::string> filePaths;
+
+    // ATSP
+    filePaths.emplace_back("best.txt");
+    filePaths.emplace_back("data17.txt");
+//    filePaths.emplace_back("data34.txt");
+//    filePaths.emplace_back("data36.txt");
+//    filePaths.emplace_back("data39.txt");
+//    filePaths.emplace_back("data43.txt");
+//    filePaths.emplace_back("data45.txt");
+//    filePaths.emplace_back("data48.txt");
+//    filePaths.emplace_back("data53.txt");
+//    filePaths.emplace_back("data56.txt");
+//    filePaths.emplace_back("data65txt");
+//    filePaths.emplace_back("data70.txt");
+//    filePaths.emplace_back("data71.txt");
+//    filePaths.emplace_back("data100.txt");
+//    filePaths.emplace_back("data171.txt");
+//    filePaths.emplace_back("data323.txt");
+//    filePaths.emplace_back("data358.txt");
+//    filePaths.emplace_back("data403.txt");
+//    filePaths.emplace_back("data443.txt");
+
+    fileGroups.insert({"ATSP", filePaths});
+
+    filePaths.clear();
+    // SMALL
+    filePaths.emplace_back("opt.txt");
+    filePaths.emplace_back("data10.txt");
+//    filePaths.emplace_back("data11.txt");
+    filePaths.emplace_back("data12.txt");
+//    filePaths.emplace_back("data13.txt");
+//    filePaths.emplace_back("data14.txt");
+//    filePaths.emplace_back("data15.txt");
+//    filePaths.emplace_back("data16.txt");
+    filePaths.emplace_back("data17.txt");
+    filePaths.emplace_back("data18.txt");
+
+    fileGroups.insert({"SMALL", filePaths});
+
+    filePaths.clear();
+    //TSP
+    filePaths.emplace_back("best.txt");
+//    filePaths.emplace_back("data17.txt");
+    filePaths.emplace_back("data21.txt");
+    filePaths.emplace_back("data24.txt");
+//    filePaths.emplace_back("data26.txt");
+//    filePaths.emplace_back("data29.txt");
+//    filePaths.emplace_back("data42.txt");
+//    filePaths.emplace_back("data58.txt");
+//    filePaths.emplace_back("data120.txt");
+
+    fileGroups.insert({"TSP", filePaths});
+
+    testAlgorithm(fileGroups, TSPAlgorithms::dynamicProgrammingHeldKarp, "dynamicProgrammingHeldKarp");
+}
+
+void TSPAlgorithmsTest::branchAndBoundTest() const {
+
+}
+
+void TSPAlgorithmsTest::testAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,
+                             int (*tspAlgorithm)(const IGraph *), const std::string &testName) const {
+    std::cout << std::string(10, '-') << "Test \"" + testName + "\"" + " started" << std::string(10, '-') << std::endl;
+    IGraph *tspInstance = nullptr;
+    std::map<std::string, int> solutions;
+    int solution;
+    for (const auto &pair : instanceFiles) {
+        if (pair.second.empty()) {
+            continue;
+        }
+        solutions = TSPUtils::loadTSPSolutionValues(pair.first + "/" + pair.second[0]);
+        for (int i = 1; i != pair.second.size(); ++i) {
+            std::cout << "Testing instance " + pair.first + "/" + pair.second[i] + "...";
+            delete tspInstance;
+            TSPUtils::loadTSPInstance(&tspInstance, pair.first + "/" + pair.second[i]);
+            solution = tspAlgorithm(tspInstance);
+            if (solution == solutions.at(pair.second[i].substr(0, pair.second[i].find('.')))) {
+                std::cout << "SUCCESS";
+            } else {
+                std::cout << "FAIL" << " [AR: " << solution << "]";
+            }
+            std::cout  << std::endl;
+        }
+    }
+    delete tspInstance;
+    std::cout << std::string(10, '-') << "Test \"" + testName + "\"" + " finished" << std::string(10, '-') << std::endl;
+}
+
