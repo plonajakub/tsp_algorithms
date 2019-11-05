@@ -133,3 +133,39 @@ int TSPAlgorithms::dpGetPartialPathCost(unsigned int partialPathSet, int endVert
     return partialPathCostTable[endVertexIdx][partialPathSet];
 }
 
+int TSPAlgorithms::branchAndBound(const IGraph *tspInstance) {
+    const int instanceSize = tspInstance->getVertexCount();
+
+    BBNodeData initNode(instanceSize, 0);
+    for (int i = 0; i < instanceSize; ++i) {
+        for (int j = 0; j < instanceSize; ++j) {
+            if (i == j) {
+                initNode.distances[i][j] = std::numeric_limits<int>::max();
+            }
+            initNode.distances[i][j] = tspInstance->getEdgeParameter(i, j);
+        }
+    }
+
+    auto bbNodeComparator =
+            [](const BBNodeData &lhs, const BBNodeData &rhs) -> bool {
+                if (lhs.lowerBound == rhs.lowerBound) {
+                    return lhs.edgesOnPath < rhs.edgesOnPath;
+                }
+                return lhs.lowerBound > rhs.lowerBound;
+            };
+    std::priority_queue<BBNodeData, std::vector<BBNodeData>, decltype(bbNodeComparator)> leafs(bbNodeComparator);
+
+    std::vector<int> nautralPermutation(instanceSize);
+    for (int i = 0; i < nautralPermutation.size(); ++i) {
+        nautralPermutation[i] = i;
+    }
+    int upperBound = TSPUtils::calculateTargetFunctionValue(tspInstance, nautralPermutation);
+    // TODO bbProcessNode(initNode);
+
+    while (leafs.top().lowerBound < upperBound) {
+        // TODO driver algorithm
+    }
+
+    return upperBound;
+}
+
