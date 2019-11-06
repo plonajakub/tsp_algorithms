@@ -5,31 +5,11 @@
 #include <queue>
 #include <list>
 #include <limits>
+#include <algorithm>
 
 #include "../utilities/TSPUtils.h"
+#include "TSPHelperStructures.h"
 
-struct BBNodeData {
-    // ATSP distances
-    std::vector<std::vector<int>> distances;
-
-    // Partial paths already added to possible solution
-    std::list<std::list<int>> partialPaths;
-
-    // Index of 0 with highest penalty in distances
-    std::pair<int, int> highestPenaltyZeroIndex;
-
-    // Current lower bound
-    int lowerBound;
-
-    // Number of already added edges to the path (maximum = instanceSize - 1)
-    int edgesOnPath;
-
-    BBNodeData(int instanceSize, int edgesOnPath) : distances(instanceSize, std::vector<int>(instanceSize)),
-                                                    highestPenaltyZeroIndex(-1, -1) {
-        lowerBound = 0;
-        this->edgesOnPath = edgesOnPath;
-    }
-};
 
 class TSPAlgorithms {
 
@@ -46,6 +26,17 @@ private:
     dpGetPartialPathCost(unsigned int partialPathSet, int endVertexIdx,
                          std::vector<std::vector<int>> &partialPathCostTable,
                          const IGraph *tspInstance);
+
+    static void bbCalculateLowerBoundAndDesignateHighestZeroPenalties(BBNodeData &nodeData);
+
+    static void
+    bbDesignateHighestZeroPenalty(BBNodeData &nodeData, std::list<std::pair<EdgeCities, Penalties>> &matrixZeroes);
+
+    static void bbUpdateLeftNodeData(BBNodeData &nodeData);
+
+    static void bbUpdateRightNodeData(BBNodeData &nodeData);
+
+    static int bbGetCycleCost(const IGraph *tspInstance, const BBNodeData &nodeData);
 };
 
 

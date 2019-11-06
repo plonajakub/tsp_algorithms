@@ -137,8 +137,8 @@ int TSPAlgorithms::branchAndBound(const IGraph *tspInstance) {
     const int instanceSize = tspInstance->getVertexCount();
 
     BBNodeData initNode(instanceSize, 0);
-    for (int i = 0; i < instanceSize; ++i) {
-        for (int j = 0; j < instanceSize; ++j) {
+    for (int i = 0; i != instanceSize; ++i) {
+        for (int j = 0; j != instanceSize; ++j) {
             if (i == j) {
                 initNode.distances[i][j] = std::numeric_limits<int>::max();
             }
@@ -155,17 +155,182 @@ int TSPAlgorithms::branchAndBound(const IGraph *tspInstance) {
             };
     std::priority_queue<BBNodeData, std::vector<BBNodeData>, decltype(bbNodeComparator)> leafs(bbNodeComparator);
 
-    std::vector<int> nautralPermutation(instanceSize);
-    for (int i = 0; i < nautralPermutation.size(); ++i) {
-        nautralPermutation[i] = i;
+    std::vector<int> naturalPermutation(instanceSize);
+    for (int i = 0; i != naturalPermutation.size(); ++i) {
+        naturalPermutation[i] = i;
     }
-    int upperBound = TSPUtils::calculateTargetFunctionValue(tspInstance, nautralPermutation);
-    // TODO bbProcessNode(initNode);
+    int upperBound = TSPUtils::calculateTargetFunctionValue(tspInstance, naturalPermutation);
 
+    bbCalculateLowerBoundAndDesignateHighestZeroPenalties(initNode);
+    leafs.push(initNode);
+    BBNodeData leftNode, rightNode;
     while (leafs.top().lowerBound < upperBound) {
-        // TODO driver algorithm
+        // TODO handle left only walk in the solution space
+        if (leafs.top().edgesOnPath != instanceSize - 1) {
+            leftNode = leafs.top();
+            rightNode = leafs.top();
+            leafs.pop();
+
+            bbUpdateLeftNodeData(leftNode);
+            bbCalculateLowerBoundAndDesignateHighestZeroPenalties(leftNode);
+            if (leftNode.lowerBound < upperBound) {
+                leafs.push(leftNode);
+            }
+
+            bbUpdateRightNodeData(rightNode);
+            bbCalculateLowerBoundAndDesignateHighestZeroPenalties(rightNode);
+            if (rightNode.lowerBound < upperBound) {
+                leafs.push(rightNode);
+            }
+        } else {
+            upperBound = bbGetCycleCost(tspInstance, leafs.top());
+            leafs.pop();
+        }
+    }
+    return upperBound;
+}
+
+void TSPAlgorithms::bbCalculateLowerBoundAndDesignateHighestZeroPenalties(BBNodeData &nodeData) {
+    // pair: <Indexes of zero, penalties>
+    std::list<std::pair<EdgeCities, Penalties>> matrixZeroes;
+
+    int rowMinimum;
+    for (int i = 0; i != nodeData.distances.size(); ++i) {
+        rowMinimum = *std::min_element(nodeData.distances[i].begin(), nodeData.distances[i].end());
+        if (rowMinimum == std::numeric_limits<int>::max()) {
+            continue;
+        }
+        for (int j = 0; j != nodeData.distances.size(); ++j) {
+            if (nodeData.distances[i][j] == std::numeric_limits<int>::max()) {
+                continue;
+            }
+            nodeData.distances[i][j] -= rowMinimum;
+            if (nodeData.distances[i][j] == 0) {
+                // TODO emplace for rework
+                matrixZeroes.emplace_back(std::pair<EdgeCities, Penalties>(EdgeCities(i, j), Penalties()));
+            }
+        }
+        nodeData.lowerBound += rowMinimum;
     }
 
-    return upperBound;
+    int columnMinimum;
+    for (int j = 0; j != nodeData.distances.size(); ++j) {
+        columnMinimum = nodeData.distances[0][j];
+        for (int i = 1; i != nodeData.distances.size(); ++i) {
+            if (nodeData.distances[i][j] < columnMinimum) {
+                columnMinimum = nodeData.distances[i][j];
+            }
+        }
+        if (columnMinimum == std::numeric_limits<int>::max() || columnMinimum == 0) {
+            continue;
+        }
+        for (int i = 0; i != nodeData.distances.size(); ++i) {
+            if (nodeData.distances[i][j] == std::numeric_limits<int>::max()) {
+                continue;
+            }
+            nodeData.distances[i][j] -= columnMinimum;
+            if (nodeData.distances[i][j] == 0) {
+                // TODO emplace for rework
+                matrixZeroes.emplace_back(std::pair<EdgeCities, Penalties>(EdgeCities(i, j), Penalties()));
+            }
+        }
+        nodeData.lowerBound += columnMinimum;
+    }
+    bbDesignateHighestZeroPenalty(nodeData, matrixZeroes);
+}
+
+void TSPAlgorithms::bbDesignateHighestZeroPenalty(BBNodeData &nodeData,
+                                                  std::list<std::pair<EdgeCities, Penalties>> &matrixZeroes) {
+    int rowMinimum, columnMinimum;
+    for (auto &matrixZero : matrixZeroes) {
+        rowMinimum = std::numeric_limits<int>::max();
+        columnMinimum = std::numeric_limits<int>::max();
+        for (int j = 0; j != nodeData.distances.size(); ++j) {
+            if (nodeData.distances[matrixZero.first.i][j] < rowMinimum && j != matrixZero.first.j) {
+                rowMinimum = nodeData.distances[matrixZero.first.i][j];
+            }
+        }
+        for (int i = 0; i != nodeData.distances.size(); ++i) {
+            if (nodeData.distances[i][matrixZero.first.j] < columnMinimum && i != matrixZero.first.i) {
+                columnMinimum = nodeData.distances[i][matrixZero.first.j];
+            }
+        }
+        matrixZero.second.row = rowMinimum;
+        matrixZero.second.column = columnMinimum;
+    }
+
+    auto highestPenaltyZeroData = std::max_element(matrixZeroes.begin(), matrixZeroes.end(),
+                                                   [](const std::pair<EdgeCities, Penalties> &lhs,
+                                                      const std::pair<EdgeCities, Penalties> &rhs) -> bool {
+                                                       return lhs.second.row + lhs.second.column <
+                                                              rhs.second.row + rhs.second.column;
+                                                   });
+    nodeData.highestZeroPenaltiesIndexes = highestPenaltyZeroData->first;
+    nodeData.highestZeroPenalties = highestPenaltyZeroData->second;
+    if (nodeData.highestZeroPenalties.row == std::numeric_limits<int>::max()) {
+        nodeData.highestZeroPenalties.row = 0;
+    }
+    if (nodeData.highestZeroPenalties.column == std::numeric_limits<int>::max()) {
+        nodeData.highestZeroPenalties.column = 0;
+    }
+}
+
+void TSPAlgorithms::bbUpdateLeftNodeData(BBNodeData &nodeData) {
+    nodeData.distances[nodeData.highestZeroPenaltiesIndexes.i][nodeData.highestZeroPenaltiesIndexes.j] = std::numeric_limits<int>::max();
+}
+
+void TSPAlgorithms::bbUpdateRightNodeData(BBNodeData &nodeData) {
+    int iCitySubpathIdx = -1;
+    int jCitySubpathIdx = -1;
+    for (int k = 0; k != nodeData.partialPaths.size(); ++k) {
+        if (nodeData.partialPaths[k].back() == nodeData.highestZeroPenaltiesIndexes.i) {
+            iCitySubpathIdx = k;
+        } else if (nodeData.partialPaths[k].front() == nodeData.highestZeroPenaltiesIndexes.j) {
+            jCitySubpathIdx = k;
+        }
+    }
+
+    EdgeCities prohibitedEdge;
+    if (iCitySubpathIdx < 0 && jCitySubpathIdx < 0) {
+        nodeData.partialPaths.emplace_back();
+        auto newSubpathIt = nodeData.partialPaths.end();
+        --newSubpathIt;
+        newSubpathIt->emplace_back(nodeData.highestZeroPenaltiesIndexes.i);
+        newSubpathIt->emplace_back(nodeData.highestZeroPenaltiesIndexes.j);
+        prohibitedEdge.i = nodeData.highestZeroPenaltiesIndexes.j;
+        prohibitedEdge.j = nodeData.highestZeroPenaltiesIndexes.i;
+        nodeData.edgesOnPath += 1;
+    } else if (iCitySubpathIdx >= 0 && jCitySubpathIdx < 0) {
+        nodeData.partialPaths[iCitySubpathIdx].emplace_back(nodeData.highestZeroPenaltiesIndexes.j);
+        prohibitedEdge.i = nodeData.highestZeroPenaltiesIndexes.j;
+        prohibitedEdge.j = nodeData.partialPaths[iCitySubpathIdx].front();
+        nodeData.edgesOnPath += 1;
+    } else if (iCitySubpathIdx < 0 && jCitySubpathIdx >= 0) {
+        nodeData.partialPaths[jCitySubpathIdx].emplace_front(nodeData.highestZeroPenaltiesIndexes.i);
+        prohibitedEdge.i = nodeData.partialPaths[jCitySubpathIdx].back();
+        prohibitedEdge.j = nodeData.highestZeroPenaltiesIndexes.i;
+        nodeData.edgesOnPath += 1;
+    } else if (iCitySubpathIdx != jCitySubpathIdx) {
+        nodeData.partialPaths[iCitySubpathIdx].splice(nodeData.partialPaths[iCitySubpathIdx].end(),
+                                                      nodeData.partialPaths[jCitySubpathIdx]);
+        nodeData.partialPaths.erase(nodeData.partialPaths.begin() + jCitySubpathIdx);
+        prohibitedEdge.i = nodeData.partialPaths[iCitySubpathIdx].back();
+        prohibitedEdge.j = nodeData.partialPaths[iCitySubpathIdx].front();
+        nodeData.edgesOnPath += 1;
+    } else { // iCitySubpathIdx == jCitySubpathIdx
+        // Shouldn't happen
+    }
+
+    for (int j = 0; j != nodeData.distances.size(); ++j) {
+        nodeData.distances[nodeData.highestZeroPenaltiesIndexes.i][j] = std::numeric_limits<int>::max();
+    }
+    for (int i = 0; i != nodeData.distances.size(); ++i) {
+        nodeData.distances[i][nodeData.highestZeroPenaltiesIndexes.j] = std::numeric_limits<int>::max();
+    }
+    nodeData.distances[prohibitedEdge.i][prohibitedEdge.j] = std::numeric_limits<int>::max();
+}
+
+int TSPAlgorithms::bbGetCycleCost(const IGraph *tspInstance, const BBNodeData &nodeData) {
+    return TSPUtils::calculateTargetFunctionValue(tspInstance, nodeData.partialPaths.front());
 }
 

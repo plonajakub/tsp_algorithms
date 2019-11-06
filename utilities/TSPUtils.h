@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <list>
 
 #include "../structures/DoublyLinkedList.h"
 #include "../structures/Table.h"
@@ -34,6 +35,8 @@ public:
     static int calculateTargetFunctionValue(const IGraph *tspInstance, const DoublyLinkedList<int> &vertexPermutation);
 
     static int calculateTargetFunctionValue(const IGraph *tspInstance, const std::vector<int> &vertexPermutation);
+
+    static int calculateTargetFunctionValue(const IGraph *tspInstance, const std::list<int> &vertexPermutation);
 
     static int calculateTargetFunctionValue(const IGraph *tspInstance, int fixedStartVertex,
                                             const std::vector<int> &vertexPermutation);

@@ -131,6 +131,27 @@ int TSPUtils::calculateTargetFunctionValue(const IGraph *tspInstance, int fixedS
     return sum;
 }
 
+int TSPUtils::calculateTargetFunctionValue(const IGraph *tspInstance, const std::list<int> &vertexPermutation) {
+    int sum = 0;
+    int permutationSize = vertexPermutation.size();
+    if (permutationSize == 0 || permutationSize == 1) {
+        return sum;
+    }
+
+    auto it = vertexPermutation.begin();
+    int vStart = *it;
+    int v1 = vStart;
+    ++it;
+    int v2 = -1;
+    for (; it != vertexPermutation.end(); ++it) {
+        v2 = *it;
+        sum += tspInstance->getEdgeParameter(v1, v2);
+        v1 = v2;
+    }
+    sum += tspInstance->getEdgeParameter(v2, vStart);
+    return sum;
+}
+
 int TSPUtils::calculateTargetFunctionValue(const IGraph *tspInstance, const DoublyLinkedList<int> &vertexPermutation) {
     int sum = 0;
     int permutationSize = vertexPermutation.getSize();

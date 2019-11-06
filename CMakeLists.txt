@@ -26,4 +26,5 @@ add_executable(
         utilities/TSPUtils.h utilities/TSPUtils.cpp
 
         algorithms/TSPAlgorithms.h algorithms/TSPAlgorithms.cpp
-        )
+        algorithms/TSPHelperStructures.h
+)
