@@ -30,13 +30,13 @@ private:
     static void bbCalculateLowerBoundAndDesignateHighestZeroPenalties(BBNodeData &nodeData);
 
     static void
-    bbDesignateHighestZeroPenalty(BBNodeData &nodeData, std::list<std::pair<EdgeCities, Penalties>> &matrixZeroes);
+    bbDesignateHighestZeroPenalty(BBNodeData &nodeData, std::list<std::pair<EdgeCities, int>> &matrixZeroes);
 
     static void bbUpdateLeftNodeData(BBNodeData &nodeData);
 
     static void bbUpdateRightNodeData(BBNodeData &nodeData);
 
-    static int bbGetCycleCost(const IGraph *tspInstance, const BBNodeData &nodeData);
+    static int bbCalculateUpperBoundNaturalPermutation(const IGraph *tspInstance, std::list<int> &outSolution);
 };
 
 

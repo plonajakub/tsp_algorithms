@@ -8,20 +8,10 @@ struct EdgeCities {
     int i;
     int j;
 
-    EdgeCities() = default;
+    EdgeCities() : i(-1), j(-1) {
+    };
 
     EdgeCities(int i, int j) : i(i), j(j) {}
-};
-
-//region B&B
-
-struct Penalties {
-    int row;
-    int column;
-
-    Penalties() = default;
-
-    Penalties(int row, int column) : row(row), column(column) {}
 };
 
 struct BBNodeData {
@@ -34,24 +24,30 @@ struct BBNodeData {
     // Number of already added edges to the path (maximum = instanceSize)
     int edgesOnPath;
 
-    // Index of 0 with highest penalty in distances
+    // True if the node can't be processed further, otherwise false
+    bool isFinal;
+
+    // Indexes of 0 with the highest penalty in distances
     EdgeCities highestZeroPenaltiesIndexes;
 
-    // Highest penalties of 0 on both axis
-    Penalties highestZeroPenalties;
+    // Highest penalty of 0
+    int highestZeroPenalty;
 
     // Current lower bound
     int lowerBound;
 
-    BBNodeData() = default;
+    BBNodeData() { init(); }
 
-    BBNodeData(int instanceSize, int edgesOnPath) : distances(instanceSize, std::vector<int>(instanceSize)),
-                                                    highestZeroPenaltiesIndexes(-1, -1) {
+    BBNodeData(int instanceSize) : distances(instanceSize, std::vector<int>(instanceSize)) { init(); }
+
+private:
+    void init() {
+        edgesOnPath = 0;
+        isFinal = false;
+        highestZeroPenalty = 0;
         lowerBound = 0;
-        this->edgesOnPath = edgesOnPath;
     }
 };
 
-//endregion
 
 #endif //PEA_P1_TSPHELPERSTRUCTURES_H

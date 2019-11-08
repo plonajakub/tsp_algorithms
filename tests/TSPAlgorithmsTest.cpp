@@ -130,10 +130,10 @@ void TSPAlgorithmsTest::branchAndBoundTest() const {
 
     // ATSP
     filePaths.emplace_back("best.txt");
-//    filePaths.emplace_back("data17.txt");
-//    filePaths.emplace_back("data34.txt");
+    filePaths.emplace_back("data17.txt");
+    filePaths.emplace_back("data34.txt");
     filePaths.emplace_back("data36.txt");
-//    filePaths.emplace_back("data39.txt");
+    filePaths.emplace_back("data39.txt");
 //    filePaths.emplace_back("data43.txt");
 //    filePaths.emplace_back("data45.txt");
 //    filePaths.emplace_back("data48.txt");
@@ -154,29 +154,29 @@ void TSPAlgorithmsTest::branchAndBoundTest() const {
     filePaths.clear();
     // SMALL
     filePaths.emplace_back("opt.txt");
-//    filePaths.emplace_back("mdata3.txt");
-//    filePaths.emplace_back("mdata4.txt");
-//    filePaths.emplace_back("mdata5.txt");
-//    filePaths.emplace_back("data10.txt");
-//    filePaths.emplace_back("data11.txt");
-//    filePaths.emplace_back("data12.txt");
-//    filePaths.emplace_back("data13.txt");
-//    filePaths.emplace_back("data14.txt");
-//    filePaths.emplace_back("data15.txt");
-//    filePaths.emplace_back("data16.txt");
-//    filePaths.emplace_back("data17.txt");
-//    filePaths.emplace_back("data18.txt");
+    filePaths.emplace_back("mdata3.txt");
+    filePaths.emplace_back("mdata4.txt");
+    filePaths.emplace_back("mdata5.txt");
+    filePaths.emplace_back("data10.txt");
+    filePaths.emplace_back("data11.txt");
+    filePaths.emplace_back("data12.txt");
+    filePaths.emplace_back("data13.txt");
+    filePaths.emplace_back("data14.txt");
+    filePaths.emplace_back("data15.txt");
+    filePaths.emplace_back("data16.txt");
+    filePaths.emplace_back("data17.txt");
+    filePaths.emplace_back("data18.txt");
 
     fileGroups.insert({"SMALL", filePaths});
 
     filePaths.clear();
     //TSP
-//    filePaths.emplace_back("best.txt");
-//    filePaths.emplace_back("data17.txt");
-//    filePaths.emplace_back("data21.txt");
-//    filePaths.emplace_back("data24.txt");
-//    filePaths.emplace_back("data26.txt");
-//    filePaths.emplace_back("data29.txt");
+    filePaths.emplace_back("best.txt");
+    filePaths.emplace_back("data17.txt");
+    filePaths.emplace_back("data21.txt");
+    filePaths.emplace_back("data24.txt");
+    filePaths.emplace_back("data26.txt");
+    filePaths.emplace_back("data29.txt");
 //    filePaths.emplace_back("data42.txt");
 //    filePaths.emplace_back("data58.txt");
 //    filePaths.emplace_back("data120.txt");
