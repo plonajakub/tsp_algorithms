@@ -160,7 +160,6 @@ int TSPAlgorithms::branchAndBound(const IGraph *tspInstance) {
     bbCalculateLowerBoundAndDesignateHighestZeroPenalties(initNode);
     bbNodes.push(initNode);
 
-
     BBNodeData leftNode, rightNode;
     int calculatedUpperBound;
     while (bbNodes.top().lowerBound < upperBound) {
@@ -195,12 +194,11 @@ int TSPAlgorithms::branchAndBound(const IGraph *tspInstance) {
 }
 
 int TSPAlgorithms::bbCalculateUpperBoundNaturalPermutation(const IGraph *tspInstance, std::list<int> &outSolution) {
-    std::vector<int> naturalPermutation(tspInstance->getVertexCount());
-    for (int i = 0; i != naturalPermutation.size(); ++i) {
-        naturalPermutation[i] = i;
+    outSolution.clear();
+    for (int i = 0; i != tspInstance->getVertexCount(); ++i) {
         outSolution.emplace_back(i);
     }
-    return TSPUtils::calculateTargetFunctionValue(tspInstance, naturalPermutation);
+    return TSPUtils::calculateTargetFunctionValue(tspInstance, outSolution);
 }
 
 void TSPAlgorithms::bbCalculateLowerBoundAndDesignateHighestZeroPenalties(BBNodeData &nodeData) {
@@ -304,19 +302,6 @@ void TSPAlgorithms::bbUpdateRightNodeData(BBNodeData &nodeData) {
         } else if (nodeData.partialPaths[k].front() == nodeData.highestZeroPenaltiesIndexes.j) {
             jCityPathIdx = k;
         }
-    }
-
-    if (nodeData.edgesOnPath == nodeData.distances.size() - 1) {
-        nodeData.distances[nodeData.highestZeroPenaltiesIndexes.i][nodeData.highestZeroPenaltiesIndexes.j] = std::numeric_limits<int>::max();
-        if (nodeData.partialPaths.size() == 2) {
-            nodeData.partialPaths[iCityPathIdx].splice(nodeData.partialPaths[iCityPathIdx].end(),
-                                                       nodeData.partialPaths[jCityPathIdx]);
-            nodeData.partialPaths.erase(nodeData.partialPaths.begin() + jCityPathIdx);
-            nodeData.edgesOnPath += 1;
-        } else if (nodeData.partialPaths.size() != 1) {
-            throw std::exception();
-        }
-        return;
     }
 
     EdgeCities prohibitedEdge;
