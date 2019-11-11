@@ -130,7 +130,7 @@ void TSPAlgorithmsTest::branchAndBoundTest() const {
 
     // ATSP
     filePaths.emplace_back("best.txt");
-    filePaths.emplace_back("data17.txt");
+//    filePaths.emplace_back("data17.txt");
     filePaths.emplace_back("data34.txt");
     filePaths.emplace_back("data36.txt");
     filePaths.emplace_back("data39.txt");
@@ -139,7 +139,7 @@ void TSPAlgorithmsTest::branchAndBoundTest() const {
 //    filePaths.emplace_back("data48.txt");
 //    filePaths.emplace_back("data53.txt");
 //    filePaths.emplace_back("data56.txt");
-//    filePaths.emplace_back("data65txt");
+//    filePaths.emplace_back("data65.txt");
 //    filePaths.emplace_back("data70.txt");
 //    filePaths.emplace_back("data71.txt");
 //    filePaths.emplace_back("data100.txt");
@@ -203,17 +203,41 @@ void TSPAlgorithmsTest::testAlgorithm(const std::map<std::string, std::vector<st
             std::cout << "Testing instance " + pair.first + "/" + pair.second[i] + "...";
             delete tspInstance;
             TSPUtils::loadTSPInstance(&tspInstance, pair.first + "/" + pair.second[i]);
+            solutionVector.clear();
             solutionPathCost = tspAlgorithm(tspInstance, solutionVector);
             if (solutionPathCost == solutions.at(pair.second[i].substr(0, pair.second[i].find('.'))) &&
-                solutionPathCost == TSPUtils::calculateTargetFunctionValue(tspInstance, solutionVector)) {
+                isSolutionValid(tspInstance, solutionVector, solutionPathCost)) {
                 std::cout << "SUCCESS";
             } else {
-                std::cout << "FAIL" << " [Returned path cost of solution: " << solutionPathCost << "]";
+                std::cout << "FAIL" << " [Returned solution: " << solutionPathCost << "]";
             }
-            std::cout << "; Found path: " << solutionVector << std::endl;
+            std::cout
+//                    << std::endl << "Found path: " << solutionVector
+                    << std::endl;
         }
     }
     delete tspInstance;
     std::cout << std::string(10, '-') << "Test \"" + testName + "\"" + " finished" << std::string(10, '-') << std::endl;
+}
+
+bool TSPAlgorithmsTest::isSolutionValid(IGraph *tspInstance, const std::vector<int> &solutionPermutation,
+                                        int solutionPathCost) const {
+    const int instanceSize = tspInstance->getVertexCount();
+
+    if (solutionPermutation.size() != instanceSize) {
+        return false;
+    }
+
+    std::vector<int> cityInSolutionCount(instanceSize, 0);
+    for (const auto &city : solutionPermutation) {
+        ++cityInSolutionCount[city];
+    }
+    for (const auto &cityOccurrences : cityInSolutionCount) {
+        if (cityOccurrences != 1) {
+            return false;
+        }
+    }
+
+    return solutionPathCost == TSPUtils::calculateTargetFunctionValue(tspInstance, solutionPermutation);
 }
 

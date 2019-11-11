@@ -4,6 +4,17 @@
 #include <vector>
 #include <list>
 
+struct TSPEdge {
+    int i;
+    int j;
+    int cost;
+
+    TSPEdge() : i(-1), j(-1), cost(std::numeric_limits<int>::max()) {
+    };
+
+    TSPEdge(int i, int j, int cost) : i(i), j(j), cost(cost) {}
+};
+
 struct EdgeCities {
     int i;
     int j;
@@ -38,7 +49,7 @@ struct BBNodeData {
 
     BBNodeData() { init(); }
 
-    BBNodeData(int instanceSize) : distances(instanceSize, std::vector<int>(instanceSize)) { init(); }
+    explicit BBNodeData(int instanceSize) : distances(instanceSize, std::vector<int>(instanceSize)) { init(); }
 
 private:
     void init() {

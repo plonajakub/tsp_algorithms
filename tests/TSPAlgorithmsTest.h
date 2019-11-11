@@ -21,6 +21,9 @@ private:
     void testAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,
                               int (*tspAlgorithm)(const IGraph *, std::vector<int> &outSolution),
                               const std::string &testName) const;
+
+    bool isSolutionValid(IGraph *tspInstance, const std::vector<int> &solutionPermutation,
+                         int solutionPathCost) const;
 };
 
 

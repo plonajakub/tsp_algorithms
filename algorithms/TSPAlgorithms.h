@@ -13,13 +13,17 @@
 
 class TSPAlgorithms {
 
-    // outSolution is a permutation of vertices (not cycle)
+    // outSolution is a permutation of vertices (not cycle) - MUST be provided (as an argument) empty
 public:
     static int bruteForce(const IGraph *tspInstance, std::vector<int> &outSolution);
 
     static int dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::vector<int> &outSolution);
 
     static int branchAndBound(const IGraph *tspInstance, std::vector<int> &outSolution);
+
+    static int nearestNeighbour(const IGraph *tspInstance, std::vector<int> &outSolution);
+
+    static int greedy(const IGraph *tspInstance, std::vector<int> &outSolution);
 
 private:
 
@@ -37,7 +41,7 @@ private:
 
     static void bbUpdateRightNodeData(BBNodeData &nodeData);
 
-    static int bbCalculateUpperBoundNaturalPermutation(const IGraph *tspInstance, std::list<int> &outSolution);
+    static int bbCalculateUpperBoundNaturalPermutation(const IGraph *tspInstance, std::vector<int> &outSolution);
 };
 
 
