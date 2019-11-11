@@ -13,12 +13,13 @@
 
 class TSPAlgorithms {
 
+    // outSolution is a permutation of vertices (not cycle)
 public:
-    static int bruteForce(const IGraph *tspInstance);
+    static int bruteForce(const IGraph *tspInstance, std::vector<int> &outSolution);
 
-    static int dynamicProgrammingHeldKarp(const IGraph *tspInstance);
+    static int dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::vector<int> &outSolution);
 
-    static int branchAndBound(const IGraph *tspInstance);
+    static int branchAndBound(const IGraph *tspInstance, std::vector<int> &outSolution);
 
 private:
 

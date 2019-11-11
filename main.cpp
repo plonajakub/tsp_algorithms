@@ -7,11 +7,11 @@ int main() {
 //    ListGraphTest lgt;
 //    lgt.run();
 
-    TSPAlgorithmsTest tspAlgorithmsTest;
-    tspAlgorithmsTest.run();
+//    TSPAlgorithmsTest tspAlgorithmsTest;
+//    tspAlgorithmsTest.run();
 
-//    ConsoleMenu cm;
-//    cm.start();
+    ConsoleMenu cm;
+    cm.start();
 
     return 0;
 }

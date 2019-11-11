@@ -187,11 +187,13 @@ void TSPAlgorithmsTest::branchAndBoundTest() const {
 }
 
 void TSPAlgorithmsTest::testAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,
-                                      int (*tspAlgorithm)(const IGraph *), const std::string &testName) const {
+                                      int (*tspAlgorithm)(const IGraph *, std::vector<int> &outSolution),
+                                      const std::string &testName) const {
     std::cout << std::string(10, '-') << "Test \"" + testName + "\"" + " started" << std::string(10, '-') << std::endl;
-    IGraph *tspInstance = nullptr;
     std::map<std::string, int> solutions;
-    int solution;
+    IGraph *tspInstance = nullptr;
+    std::vector<int> solutionVector;
+    int solutionPathCost;
     for (const auto &pair : instanceFiles) {
         if (pair.second.empty()) {
             continue;
@@ -201,13 +203,14 @@ void TSPAlgorithmsTest::testAlgorithm(const std::map<std::string, std::vector<st
             std::cout << "Testing instance " + pair.first + "/" + pair.second[i] + "...";
             delete tspInstance;
             TSPUtils::loadTSPInstance(&tspInstance, pair.first + "/" + pair.second[i]);
-            solution = tspAlgorithm(tspInstance);
-            if (solution == solutions.at(pair.second[i].substr(0, pair.second[i].find('.')))) {
+            solutionPathCost = tspAlgorithm(tspInstance, solutionVector);
+            if (solutionPathCost == solutions.at(pair.second[i].substr(0, pair.second[i].find('.'))) &&
+                solutionPathCost == TSPUtils::calculateTargetFunctionValue(tspInstance, solutionVector)) {
                 std::cout << "SUCCESS";
             } else {
-                std::cout << "FAIL" << " [AR: " << solution << "]";
+                std::cout << "FAIL" << " [Returned path cost of solution: " << solutionPathCost << "]";
             }
-            std::cout << std::endl;
+            std::cout << "; Found path: " << solutionVector << std::endl;
         }
     }
     delete tspInstance;

@@ -196,3 +196,14 @@ std::map<std::string, int> TSPUtils::loadTSPSolutionValues(const std::string &fi
     return solutions;
 }
 
+std::ostream &operator<<(std::ostream &ostr, std::vector<int> permutation) {
+    ostr << "[";
+    for (auto vertex : permutation) {
+        ostr << vertex << " -> ";
+    }
+    if (!permutation.empty()) {
+        ostr << permutation.front();
+    }
+    ostr << "]";
+    return ostr;
+}

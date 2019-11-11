@@ -48,5 +48,7 @@ private:
 
 };
 
+// Prints cycle (but takes permutation)
+std::ostream& operator<<(std::ostream &ostr, std::vector<int> permutation);
 
 #endif //PEA_P1_TSPUTILS_H

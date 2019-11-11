@@ -139,15 +139,28 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
             cout << "No instance of TSP has been loaded. Load an instance first." << endl;
             return ProgramState::RUNNING;
         }
-        cout << "The shortest path of ATSP has value of: " << TSPAlgorithms::bruteForce(tspInstance)
+        std::vector<int> solution;
+        cout << "The minimal cycle of ATSP has value of: " << TSPAlgorithms::bruteForce(tspInstance, solution)
              << " [BF]" << endl;
+        cout << "Solution cycle: " << solution << endl;
     } else if (operationCode == "5") {
         if (tspInstance == nullptr) {
             cout << "No instance of TSP has been loaded. Load an instance first." << endl;
             return ProgramState::RUNNING;
         }
-        cout << "The shortest path of ATSP has value of: " <<
-             TSPAlgorithms::dynamicProgrammingHeldKarp(tspInstance) << " [DP]" << endl;
+        std::vector<int> solution;
+        cout << "The minimal cycle of ATSP has value of: " <<
+             TSPAlgorithms::dynamicProgrammingHeldKarp(tspInstance, solution) << " [DP]" << endl;
+        cout << "Solution cycle: " << solution << endl;
+    } else if (operationCode == "6") {
+        if (tspInstance == nullptr) {
+            cout << "No instance of TSP has been loaded. Load an instance first." << endl;
+            return ProgramState::RUNNING;
+        }
+        std::vector<int> solution;
+        cout << "The minimal cycle of ATSP has value of: " <<
+             TSPAlgorithms::branchAndBound(tspInstance, solution) << " [B&B]" << endl;
+        cout << "Solution cycle: " << solution << endl;
     }
     return ProgramState::RUNNING;
 }
@@ -183,6 +196,10 @@ void ConsoleMenu::prepareMenuOperations() {
     menuOption.description = "Solve ATSP with dynamic programming (Held-Karp) algorithm";
     menuItem.addMenuOption(menuOption);
 
+    menuOption.ID = "6";
+    menuOption.description = "Solve ATSP with branch and bound algorithm";
+    menuItem.addMenuOption(menuOption);
+
     menuOperation.menuItem = menuItem;
     this->addMenuOperation(menuOperation);
 
@@ -211,6 +228,11 @@ void ConsoleMenu::prepareMenuOperations() {
 
     menuOperation.ID = "5";
     menuItem = MenuItem(MenuItem::OperationType::FUNCTION, "Solve ATSP with dynamic programming (Held-Karp) algorithm");
+    menuOperation.menuItem = menuItem;
+    this->addMenuOperation(menuOperation);
+
+    menuOperation.ID = "6";
+    menuItem = MenuItem(MenuItem::OperationType::FUNCTION, "Solve ATSP with branch and bound algorithm");
     menuOperation.menuItem = menuItem;
     this->addMenuOperation(menuOperation);
 }

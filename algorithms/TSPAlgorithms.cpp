@@ -1,6 +1,6 @@
 #include "TSPAlgorithms.h"
 
-int TSPAlgorithms::bruteForce(const IGraph *tspInstance) {
+int TSPAlgorithms::bruteForce(const IGraph *tspInstance, std::vector<int> &outSolution) {
     // Get size of the ATSP instance
     int permutationSize = tspInstance->getVertexCount();
 
@@ -22,6 +22,8 @@ int TSPAlgorithms::bruteForce(const IGraph *tspInstance) {
     // Current permutation's target function value
     int currentPathTargetFunctionValue;
 
+    // Save natural permutation as current solution
+    outSolution = permutation;
     // Check target function value for natural permutation and take as best for now
     int bestPathTargetFunctionValue = TSPUtils::calculateTargetFunctionValue(tspInstance, permutationSize,
                                                                              permutation);
@@ -47,6 +49,7 @@ int TSPAlgorithms::bruteForce(const IGraph *tspInstance) {
                                                                                     permutation);
             if (currentPathTargetFunctionValue < bestPathTargetFunctionValue) {
                 bestPathTargetFunctionValue = currentPathTargetFunctionValue;
+                outSolution = permutation;
             }
         } else {
             // Process permutations with bigger size
@@ -56,11 +59,11 @@ int TSPAlgorithms::bruteForce(const IGraph *tspInstance) {
 
         // Repeat until all permutations are processed
     } while ((stackSlotIndex + 1) <= permutationSize);
-
+    outSolution.emplace_back(permutationSize);
     return bestPathTargetFunctionValue;
 }
 
-int TSPAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance) {
+int TSPAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::vector<int> &outSolution) {
     // Get size of the ATSP instance
     // (nVertex - 1) is an index of the fixed start vertex
     const int nVertex = tspInstance->getVertexCount();
@@ -98,6 +101,40 @@ int TSPAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance) {
             bestPathCost = pathCost;
         }
     }
+
+    std::list<int> solutionPath;
+    int pathCostBacktrack = bestPathCost;
+    int currentPathCost, currentMinPathCost = std::numeric_limits<int>::max();
+    int bestOnPathVertex = -1;
+    fullPathSet = (1u << (nVertex - 1)) - 1;
+    // First on the tour is the starting vertex
+    solutionPath.emplace_front(nVertex - 1);
+    // Find the solution using computed values in partialPathCosts - travel backward
+    for (int i = 0; i < nVertex - 1; ++i) {
+        // Loop trough all vertices and find best link
+        for (int vertexIdx = 0; vertexIdx < nVertex - 1; ++vertexIdx) {
+            // For each vertex if it is part of minimal link belonging to the best tour
+            if (fullPathSet & (1u << vertexIdx)) {
+                currentPathCost = partialPathCosts[vertexIdx][fullPathSet] +
+                                           tspInstance->getEdgeParameter(vertexIdx, solutionPath.front());
+                if (currentPathCost < currentMinPathCost) {
+                    currentMinPathCost = currentPathCost;
+                    bestOnPathVertex = vertexIdx;
+                }
+            }
+        }
+        // And best link to the path
+        solutionPath.emplace_front(bestOnPathVertex);
+
+        // Update values for next iteration
+        fullPathSet &= ~(1u << bestOnPathVertex);
+        pathCostBacktrack -= currentMinPathCost;
+        currentMinPathCost = std::numeric_limits<int>::max();
+        bestOnPathVertex = -1;
+    }
+    for (auto vertex : solutionPath) {
+        outSolution.emplace_back(vertex);
+    }
     return bestPathCost;
 }
 
@@ -120,8 +157,9 @@ int TSPAlgorithms::dpGetPartialPathCost(unsigned int partialPathSet, int endVert
                 continue;
             }
             // opt(S, t) = min(opt(S \ {t}, q) + dist(q, t) : q ∈ S \ {t})
-            partialPathCost = dpGetPartialPathCost(partialPathSubset, vertexIdx, partialPathCostTable, tspInstance) +
-                              tspInstance->getEdgeParameter(vertexIdx, endVertexIdx);
+            partialPathCost =
+                    dpGetPartialPathCost(partialPathSubset, vertexIdx, partialPathCostTable, tspInstance) +
+                    tspInstance->getEdgeParameter(vertexIdx, endVertexIdx);
             // Update best partial path cost
             if (partialPathCost < bestPartialPathCost) {
                 bestPartialPathCost = partialPathCost;
@@ -133,7 +171,7 @@ int TSPAlgorithms::dpGetPartialPathCost(unsigned int partialPathSet, int endVert
     return partialPathCostTable[endVertexIdx][partialPathSet];
 }
 
-int TSPAlgorithms::branchAndBound(const IGraph *tspInstance) {
+int TSPAlgorithms::branchAndBound(const IGraph *tspInstance, std::vector<int> &outSolution) {
     const int instanceSize = tspInstance->getVertexCount();
 
     auto bbNodeComparator =
@@ -189,7 +227,9 @@ int TSPAlgorithms::branchAndBound(const IGraph *tspInstance) {
             bbNodes.pop();
         }
     }
-    // TODO The solution for the ATSP is in the tspSolution
+    for (auto vertex : tspSolution) {
+        outSolution.emplace_back(vertex);
+    }
     return upperBound;
 }
 
