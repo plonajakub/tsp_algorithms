@@ -65,7 +65,7 @@ int TSPAlgorithms::bruteForce(const IGraph *tspInstance, std::vector<int> &outSo
 
 int TSPAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::vector<int> &outSolution) {
     // Get size of the ATSP instance
-    // (nVertex - 1) is an index of the fixed start vertex
+    // (nVertex - 1) is the fixed start vertex
     const int nVertex = tspInstance->getVertexCount();
 
     // Number of subsets of sets with size (nVertex - 1)
@@ -76,7 +76,7 @@ int TSPAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::ve
     // Second dimension denote set of go-trough vertices:
     //      The set is stored as an unsigned int where "1" bit denote that vertex is in set and
     //      "0" bit denote that set is not in the set
-    std::vector<std::vector<int>> partialPathCosts(nVertex, std::vector<int>(pathSetCount));
+    std::vector<std::vector<int>> partialPathCosts(nVertex - 1, std::vector<int>(pathSetCount));
 
     // Go trough all [0, 1, ..., nVertex - 2] vertices
     for (int vertexIdx = 0; vertexIdx < nVertex - 1; ++vertexIdx) {
@@ -91,7 +91,7 @@ int TSPAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::ve
     // Find best path cost
     int pathCost, bestPathCost = std::numeric_limits<int>::max();
     // A set witch contains all vertices without the starting one
-    unsigned int fullPathSet = (1u << (nVertex - 1)) - 1;
+    const unsigned int fullPathSet = (1u << (nVertex - 1)) - 1;
     for (int endVertexIdx = 0; endVertexIdx < nVertex - 1; ++endVertexIdx) {
         // v∗ = min(opt(N, t) + dist(t, x) : t ∈ N)
         pathCost = dpGetPartialPathCost(fullPathSet, endVertexIdx, partialPathCosts, tspInstance) +
@@ -106,28 +106,28 @@ int TSPAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::ve
     int pathCostBacktrack = bestPathCost;
     int currentPathCost, currentMinPathCost = std::numeric_limits<int>::max();
     int bestOnPathVertex = -1;
-    fullPathSet = (1u << (nVertex - 1)) - 1;
+    unsigned int pathSet = fullPathSet;
     // First on the tour is the starting vertex
     solutionPath.emplace_front(nVertex - 1);
     // Find the solution using computed values in partialPathCosts - travel backward
     for (int i = 0; i < nVertex - 1; ++i) {
         // Loop trough all vertices and find best link
         for (int vertexIdx = 0; vertexIdx < nVertex - 1; ++vertexIdx) {
-            // For each vertex if it is part of minimal link belonging to the best tour
-            if (fullPathSet & (1u << vertexIdx)) {
-                currentPathCost = partialPathCosts[vertexIdx][fullPathSet] +
+            if (pathSet & (1u << vertexIdx)) {
+                currentPathCost = partialPathCosts[vertexIdx][pathSet] +
                                            tspInstance->getEdgeParameter(vertexIdx, solutionPath.front());
+                // Taking minimum only if needed is crucial here (always first minimum found)
                 if (currentPathCost < currentMinPathCost) {
                     currentMinPathCost = currentPathCost;
                     bestOnPathVertex = vertexIdx;
                 }
             }
         }
-        // And best link to the path
+        // Add best link to the path
         solutionPath.emplace_front(bestOnPathVertex);
 
         // Update values for next iteration
-        fullPathSet &= ~(1u << bestOnPathVertex);
+        pathSet &= ~(1u << bestOnPathVertex);
         pathCostBacktrack -= currentMinPathCost;
         currentMinPathCost = std::numeric_limits<int>::max();
         bestOnPathVertex = -1;
