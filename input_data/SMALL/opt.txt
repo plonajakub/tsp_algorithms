@@ -5,8 +5,5 @@ data13  data13:   269
 data14  data14:   125
 data15  data15:   291
 data16  data16:   156
-data17  data17:   183
+data17  data17:   2085
 data18  data18:   187
-mdata3  mdata3:    10
-mdata4  mdata4:    25
-mdata5  mdata5:    20

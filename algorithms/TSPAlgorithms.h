@@ -41,7 +41,7 @@ private:
 
     static void bbUpdateRightNodeData(BBNodeData &nodeData);
 
-    static int bbCalculateUpperBoundNaturalPermutation(const IGraph *tspInstance, std::vector<int> &outSolution);
+    static int bbCalculateUpperBoundFromNaturalPermutation(const IGraph *tspInstance, std::vector<int> &outSolution);
 };
 
 

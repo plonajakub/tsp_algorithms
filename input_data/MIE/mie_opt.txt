@@ -1,0 +1,8 @@
+tsp_6_1     tsp_6_1:    132
+tsp_6_2     tsp_6_2:    80
+tsp_10      tsp_10:     212
+tsp_12      tsp_12:     264
+tsp_13      tsp_13:     269
+tsp_14      tsp_14:     282
+tsp_15      tsp_15:     291
+tsp_17      tsp_17:     39
