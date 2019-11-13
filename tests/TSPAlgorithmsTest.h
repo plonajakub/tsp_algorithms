@@ -13,6 +13,7 @@ public:
 
 private:
     void bruteForceTest() const;
+    void bruteForceTreeTest() const;
     void dynamicProgrammingHeldKarpTest() const;
     void branchAndBoundTest() const;
     void nearestNeighbourTest() const;

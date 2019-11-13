@@ -67,6 +67,54 @@ int TSPAlgorithms::bruteForce(const IGraph *tspInstance, std::vector<int> &outSo
     return bestPathTargetFunctionValue;
 }
 
+int TSPAlgorithms::bruteForceTree(const IGraph *tspInstance, std::vector<int> &outSolution) {
+    // Last vertex is the starting vertex
+    const int permutationSize = tspInstance->getVertexCount() - 1;
+    if (permutationSize == 1) {
+        outSolution.emplace_back(tspInstance->getEdgeParameter(0, 1));
+    }
+
+    std::vector<int> usedElements;
+    std::vector<int> availableElements;
+    for (int vertexIdx = 0; vertexIdx != permutationSize; ++vertexIdx) {
+        availableElements.emplace_back(vertexIdx);
+    }
+
+    int bestSolutionValue = std::numeric_limits<int>::max();
+    for (int i = 0; i != availableElements.size(); ++i) {
+        usedElements.emplace_back(availableElements[i]);
+        availableElements.erase(availableElements.begin() + i);
+        bruteForceTreeRecursiveBuild(availableElements, usedElements, bestSolutionValue, tspInstance, outSolution);
+        availableElements.insert(availableElements.begin() + i, usedElements.back());
+        usedElements.erase(usedElements.end() - 1);
+    }
+    outSolution.emplace_back(permutationSize);
+    return bestSolutionValue;
+}
+
+void TSPAlgorithms::bruteForceTreeRecursiveBuild(std::vector<int> &availableElements, std::vector<int> &usedElements,
+                                                 int &bestSolutionValue, const IGraph *tspInstance,
+                                                 std::vector<int> &solution) {
+    if (availableElements.empty()) {
+        int currentSolutionValue = TSPUtils::calculateTargetFunctionValue(tspInstance,
+                                                                          tspInstance->getVertexCount() - 1,
+                                                                          usedElements);
+        if (currentSolutionValue < bestSolutionValue) {
+            bestSolutionValue = currentSolutionValue;
+            solution = usedElements;
+        }
+        return;
+    }
+
+    for (int i = 0; i != availableElements.size(); ++i) {
+        usedElements.emplace_back(availableElements[i]);
+        availableElements.erase(availableElements.begin() + i);
+        bruteForceTreeRecursiveBuild(availableElements, usedElements, bestSolutionValue, tspInstance, solution);
+        availableElements.insert(availableElements.begin() + i, usedElements.back());
+        usedElements.erase(usedElements.end() - 1);
+    }
+}
+
 int TSPAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::vector<int> &outSolution) {
     // Get size of the ATSP instance
     // (nVertex - 1) is the fixed start vertex
@@ -508,4 +556,8 @@ int TSPAlgorithms::greedy(const IGraph *tspInstance, std::vector<int> &outSoluti
     }
     return TSPUtils::calculateTargetFunctionValue(tspInstance, outSolution);
 }
+
+
+
+
 

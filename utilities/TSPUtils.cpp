@@ -75,11 +75,11 @@ TSPUtils::TSPType TSPUtils::getTSPType(const std::string &path) {
             throw std::logic_error("Error: provided data does not represent an instance of TSP");
         }
     }
-    for (int i = 0; i < instance.getSize(); ++i) {
-        if (instance[i][i] != -1) {
-            throw std::logic_error("Error: provided data does not represent an instance of TSP");
-        }
-    }
+//    for (int i = 0; i < instance.getSize(); ++i) {
+//        if (instance[i][i] != -1) {
+//            throw std::logic_error("Error: provided data does not represent an instance of TSP");
+//        }
+//    }
 
     for (int i = 0; i < nVertex; ++i) {
         for (int j = i + 1; j < nVertex; ++j) {
@@ -149,6 +149,25 @@ int TSPUtils::calculateTargetFunctionValue(const IGraph *tspInstance, const std:
         v1 = v2;
     }
     sum += tspInstance->getEdgeParameter(v2, vStart);
+    return sum;
+}
+
+int TSPUtils::calculateTargetFunctionValue(const IGraph *tspInstance, int fixedStartVertex,
+                                           const std::list<int> &vertexPermutation) {
+    int sum = 0;
+    int permutationSize = vertexPermutation.size();
+    if (permutationSize == 0) {
+        return sum;
+    }
+
+    int v1 = fixedStartVertex;
+    int v2 = -1;
+    for (const auto &nextVertex : vertexPermutation) {
+        v2 = nextVertex;
+        sum += tspInstance->getEdgeParameter(v1, v2);
+        v1 = v2;
+    }
+    sum += tspInstance->getEdgeParameter(v2, fixedStartVertex);
     return sum;
 }
 

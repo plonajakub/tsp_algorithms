@@ -17,6 +17,9 @@ class TSPAlgorithms {
 public:
     static int bruteForce(const IGraph *tspInstance, std::vector<int> &outSolution);
 
+    // DFS
+    static int bruteForceTree(const IGraph *tspInstance, std::vector<int> &outSolution);
+
     static int dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::vector<int> &outSolution);
 
     static int branchAndBound(const IGraph *tspInstance, std::vector<int> &outSolution);
@@ -26,6 +29,11 @@ public:
     static int greedy(const IGraph *tspInstance, std::vector<int> &outSolution);
 
 private:
+
+    static void
+    bruteForceTreeRecursiveBuild(std::vector<int> &availableElements, std::vector<int> &usedElements,
+                                 int &bestSolutionValue, const IGraph *tspInstance,
+                                 std::vector<int> &solution);
 
     static int
     dpGetPartialPathCost(unsigned int partialPathSet, int endVertexIdx,
@@ -42,6 +50,7 @@ private:
     static void bbUpdateRightNodeData(BBNodeData &nodeData);
 
     static int bbCalculateUpperBoundFromNaturalPermutation(const IGraph *tspInstance, std::vector<int> &outSolution);
+
 };
 
 
