@@ -552,6 +552,284 @@ int TSPAlgorithms::greedy(const IGraph *tspInstance, std::vector<int> &outSoluti
     return TSPUtils::calculateTargetFunctionValue(tspInstance, outSolution);
 }
 
+int TSPAlgorithms::branchAndBound0Heuristics(const IGraph *tspInstance, std::vector<int> &outSolution) {
+    const int instanceSize = tspInstance->getVertexCount();
+
+    auto bbNodeComparator =
+            [](const BBNodeData &lhs, const BBNodeData &rhs) -> bool {
+                if (lhs.lowerBound == rhs.lowerBound) {
+                    return lhs.edgesOnPath < rhs.edgesOnPath;
+                }
+                return lhs.lowerBound > rhs.lowerBound;
+            };
+    std::priority_queue<BBNodeData, std::vector<BBNodeData>, decltype(bbNodeComparator)> bbNodes(bbNodeComparator);
+
+    int upperBound = std::numeric_limits<int>::max();
+    std::list<int> tspSolution;
+
+    BBNodeData initNode(instanceSize);
+    for (int i = 0; i != instanceSize; ++i) {
+        for (int j = 0; j != instanceSize; ++j) {
+            if (i == j) {
+                initNode.distances[i][j] = std::numeric_limits<int>::max();
+            }
+            initNode.distances[i][j] = tspInstance->getEdgeParameter(i, j);
+        }
+    }
+    bbCalculateLowerBoundAndDesignateHighestZeroPenalties(initNode);
+    bbNodes.push(initNode);
+
+    BBNodeData leftNode, rightNode;
+    int calculatedUpperBound;
+    while (bbNodes.top().lowerBound < upperBound && !bbNodes.empty()) {
+        if (!bbNodes.top().isFinal) {
+            leftNode = bbNodes.top();
+            rightNode = bbNodes.top();
+            bbNodes.pop();
+
+            bbUpdateLeftNodeData(leftNode);
+            bbCalculateLowerBoundAndDesignateHighestZeroPenalties(leftNode);
+            if (leftNode.lowerBound < upperBound) {
+                bbNodes.push(leftNode);
+            }
+
+            bbUpdateRightNodeData(rightNode);
+            bbCalculateLowerBoundAndDesignateHighestZeroPenalties(rightNode);
+            if (rightNode.lowerBound < upperBound) {
+                bbNodes.push(rightNode);
+            }
+        } else {
+            calculatedUpperBound = TSPUtils::calculateTargetFunctionValue(tspInstance,
+                                                                          bbNodes.top().partialPaths.front());
+            if (calculatedUpperBound < upperBound) {
+                upperBound = calculatedUpperBound;
+                tspSolution = bbNodes.top().partialPaths.front();
+            }
+            bbNodes.pop();
+        }
+    }
+    for (const auto &vertex : tspSolution) {
+        outSolution.emplace_back(vertex);
+    }
+    return upperBound;
+}
+
+int TSPAlgorithms::branchAndBoundNNHeuristic(const IGraph *tspInstance, std::vector<int> &outSolution) {
+    const int instanceSize = tspInstance->getVertexCount();
+
+    auto bbNodeComparator =
+            [](const BBNodeData &lhs, const BBNodeData &rhs) -> bool {
+                if (lhs.lowerBound == rhs.lowerBound) {
+                    return lhs.edgesOnPath < rhs.edgesOnPath;
+                }
+                return lhs.lowerBound > rhs.lowerBound;
+            };
+    std::priority_queue<BBNodeData, std::vector<BBNodeData>, decltype(bbNodeComparator)> bbNodes(bbNodeComparator);
+
+    std::vector<int> heuristicSolution;
+    int upperBound = nearestNeighbour(tspInstance, heuristicSolution);
+    std::list<int> tspSolution;
+    for (const auto &vertex : heuristicSolution) {
+        tspSolution.emplace_back(vertex);
+    }
+
+    BBNodeData initNode(instanceSize);
+    for (int i = 0; i != instanceSize; ++i) {
+        for (int j = 0; j != instanceSize; ++j) {
+            if (i == j) {
+                initNode.distances[i][j] = std::numeric_limits<int>::max();
+            }
+            initNode.distances[i][j] = tspInstance->getEdgeParameter(i, j);
+        }
+    }
+    bbCalculateLowerBoundAndDesignateHighestZeroPenalties(initNode);
+    bbNodes.push(initNode);
+
+    BBNodeData leftNode, rightNode;
+    int calculatedUpperBound;
+    while (bbNodes.top().lowerBound < upperBound && !bbNodes.empty()) {
+        if (!bbNodes.top().isFinal) {
+            leftNode = bbNodes.top();
+            rightNode = bbNodes.top();
+            bbNodes.pop();
+
+            bbUpdateLeftNodeData(leftNode);
+            bbCalculateLowerBoundAndDesignateHighestZeroPenalties(leftNode);
+            if (leftNode.lowerBound < upperBound) {
+                bbNodes.push(leftNode);
+            }
+
+            bbUpdateRightNodeData(rightNode);
+            bbCalculateLowerBoundAndDesignateHighestZeroPenalties(rightNode);
+            if (rightNode.lowerBound < upperBound) {
+                bbNodes.push(rightNode);
+            }
+        } else {
+            calculatedUpperBound = TSPUtils::calculateTargetFunctionValue(tspInstance,
+                                                                          bbNodes.top().partialPaths.front());
+            if (calculatedUpperBound < upperBound) {
+                upperBound = calculatedUpperBound;
+                tspSolution = bbNodes.top().partialPaths.front();
+            }
+            bbNodes.pop();
+        }
+    }
+    for (const auto &vertex : tspSolution) {
+        outSolution.emplace_back(vertex);
+    }
+    return upperBound;
+}
+
+int TSPAlgorithms::branchAndBoundGHeuristic(const IGraph *tspInstance, std::vector<int> &outSolution) {
+    const int instanceSize = tspInstance->getVertexCount();
+
+    auto bbNodeComparator =
+            [](const BBNodeData &lhs, const BBNodeData &rhs) -> bool {
+                if (lhs.lowerBound == rhs.lowerBound) {
+                    return lhs.edgesOnPath < rhs.edgesOnPath;
+                }
+                return lhs.lowerBound > rhs.lowerBound;
+            };
+    std::priority_queue<BBNodeData, std::vector<BBNodeData>, decltype(bbNodeComparator)> bbNodes(bbNodeComparator);
+
+    std::vector<int> heuristicSolution;
+    int upperBound = greedy(tspInstance, heuristicSolution);
+    std::list<int> tspSolution;
+    for (const auto &vertex : heuristicSolution) {
+        tspSolution.emplace_back(vertex);
+    }
+
+    BBNodeData initNode(instanceSize);
+    for (int i = 0; i != instanceSize; ++i) {
+        for (int j = 0; j != instanceSize; ++j) {
+            if (i == j) {
+                initNode.distances[i][j] = std::numeric_limits<int>::max();
+            }
+            initNode.distances[i][j] = tspInstance->getEdgeParameter(i, j);
+        }
+    }
+    bbCalculateLowerBoundAndDesignateHighestZeroPenalties(initNode);
+    bbNodes.push(initNode);
+
+    BBNodeData leftNode, rightNode;
+    int calculatedUpperBound;
+    while (bbNodes.top().lowerBound < upperBound && !bbNodes.empty()) {
+        if (!bbNodes.top().isFinal) {
+            leftNode = bbNodes.top();
+            rightNode = bbNodes.top();
+            bbNodes.pop();
+
+            bbUpdateLeftNodeData(leftNode);
+            bbCalculateLowerBoundAndDesignateHighestZeroPenalties(leftNode);
+            if (leftNode.lowerBound < upperBound) {
+                bbNodes.push(leftNode);
+            }
+
+            bbUpdateRightNodeData(rightNode);
+            bbCalculateLowerBoundAndDesignateHighestZeroPenalties(rightNode);
+            if (rightNode.lowerBound < upperBound) {
+                bbNodes.push(rightNode);
+            }
+        } else {
+            calculatedUpperBound = TSPUtils::calculateTargetFunctionValue(tspInstance,
+                                                                          bbNodes.top().partialPaths.front());
+            if (calculatedUpperBound < upperBound) {
+                upperBound = calculatedUpperBound;
+                tspSolution = bbNodes.top().partialPaths.front();
+            }
+            bbNodes.pop();
+        }
+    }
+    for (const auto &vertex : tspSolution) {
+        outSolution.emplace_back(vertex);
+    }
+    return upperBound;
+}
+
+int TSPAlgorithms::branchAndBound2Heuristics(const IGraph *tspInstance, std::vector<int> &outSolution) {
+    const int instanceSize = tspInstance->getVertexCount();
+
+    auto bbNodeComparator =
+            [](const BBNodeData &lhs, const BBNodeData &rhs) -> bool {
+                if (lhs.lowerBound == rhs.lowerBound) {
+                    return lhs.edgesOnPath < rhs.edgesOnPath;
+                }
+                return lhs.lowerBound > rhs.lowerBound;
+            };
+    std::priority_queue<BBNodeData, std::vector<BBNodeData>, decltype(bbNodeComparator)> bbNodes(bbNodeComparator);
+
+    // region heuristics
+    std::vector<int> heuristicSolution;
+    int heuristicSolutionValue;
+    std::list<std::pair<int, std::vector<int>>> heuristicsStorage;
+
+    heuristicSolutionValue = nearestNeighbour(tspInstance, heuristicSolution);
+    heuristicsStorage.emplace_back(heuristicSolutionValue, heuristicSolution);
+
+    heuristicSolution.clear();
+    heuristicSolutionValue = greedy(tspInstance, heuristicSolution);
+    heuristicsStorage.emplace_back(heuristicSolutionValue, heuristicSolution);
+    // endregion heuristics
+
+    auto bestHeuristicSolutionIt = std::min_element(heuristicsStorage.begin(), heuristicsStorage.end(),
+                                                    [](const std::pair<int, std::vector<int>> &lhs,
+                                                       const std::pair<int, std::vector<int>> &rhs) -> bool {
+                                                        return lhs.first < rhs.first;
+                                                    });
+
+    int upperBound = bestHeuristicSolutionIt->first;
+    std::list<int> tspSolution;
+    for (const auto &vertex : bestHeuristicSolutionIt->second) {
+        tspSolution.emplace_back(vertex);
+    }
+
+    BBNodeData initNode(instanceSize);
+    for (int i = 0; i != instanceSize; ++i) {
+        for (int j = 0; j != instanceSize; ++j) {
+            if (i == j) {
+                initNode.distances[i][j] = std::numeric_limits<int>::max();
+            }
+            initNode.distances[i][j] = tspInstance->getEdgeParameter(i, j);
+        }
+    }
+    bbCalculateLowerBoundAndDesignateHighestZeroPenalties(initNode);
+    bbNodes.push(initNode);
+
+    BBNodeData leftNode, rightNode;
+    int calculatedUpperBound;
+    while (bbNodes.top().lowerBound < upperBound && !bbNodes.empty()) {
+        if (!bbNodes.top().isFinal) {
+            leftNode = bbNodes.top();
+            rightNode = bbNodes.top();
+            bbNodes.pop();
+
+            bbUpdateLeftNodeData(leftNode);
+            bbCalculateLowerBoundAndDesignateHighestZeroPenalties(leftNode);
+            if (leftNode.lowerBound < upperBound) {
+                bbNodes.push(leftNode);
+            }
+
+            bbUpdateRightNodeData(rightNode);
+            bbCalculateLowerBoundAndDesignateHighestZeroPenalties(rightNode);
+            if (rightNode.lowerBound < upperBound) {
+                bbNodes.push(rightNode);
+            }
+        } else {
+            calculatedUpperBound = TSPUtils::calculateTargetFunctionValue(tspInstance,
+                                                                          bbNodes.top().partialPaths.front());
+            if (calculatedUpperBound < upperBound) {
+                upperBound = calculatedUpperBound;
+                tspSolution = bbNodes.top().partialPaths.front();
+            }
+            bbNodes.pop();
+        }
+    }
+    for (const auto &vertex : tspSolution) {
+        outSolution.emplace_back(vertex);
+    }
+    return upperBound;
+}
+
 
 
 

@@ -28,6 +28,15 @@ public:
 
     static int greedy(const IGraph *tspInstance, std::vector<int> &outSolution);
 
+    // For tests
+    static int branchAndBound0Heuristics(const IGraph *tspInstance, std::vector<int> &outSolution);
+
+    static int branchAndBoundNNHeuristic(const IGraph *tspInstance, std::vector<int> &outSolution);
+
+    static int branchAndBoundGHeuristic(const IGraph *tspInstance, std::vector<int> &outSolution);
+
+    static int branchAndBound2Heuristics(const IGraph *tspInstance, std::vector<int> &outSolution);
+
 private:
 
     static void
