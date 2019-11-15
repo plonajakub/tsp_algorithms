@@ -81,13 +81,8 @@ int TSPAlgorithms::bruteForceTree(const IGraph *tspInstance, std::vector<int> &o
     }
 
     int bestSolutionValue = std::numeric_limits<int>::max();
-    for (int i = 0; i != availableElements.size(); ++i) {
-        usedElements.emplace_back(availableElements[i]);
-        availableElements.erase(availableElements.begin() + i);
-        bruteForceTreeRecursiveBuild(availableElements, usedElements, bestSolutionValue, tspInstance, outSolution);
-        availableElements.insert(availableElements.begin() + i, usedElements.back());
-        usedElements.erase(usedElements.end() - 1);
-    }
+    bruteForceTreeRecursiveBuild(availableElements, usedElements, bestSolutionValue, tspInstance, outSolution);
+
     outSolution.emplace_back(permutationSize);
     return bestSolutionValue;
 }
