@@ -1,12 +1,12 @@
 #include "TSPAlgorithmsTest.h"
 
 void TSPAlgorithmsTest::run() const {
-    bruteForceTest();
-    bruteForceTreeTest();
-    dynamicProgrammingHeldKarpTest();
+//    bruteForceTest();
+//    bruteForceTreeTest();
+//    dynamicProgrammingHeldKarpTest();
     branchAndBoundTest();
-    nearestNeighbourTest();
-    greedyTest();
+//    nearestNeighbourTest();
+//    greedyTest();
 }
 
 void TSPAlgorithmsTest::bruteForceTest() const {
@@ -322,7 +322,11 @@ void TSPAlgorithmsTest::branchAndBoundTest() const {
     fileGroups.insert({"MIE", filePaths});
     filePaths.clear();
 
-    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBound, false, "branchAndBound");
+//    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBound, false, "branchAndBound");
+    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBound0Heuristics, false, "branchAndBound0Heuristics");
+    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBoundNNHeuristic, false, "branchAndBoundNNHeuristic");
+    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBoundGHeuristic, false, "branchAndBoundGHeuristic");
+    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBound2Heuristics, false, "branchAndBound2Heuristics");
 }
 
 void TSPAlgorithmsTest::nearestNeighbourTest() const {
