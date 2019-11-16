@@ -27,4 +27,6 @@ add_executable(
 
         algorithms/TSPAlgorithms.h algorithms/TSPAlgorithms.cpp
         algorithms/TSPHelperStructures.h
+
+        time_tests/TimeMeasurement.h time_tests/TimeMeasurement.cpp
 )
