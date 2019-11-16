@@ -1,0 +1,4 @@
+Repetitions number,15
+Time unit,millisecond
+Algorithm\Instance size,10,11,12,13,14,15,16,17,18,21,24
+DP (Held-Karp),11.3745,1.75864,2.44406,6.21339,13.5125,31.2894,73.1002,162.64,445.236,7702.83,93798
