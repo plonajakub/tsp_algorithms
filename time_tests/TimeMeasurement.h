@@ -34,7 +34,7 @@ public:
 private:
 
     // Number of repeated operations of the same type with the same size
-    static const int REPETITIONS_NUMBER = 1;
+    static const int REPETITIONS_NUMBER = 15;
 
     std::vector<MeasurementPoint> measureAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,
                                                    int (*tspAlgorithm)(const IGraph *, std::vector<int> &),

@@ -9,19 +9,24 @@ void TimeMeasurement::run() const {
     timeData = measureAlgorithm(getBruteForceTreeInstances(), TSPAlgorithms::bruteForceTree, "bruteForceTree");
     saveTimeDataToFile("brute_force_tree", "BF (DFS)", timeData);
 
-    timeData = measureAlgorithm(getDynamicProgrammingInstances(), TSPAlgorithms::dynamicProgrammingHeldKarp, "dynamicProgrammingHeldKarp");
+    timeData = measureAlgorithm(getDynamicProgrammingInstances(), TSPAlgorithms::dynamicProgrammingHeldKarp,
+                                "dynamicProgrammingHeldKarp");
     saveTimeDataToFile("dynamic_programming", "DP (Held-Karp)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBound0Heuristics, "branchAndBound0Heuristics");
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBound0Heuristics,
+                                "branchAndBound0Heuristics");
     saveTimeDataToFile("branch_and_bound_0h", "B&B (Little)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBoundNNHeuristic, "branchAndBoundNNHeuristic");
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBoundNNHeuristic,
+                                "branchAndBoundNNHeuristic");
     saveTimeDataToFile("branch_and_bound_nn", "B&B (Little; NN)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBoundGHeuristic, "branchAndBoundGHeuristic");
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBoundGHeuristic,
+                                "branchAndBoundGHeuristic");
     saveTimeDataToFile("branch_and_bound_g", "B&B (Little; G)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBound2Heuristics, "branchAndBound2Heuristics");
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBound2Heuristics,
+                                "branchAndBound2Heuristics");
     saveTimeDataToFile("branch_and_bound_nn_g", "B&B (Little; NN; G)", timeData);
 }
 
@@ -60,12 +65,12 @@ TimeMeasurement::measureAlgorithm(const std::map<std::string, std::vector<std::s
             measurementPoints.emplace_back(mp);
             cout << endl;
         }
-        std::sort(measurementPoints.begin(), measurementPoints.end(),
-                  [](const MeasurementPoint &lhs, const MeasurementPoint &rhs) {
-                      return lhs.nVertex < rhs.nVertex;
-                  });
         cout << "Measurement of group \"" << pair.first << "\" completed!" << endl;
     }
+    std::sort(measurementPoints.begin(), measurementPoints.end(),
+              [](const MeasurementPoint &lhs, const MeasurementPoint &rhs) {
+                  return lhs.nVertex < rhs.nVertex;
+              });
     delete tspInstance;
 
     cout << std::string(10, '-') << "Measurement of \"" + algorithmName + "\"" + " finished" << std::string(10, '-')
@@ -96,7 +101,7 @@ TimeMeasurement::saveTimeDataToFile(const std::string &fileName, const std::stri
     cout << "Writing file " + fileName + fileExtension + "...";
 
     file << "Repetitions number" << sep << REPETITIONS_NUMBER << endl;
-    file << "Time unit" << sep << "milliseconds" << endl;
+    file << "Time unit" << sep << "millisecond" << endl;
     file << "Algorithm\\Instance size";
     for (const auto &mp : measurementPoints) {
         file << sep << mp.nVertex;
@@ -108,8 +113,8 @@ TimeMeasurement::saveTimeDataToFile(const std::string &fileName, const std::stri
     }
     file << endl;
 
-    cout << "FILE WRITTEN SUCCESSFULLY" << endl;
     file.close();
+    cout << "FILE WRITTEN SUCCESSFULLY" << endl;
 }
 
 std::map<std::string, std::vector<std::string>> TimeMeasurement::getBruteForceSwapInstances() const {
