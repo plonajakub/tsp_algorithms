@@ -34,7 +34,7 @@ public:
 private:
 
     // Number of repeated operations of the same type with the same size
-    static const int REPETITIONS_NUMBER = 2;
+    static const int REPETITIONS_NUMBER = 1;
 
     std::vector<MeasurementPoint> measureAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,
                                                    int (*tspAlgorithm)(const IGraph *, std::vector<int> &),
@@ -49,6 +49,7 @@ private:
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getBruteForceSwapInstances() const;
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getBruteForceTreeInstances() const;
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getDynamicProgrammingInstances() const;
+    [[nodiscard]] std::map<std::string, std::vector<std::string>> getBranchAndBoundInstances() const;
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getBranchAndBound0HInstances() const;
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getBranchAndBoundNNInstances() const;
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getBranchAndBoundGInstances() const;

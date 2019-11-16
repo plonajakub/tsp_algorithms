@@ -12,16 +12,16 @@ void TimeMeasurement::run() const {
     timeData = measureAlgorithm(getDynamicProgrammingInstances(), TSPAlgorithms::dynamicProgrammingHeldKarp, "dynamicProgrammingHeldKarp");
     saveTimeDataToFile("dynamic_programming", "DP (Held-Karp)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBound0HInstances(), TSPAlgorithms::branchAndBound0Heuristics, "branchAndBound0Heuristics");
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBound0Heuristics, "branchAndBound0Heuristics");
     saveTimeDataToFile("branch_and_bound_0h", "B&B (Little)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBoundNNInstances(), TSPAlgorithms::branchAndBoundNNHeuristic, "branchAndBoundNNHeuristic");
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBoundNNHeuristic, "branchAndBoundNNHeuristic");
     saveTimeDataToFile("branch_and_bound_nn", "B&B (Little; NN)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBoundGInstances(), TSPAlgorithms::branchAndBoundGHeuristic, "branchAndBoundGHeuristic");
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBoundGHeuristic, "branchAndBoundGHeuristic");
     saveTimeDataToFile("branch_and_bound_g", "B&B (Little; G)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBound2HInstances(), TSPAlgorithms::branchAndBound2Heuristics, "branchAndBound2Heuristics");
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBound2Heuristics, "branchAndBound2Heuristics");
     saveTimeDataToFile("branch_and_bound_nn_g", "B&B (Little; NN; G)", timeData);
 }
 
@@ -117,10 +117,10 @@ std::map<std::string, std::vector<std::string>> TimeMeasurement::getBruteForceSw
     std::vector<std::string> filePaths;
 
     // SMALL
-    filePaths.emplace_back("data10.txt");
-    filePaths.emplace_back("data11.txt");
-    filePaths.emplace_back("data12.txt");
-//    filePaths.emplace_back("data13.txt");
+    filePaths.emplace_back("data10.txt"); //+
+    filePaths.emplace_back("data11.txt"); //+
+    filePaths.emplace_back("data12.txt"); //+
+    filePaths.emplace_back("data13.txt"); //+ ~104s
 //    filePaths.emplace_back("data14.txt");
 //    filePaths.emplace_back("data15.txt");
 //    filePaths.emplace_back("data16.txt");
@@ -169,10 +169,10 @@ std::map<std::string, std::vector<std::string>> TimeMeasurement::getBruteForceTr
     std::vector<std::string> filePaths;
 
     // SMALL
-    filePaths.emplace_back("data10.txt");
-    filePaths.emplace_back("data11.txt");
-    filePaths.emplace_back("data12.txt");
-//    filePaths.emplace_back("data13.txt");
+    filePaths.emplace_back("data10.txt"); //+
+    filePaths.emplace_back("data11.txt"); //+
+    filePaths.emplace_back("data12.txt"); //+
+//    filePaths.emplace_back("data13.txt"); // > 5m
 //    filePaths.emplace_back("data14.txt");
 //    filePaths.emplace_back("data15.txt");
 //    filePaths.emplace_back("data16.txt");
@@ -221,19 +221,19 @@ std::map<std::string, std::vector<std::string>> TimeMeasurement::getDynamicProgr
     std::vector<std::string> filePaths;
 
     // SMALL
-    filePaths.emplace_back("data10.txt");
-    filePaths.emplace_back("data11.txt");
-    filePaths.emplace_back("data12.txt");
-    filePaths.emplace_back("data13.txt");
-    filePaths.emplace_back("data14.txt");
-    filePaths.emplace_back("data15.txt");
-    filePaths.emplace_back("data16.txt");
-    filePaths.emplace_back("data18.txt");
+    filePaths.emplace_back("data10.txt"); //+
+    filePaths.emplace_back("data11.txt"); //+
+    filePaths.emplace_back("data12.txt"); //+
+    filePaths.emplace_back("data13.txt"); //+
+    filePaths.emplace_back("data14.txt"); //+
+    filePaths.emplace_back("data15.txt"); //+
+    filePaths.emplace_back("data16.txt"); //+
+    filePaths.emplace_back("data18.txt"); //+
     fileGroups.insert({"SMALL", filePaths});
     filePaths.clear();
 
     // ATSP
-    filePaths.emplace_back("data17.txt");
+    filePaths.emplace_back("data17.txt");  //+
 //    filePaths.emplace_back("data34.txt");
 //    filePaths.emplace_back("data36.txt");
 //    filePaths.emplace_back("data39.txt");
@@ -255,9 +255,9 @@ std::map<std::string, std::vector<std::string>> TimeMeasurement::getDynamicProgr
     filePaths.clear();
 
     // TSP
-    filePaths.emplace_back("data21.txt");
-//    filePaths.emplace_back("data24.txt");
-//    filePaths.emplace_back("data26.txt");
+    filePaths.emplace_back("data21.txt"); //+
+    filePaths.emplace_back("data24.txt"); //+
+//    filePaths.emplace_back("data26.txt"); // > 4m
 //    filePaths.emplace_back("data29.txt");
 //    filePaths.emplace_back("data42.txt");
 //    filePaths.emplace_back("data58.txt");
@@ -268,31 +268,31 @@ std::map<std::string, std::vector<std::string>> TimeMeasurement::getDynamicProgr
     return fileGroups;
 }
 
-std::map<std::string, std::vector<std::string>> TimeMeasurement::getBranchAndBound0HInstances() const {
+std::map<std::string, std::vector<std::string>> TimeMeasurement::getBranchAndBoundInstances() const {
     std::map<std::string, std::vector<std::string>> fileGroups;
     std::vector<std::string> filePaths;
 
     // SMALL
-    filePaths.emplace_back("data10.txt");
-    filePaths.emplace_back("data11.txt");
-    filePaths.emplace_back("data12.txt");
-    filePaths.emplace_back("data13.txt");
-    filePaths.emplace_back("data14.txt");
-    filePaths.emplace_back("data15.txt");
-    filePaths.emplace_back("data16.txt");
-    filePaths.emplace_back("data18.txt");
+    filePaths.emplace_back("data10.txt"); //+
+    filePaths.emplace_back("data11.txt"); //+
+    filePaths.emplace_back("data12.txt"); //+
+    filePaths.emplace_back("data13.txt"); //+
+    filePaths.emplace_back("data14.txt"); //+
+    filePaths.emplace_back("data15.txt"); //+
+    filePaths.emplace_back("data16.txt"); //+
+    filePaths.emplace_back("data18.txt"); //+
     fileGroups.insert({"SMALL", filePaths});
     filePaths.clear();
 
     // ATSP
-//    filePaths.emplace_back("data17.txt");
-    filePaths.emplace_back("data34.txt");
-    filePaths.emplace_back("data36.txt");
-//    filePaths.emplace_back("data39.txt");
-//    filePaths.emplace_back("data43.txt");
-//    filePaths.emplace_back("data45.txt");
-//    filePaths.emplace_back("data48.txt");
-//    filePaths.emplace_back("data53.txt");
+    filePaths.emplace_back("data17.txt"); //+
+    filePaths.emplace_back("data34.txt"); //+
+    filePaths.emplace_back("data36.txt"); //+
+    filePaths.emplace_back("data39.txt"); //+
+//    filePaths.emplace_back("data43.txt"); // > 3m
+    filePaths.emplace_back("data45.txt"); //+
+//    filePaths.emplace_back("data48.txt"); // > 3m
+//    filePaths.emplace_back("data53.txt"); // > 3m
 //    filePaths.emplace_back("data56.txt");
 //    filePaths.emplace_back("data65.txt");
 //    filePaths.emplace_back("data70.txt");
@@ -307,11 +307,63 @@ std::map<std::string, std::vector<std::string>> TimeMeasurement::getBranchAndBou
     filePaths.clear();
 
     // TSP
-    filePaths.emplace_back("data21.txt");
-    filePaths.emplace_back("data24.txt");
-    filePaths.emplace_back("data26.txt");
-    filePaths.emplace_back("data29.txt");
-//    filePaths.emplace_back("data42.txt");
+    filePaths.emplace_back("data21.txt"); //+
+    filePaths.emplace_back("data24.txt"); //+
+    filePaths.emplace_back("data26.txt"); //+
+    filePaths.emplace_back("data29.txt"); //+
+//    filePaths.emplace_back("data42.txt"); // > 4m
+//    filePaths.emplace_back("data58.txt");
+//    filePaths.emplace_back("data120.txt");
+    fileGroups.insert({"TSP", filePaths});
+    filePaths.clear();
+
+    return fileGroups;
+}
+
+std::map<std::string, std::vector<std::string>> TimeMeasurement::getBranchAndBound0HInstances() const {
+    std::map<std::string, std::vector<std::string>> fileGroups;
+    std::vector<std::string> filePaths;
+
+    // SMALL
+    filePaths.emplace_back("data10.txt"); //+
+    filePaths.emplace_back("data11.txt"); //+
+    filePaths.emplace_back("data12.txt"); //+
+    filePaths.emplace_back("data13.txt"); //+
+    filePaths.emplace_back("data14.txt"); //+
+    filePaths.emplace_back("data15.txt"); //+
+    filePaths.emplace_back("data16.txt"); //+
+    filePaths.emplace_back("data18.txt"); //+
+    fileGroups.insert({"SMALL", filePaths});
+    filePaths.clear();
+
+    // ATSP
+    filePaths.emplace_back("data17.txt"); //+
+    filePaths.emplace_back("data34.txt"); //+
+    filePaths.emplace_back("data36.txt"); //+
+    filePaths.emplace_back("data39.txt"); //+
+//    filePaths.emplace_back("data43.txt"); // > 3m
+    filePaths.emplace_back("data45.txt"); //+
+//    filePaths.emplace_back("data48.txt"); // > 3m
+//    filePaths.emplace_back("data53.txt"); // > 3m
+//    filePaths.emplace_back("data56.txt");
+//    filePaths.emplace_back("data65.txt");
+//    filePaths.emplace_back("data70.txt");
+//    filePaths.emplace_back("data71.txt");
+//    filePaths.emplace_back("data100.txt");
+//    filePaths.emplace_back("data171.txt");
+//    filePaths.emplace_back("data323.txt");
+//    filePaths.emplace_back("data358.txt");
+//    filePaths.emplace_back("data403.txt");
+//    filePaths.emplace_back("data443.txt");
+    fileGroups.insert({"ATSP", filePaths});
+    filePaths.clear();
+
+    // TSP
+    filePaths.emplace_back("data21.txt"); //+
+    filePaths.emplace_back("data24.txt"); //+
+    filePaths.emplace_back("data26.txt"); //+
+    filePaths.emplace_back("data29.txt"); //+
+//    filePaths.emplace_back("data42.txt"); // > 4m
 //    filePaths.emplace_back("data58.txt");
 //    filePaths.emplace_back("data120.txt");
     fileGroups.insert({"TSP", filePaths});
