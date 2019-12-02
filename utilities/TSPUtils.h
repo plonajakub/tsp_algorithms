@@ -44,9 +44,6 @@ public:
     static int calculateTargetFunctionValue(const IGraph *tspInstance, int fixedStartVertex,
                                             const std::list<int> &vertexPermutation);
 
-    // Returns random value from [leftLimit, rightLimit) interval
-    static int getRand(int leftLimit, int rightLimit);
-
 private:
 
 };

@@ -1,4 +1,5 @@
 #include "TSPUtils.h"
+#include "TSPRandom.h"
 
 
 std::string TSPUtils::loadTSPInstance(IGraph **pGraph, const std::string &path, TSPUtils::TSPType tspType) {
@@ -190,10 +191,6 @@ int TSPUtils::calculateTargetFunctionValue(const IGraph *tspInstance, const Doub
     }
     sum += tspInstance->getEdgeParameter(v2, vStart);
     return sum;
-}
-
-int TSPUtils::getRand(int leftLimit, int rightLimit) {
-    return leftLimit + rand() % (rightLimit - leftLimit);
 }
 
 std::map<std::string, int> TSPUtils::loadTSPSolutionValues(const std::string &file) {

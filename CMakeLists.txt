@@ -29,4 +29,4 @@ add_executable(
         algorithms/TSPHelperStructures.h
 
         time_tests/TimeMeasurement.h time_tests/TimeMeasurement.cpp
-        algorithms/TSPGreedyAlgorithms.cpp algorithms/TSPGreedyAlgorithms.h)
+        algorithms/TSPGreedyAlgorithms.cpp algorithms/TSPGreedyAlgorithms.h algorithms/TSPLocalSearchAlgorithms.cpp algorithms/TSPLocalSearchAlgorithms.h utilities/TSPRandom.cpp utilities/TSPRandom.h tests/MiscellaneousTests.cpp tests/MiscellaneousTests.h)
