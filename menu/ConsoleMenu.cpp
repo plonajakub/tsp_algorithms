@@ -140,7 +140,7 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
             return ProgramState::RUNNING;
         }
         std::vector<int> solution;
-        cout << "The minimal cycle of ATSP has value of: " << TSPAlgorithms::bruteForce(tspInstance, solution)
+        cout << "The minimal cycle of ATSP has value of: " << TSPExactAlgorithms::bruteForce(tspInstance, solution)
              << " [BF]" << endl;
         cout << "Solution cycle: " << solution << endl;
     } else if (operationCode == "5") {
@@ -150,7 +150,7 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         }
         std::vector<int> solution;
         cout << "The minimal cycle of ATSP has value of: " <<
-             TSPAlgorithms::dynamicProgrammingHeldKarp(tspInstance, solution) << " [DP]" << endl;
+             TSPExactAlgorithms::dynamicProgrammingHeldKarp(tspInstance, solution) << " [DP]" << endl;
         cout << "Solution cycle: " << solution << endl;
     } else if (operationCode == "6") {
         if (tspInstance == nullptr) {
@@ -159,7 +159,7 @@ ConsoleMenu::ProgramState ConsoleMenu::chooseMenuOperation(const std::string &me
         }
         std::vector<int> solution;
         cout << "The minimal cycle of ATSP has value of: " <<
-             TSPAlgorithms::branchAndBound(tspInstance, solution) << " [B&B]" << endl;
+             TSPExactAlgorithms::branchAndBound(tspInstance, solution) << " [B&B]" << endl;
         cout << "Solution cycle: " << solution << endl;
     }
     return ProgramState::RUNNING;

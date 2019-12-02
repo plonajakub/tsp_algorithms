@@ -4,7 +4,8 @@
 #include <vector>
 
 #include "../utilities/TSPUtils.h"
-#include "../algorithms/TSPAlgorithms.h"
+#include "../algorithms/TSPExactAlgorithms.h"
+#include "../algorithms/TSPGreedyAlgorithms.h"
 
 
 class TSPAlgorithmsTest {

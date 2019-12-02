@@ -25,8 +25,8 @@ add_executable(
 
         utilities/TSPUtils.h utilities/TSPUtils.cpp
 
-        algorithms/TSPAlgorithms.h algorithms/TSPAlgorithms.cpp
+        algorithms/TSPExactAlgorithms.h algorithms/TSPExactAlgorithms.cpp
         algorithms/TSPHelperStructures.h
 
         time_tests/TimeMeasurement.h time_tests/TimeMeasurement.cpp
-)
+        algorithms/TSPGreedyAlgorithms.cpp algorithms/TSPGreedyAlgorithms.h)

@@ -1,12 +1,12 @@
 #include "TSPAlgorithmsTest.h"
 
 void TSPAlgorithmsTest::run() const {
-//    bruteForceTest();
-//    bruteForceTreeTest();
-//    dynamicProgrammingHeldKarpTest();
+    bruteForceTest();
+    bruteForceTreeTest();
+    dynamicProgrammingHeldKarpTest();
     branchAndBoundTest();
-//    nearestNeighbourTest();
-//    greedyTest();
+    nearestNeighbourTest();
+    greedyTest();
 }
 
 void TSPAlgorithmsTest::bruteForceTest() const {
@@ -85,7 +85,7 @@ void TSPAlgorithmsTest::bruteForceTest() const {
     fileGroups.insert({"MIE", filePaths});
     filePaths.clear();
 
-    testAlgorithm(fileGroups, TSPAlgorithms::bruteForce, false, "bruteForce");
+    testAlgorithm(fileGroups, TSPExactAlgorithms::bruteForce, false, "bruteForce");
 }
 
 void TSPAlgorithmsTest::bruteForceTreeTest() const {
@@ -164,7 +164,7 @@ void TSPAlgorithmsTest::bruteForceTreeTest() const {
     fileGroups.insert({"MIE", filePaths});
     filePaths.clear();
 
-    testAlgorithm(fileGroups, TSPAlgorithms::bruteForceTree, false, "bruteForceTree");
+    testAlgorithm(fileGroups, TSPExactAlgorithms::bruteForceTree, false, "bruteForceTree");
 }
 
 void TSPAlgorithmsTest::dynamicProgrammingHeldKarpTest() const {
@@ -220,7 +220,7 @@ void TSPAlgorithmsTest::dynamicProgrammingHeldKarpTest() const {
     // TSP
     filePaths.emplace_back("best.txt");
     filePaths.emplace_back("data17.txt");
-    filePaths.emplace_back("data21.txt");
+//    filePaths.emplace_back("data21.txt");
 //    filePaths.emplace_back("data24.txt");
 //    filePaths.emplace_back("data26.txt");
 //    filePaths.emplace_back("data29.txt");
@@ -243,7 +243,7 @@ void TSPAlgorithmsTest::dynamicProgrammingHeldKarpTest() const {
     fileGroups.insert({"MIE", filePaths});
     filePaths.clear();
 
-    testAlgorithm(fileGroups, TSPAlgorithms::dynamicProgrammingHeldKarp, false, "dynamicProgrammingHeldKarp");
+    testAlgorithm(fileGroups, TSPExactAlgorithms::dynamicProgrammingHeldKarp, false, "dynamicProgrammingHeldKarp");
 }
 
 void TSPAlgorithmsTest::branchAndBoundTest() const {
@@ -322,11 +322,11 @@ void TSPAlgorithmsTest::branchAndBoundTest() const {
     fileGroups.insert({"MIE", filePaths});
     filePaths.clear();
 
-//    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBound, false, "branchAndBound");
-    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBound0Heuristics, false, "branchAndBound0Heuristics");
-    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBoundNNHeuristic, false, "branchAndBoundNNHeuristic");
-    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBoundGHeuristic, false, "branchAndBoundGHeuristic");
-    testAlgorithm(fileGroups, TSPAlgorithms::branchAndBound2Heuristics, false, "branchAndBound2Heuristics");
+    testAlgorithm(fileGroups, TSPExactAlgorithms::branchAndBound, false, "branchAndBound");
+//    testAlgorithm(fileGroups, TSPExactAlgorithms::branchAndBound0Heuristics, false, "branchAndBound0Heuristics");
+//    testAlgorithm(fileGroups, TSPExactAlgorithms::branchAndBoundNNHeuristic, false, "branchAndBoundNNHeuristic");
+//    testAlgorithm(fileGroups, TSPExactAlgorithms::branchAndBoundGHeuristic, false, "branchAndBoundGHeuristic");
+//    testAlgorithm(fileGroups, TSPExactAlgorithms::branchAndBound2Heuristics, false, "branchAndBound2Heuristics");
 }
 
 void TSPAlgorithmsTest::nearestNeighbourTest() const {
@@ -405,7 +405,7 @@ void TSPAlgorithmsTest::nearestNeighbourTest() const {
     fileGroups.insert({"MIE", filePaths});
     filePaths.clear();
 
-    testAlgorithm(fileGroups, TSPAlgorithms::nearestNeighbour, true, "nearestNeighbour");
+    testAlgorithm(fileGroups, TSPGreedyAlgorithms::nearestNeighbour, true, "nearestNeighbour");
 }
 
 void TSPAlgorithmsTest::greedyTest() const {
@@ -484,7 +484,7 @@ void TSPAlgorithmsTest::greedyTest() const {
     fileGroups.insert({"MIE", filePaths});
     filePaths.clear();
 
-    testAlgorithm(fileGroups, TSPAlgorithms::greedy, true, "greedy");
+    testAlgorithm(fileGroups, TSPGreedyAlgorithms::greedy, true, "greedy");
 }
 
 void TSPAlgorithmsTest::testAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,

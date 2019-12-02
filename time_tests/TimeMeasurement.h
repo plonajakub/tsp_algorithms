@@ -10,7 +10,7 @@
 #include <algorithm>
 
 #include "../structures/graphs/IGraph.h"
-#include "../algorithms/TSPAlgorithms.h"
+#include "../algorithms/TSPExactAlgorithms.h"
 #include "../utilities/TSPUtils.h"
 
 using std::cout;

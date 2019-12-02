@@ -1,5 +1,5 @@
-#ifndef PEA_P1_TSPALGORITHMS_H
-#define PEA_P1_TSPALGORITHMS_H
+#ifndef PEA_P1_TSPEXACTALGORITHMS_H
+#define PEA_P1_TSPEXACTALGORITHMS_H
 
 #include <vector>
 #include <queue>
@@ -9,11 +9,11 @@
 
 #include "../utilities/TSPUtils.h"
 #include "TSPHelperStructures.h"
+#include "TSPGreedyAlgorithms.h"
 
+// outSolution is a permutation of vertices (not cycle) - MUST be provided (as an argument) empty
+class TSPExactAlgorithms {
 
-class TSPAlgorithms {
-
-    // outSolution is a permutation of vertices (not cycle) - MUST be provided (as an argument) empty
 public:
     static int bruteForce(const IGraph *tspInstance, std::vector<int> &outSolution);
 
@@ -23,10 +23,6 @@ public:
     static int dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::vector<int> &outSolution);
 
     static int branchAndBound(const IGraph *tspInstance, std::vector<int> &outSolution);
-
-    static int nearestNeighbour(const IGraph *tspInstance, std::vector<int> &outSolution);
-
-    static int greedy(const IGraph *tspInstance, std::vector<int> &outSolution);
 
     // For tests
     static int branchAndBound0Heuristics(const IGraph *tspInstance, std::vector<int> &outSolution);
@@ -58,9 +54,7 @@ private:
 
     static void bbUpdateRightNodeData(BBNodeData &nodeData);
 
-    static int bbCalculateUpperBoundFromNaturalPermutation(const IGraph *tspInstance, std::vector<int> &outSolution);
-
 };
 
 
-#endif //PEA_P1_TSPALGORITHMS_H
+#endif //PEA_P1_TSPEXACTALGORITHMS_H

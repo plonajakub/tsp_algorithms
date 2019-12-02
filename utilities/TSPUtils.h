@@ -14,7 +14,7 @@
 #include "../structures/Table.h"
 #include "../structures/graphs/IGraph.h"
 #include "../structures/graphs/ListGraph.h"
-#include "../algorithms/TSPAlgorithms.h"
+#include "../algorithms/TSPExactAlgorithms.h"
 
 
 class TSPUtils {

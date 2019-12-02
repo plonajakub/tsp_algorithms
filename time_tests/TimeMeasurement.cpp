@@ -3,29 +3,29 @@
 void TimeMeasurement::run() const {
     std::vector<MeasurementPoint> timeData;
 
-    timeData = measureAlgorithm(getBruteForceSwapInstances(), TSPAlgorithms::bruteForce, "bruteForce");
+    timeData = measureAlgorithm(getBruteForceSwapInstances(), TSPExactAlgorithms::bruteForce, "bruteForce");
     saveTimeDataToFile("brute_force_swap", "BF (swap)", timeData);
 
-    timeData = measureAlgorithm(getBruteForceTreeInstances(), TSPAlgorithms::bruteForceTree, "bruteForceTree");
+    timeData = measureAlgorithm(getBruteForceTreeInstances(), TSPExactAlgorithms::bruteForceTree, "bruteForceTree");
     saveTimeDataToFile("brute_force_tree", "BF (DFS)", timeData);
 
-    timeData = measureAlgorithm(getDynamicProgrammingInstances(), TSPAlgorithms::dynamicProgrammingHeldKarp,
+    timeData = measureAlgorithm(getDynamicProgrammingInstances(), TSPExactAlgorithms::dynamicProgrammingHeldKarp,
                                 "dynamicProgrammingHeldKarp");
     saveTimeDataToFile("dynamic_programming", "DP (Held-Karp)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBound0Heuristics,
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPExactAlgorithms::branchAndBound0Heuristics,
                                 "branchAndBound0Heuristics");
     saveTimeDataToFile("branch_and_bound_0h", "B&B (Little)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBoundNNHeuristic,
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPExactAlgorithms::branchAndBoundNNHeuristic,
                                 "branchAndBoundNNHeuristic");
     saveTimeDataToFile("branch_and_bound_nn", "B&B (Little; NN)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBoundGHeuristic,
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPExactAlgorithms::branchAndBoundGHeuristic,
                                 "branchAndBoundGHeuristic");
     saveTimeDataToFile("branch_and_bound_g", "B&B (Little; G)", timeData);
 
-    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPAlgorithms::branchAndBound2Heuristics,
+    timeData = measureAlgorithm(getBranchAndBoundInstances(), TSPExactAlgorithms::branchAndBound2Heuristics,
                                 "branchAndBound2Heuristics");
     saveTimeDataToFile("branch_and_bound_nn_g", "B&B (Little; NN; G)", timeData);
 }

@@ -8,14 +8,14 @@ int main() {
 //    ListGraphTest lgt;
 //    lgt.run();
 
-//    TSPAlgorithmsTest tspAlgorithmsTest;
-//    tspAlgorithmsTest.run();
+    TSPAlgorithmsTest tspAlgorithmsTest;
+    tspAlgorithmsTest.run();
 
 //    ConsoleMenu cm;
 //    cm.start();
 
-    TimeMeasurement tm;
-    tm.run();
+//    TimeMeasurement tm;
+//    tm.run();
 
     return 0;
 }

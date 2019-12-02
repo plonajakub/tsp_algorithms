@@ -1,6 +1,6 @@
-#include "TSPAlgorithms.h"
+#include "TSPExactAlgorithms.h"
 
-int TSPAlgorithms::bruteForce(const IGraph *tspInstance, std::vector<int> &outSolution) {
+int TSPExactAlgorithms::bruteForce(const IGraph *tspInstance, std::vector<int> &outSolution) {
     // Get size of the ATSP instance
     // permutationSize is the fixed start vertex (counting from 0)
     // Working on permutation [0 1 2 .. tspInstance->getVertexCount() - 2]
@@ -67,7 +67,7 @@ int TSPAlgorithms::bruteForce(const IGraph *tspInstance, std::vector<int> &outSo
     return bestPathTargetFunctionValue;
 }
 
-int TSPAlgorithms::bruteForceTree(const IGraph *tspInstance, std::vector<int> &outSolution) {
+int TSPExactAlgorithms::bruteForceTree(const IGraph *tspInstance, std::vector<int> &outSolution) {
     // Last vertex is the starting vertex
     const int permutationSize = tspInstance->getVertexCount() - 1;
     if (permutationSize == 1) {
@@ -87,9 +87,9 @@ int TSPAlgorithms::bruteForceTree(const IGraph *tspInstance, std::vector<int> &o
     return bestSolutionValue;
 }
 
-void TSPAlgorithms::bruteForceTreeRecursiveBuild(std::vector<int> &availableElements, std::vector<int> &usedElements,
-                                                 int &bestSolutionValue, const IGraph *tspInstance,
-                                                 std::vector<int> &solution) {
+void TSPExactAlgorithms::bruteForceTreeRecursiveBuild(std::vector<int> &availableElements, std::vector<int> &usedElements,
+                                                      int &bestSolutionValue, const IGraph *tspInstance,
+                                                      std::vector<int> &solution) {
     if (availableElements.empty()) {
         int currentSolutionValue = TSPUtils::calculateTargetFunctionValue(tspInstance,
                                                                           tspInstance->getVertexCount() - 1,
@@ -110,7 +110,7 @@ void TSPAlgorithms::bruteForceTreeRecursiveBuild(std::vector<int> &availableElem
     }
 }
 
-int TSPAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::vector<int> &outSolution) {
+int TSPExactAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::vector<int> &outSolution) {
     // Get size of the ATSP instance
     // (nVertex - 1) is the fixed start vertex
     const int nVertex = tspInstance->getVertexCount();
@@ -185,9 +185,9 @@ int TSPAlgorithms::dynamicProgrammingHeldKarp(const IGraph *tspInstance, std::ve
     return bestPathCost;
 }
 
-int TSPAlgorithms::dpGetPartialPathCost(unsigned int partialPathSet, int endVertexIdx,
-                                        std::vector<std::vector<int>> &partialPathCostTable,
-                                        const IGraph *tspInstance) {
+int TSPExactAlgorithms::dpGetPartialPathCost(unsigned int partialPathSet, int endVertexIdx,
+                                             std::vector<std::vector<int>> &partialPathCostTable,
+                                             const IGraph *tspInstance) {
     const int nVertex = tspInstance->getVertexCount();
     int partialPathCost;
     int bestPartialPathCost = std::numeric_limits<int>::max();
@@ -218,7 +218,7 @@ int TSPAlgorithms::dpGetPartialPathCost(unsigned int partialPathSet, int endVert
     return partialPathCostTable[endVertexIdx][partialPathSet];
 }
 
-int TSPAlgorithms::branchAndBound(const IGraph *tspInstance, std::vector<int> &outSolution) {
+int TSPExactAlgorithms::branchAndBound(const IGraph *tspInstance, std::vector<int> &outSolution) {
     const int instanceSize = tspInstance->getVertexCount();
 
     auto bbNodeComparator =
@@ -235,15 +235,15 @@ int TSPAlgorithms::branchAndBound(const IGraph *tspInstance, std::vector<int> &o
     int heuristicSolutionValue;
     std::list<std::pair<int, std::vector<int>>> heuristicsStorage;
 
-    heuristicSolutionValue = bbCalculateUpperBoundFromNaturalPermutation(tspInstance, heuristicSolution);
+    heuristicSolutionValue = TSPGreedyAlgorithms::createNaturalPermutation(tspInstance, heuristicSolution);
     heuristicsStorage.emplace_back(heuristicSolutionValue, heuristicSolution);
 
     heuristicSolution.clear();
-    heuristicSolutionValue = nearestNeighbour(tspInstance, heuristicSolution);
+    heuristicSolutionValue = TSPGreedyAlgorithms::nearestNeighbour(tspInstance, heuristicSolution);
     heuristicsStorage.emplace_back(heuristicSolutionValue, heuristicSolution);
 
     heuristicSolution.clear();
-    heuristicSolutionValue = greedy(tspInstance, heuristicSolution);
+    heuristicSolutionValue = TSPGreedyAlgorithms::greedy(tspInstance, heuristicSolution);
     heuristicsStorage.emplace_back(heuristicSolutionValue, heuristicSolution);
     // endregion heuristics
 
@@ -306,7 +306,7 @@ int TSPAlgorithms::branchAndBound(const IGraph *tspInstance, std::vector<int> &o
     return upperBound;
 }
 
-void TSPAlgorithms::bbCalculateLowerBoundAndDesignateHighestZeroPenalties(BBNodeData &nodeData) {
+void TSPExactAlgorithms::bbCalculateLowerBoundAndDesignateHighestZeroPenalties(BBNodeData &nodeData) {
     // pair: <Indexes of zero, penalty>
     std::list<std::pair<EdgeCities, int>> matrixZeroes;
 
@@ -360,8 +360,8 @@ void TSPAlgorithms::bbCalculateLowerBoundAndDesignateHighestZeroPenalties(BBNode
     bbDesignateHighestZeroPenalty(nodeData, matrixZeroes);
 }
 
-void TSPAlgorithms::bbDesignateHighestZeroPenalty(BBNodeData &nodeData,
-                                                  std::list<std::pair<EdgeCities, int>> &matrixZeroes) {
+void TSPExactAlgorithms::bbDesignateHighestZeroPenalty(BBNodeData &nodeData,
+                                                       std::list<std::pair<EdgeCities, int>> &matrixZeroes) {
     int rowMinimum, columnMinimum;
     for (auto &matrixZero : matrixZeroes) {
         rowMinimum = std::numeric_limits<int>::max();
@@ -394,11 +394,11 @@ void TSPAlgorithms::bbDesignateHighestZeroPenalty(BBNodeData &nodeData,
     nodeData.highestZeroPenalty = highestPenaltyZeroData->second;
 }
 
-void TSPAlgorithms::bbUpdateLeftNodeData(BBNodeData &nodeData) {
+void TSPExactAlgorithms::bbUpdateLeftNodeData(BBNodeData &nodeData) {
     nodeData.distances[nodeData.highestZeroPenaltiesIndexes.i][nodeData.highestZeroPenaltiesIndexes.j] = std::numeric_limits<int>::max();
 }
 
-void TSPAlgorithms::bbUpdateRightNodeData(BBNodeData &nodeData) {
+void TSPExactAlgorithms::bbUpdateRightNodeData(BBNodeData &nodeData) {
     int iCityPathIdx = -1;
     int jCityPathIdx = -1;
     for (int k = 0; k != nodeData.partialPaths.size(); ++k) {
@@ -449,110 +449,7 @@ void TSPAlgorithms::bbUpdateRightNodeData(BBNodeData &nodeData) {
     nodeData.distances[prohibitedEdge.i][prohibitedEdge.j] = std::numeric_limits<int>::max();
 }
 
-int
-TSPAlgorithms::bbCalculateUpperBoundFromNaturalPermutation(const IGraph *tspInstance, std::vector<int> &outSolution) {
-    for (int i = 0; i != tspInstance->getVertexCount(); ++i) {
-        outSolution.emplace_back(i);
-    }
-    return TSPUtils::calculateTargetFunctionValue(tspInstance, outSolution);
-}
-
-int TSPAlgorithms::nearestNeighbour(const IGraph *tspInstance, std::vector<int> &outSolution) {
-    const int instanceSize = tspInstance->getVertexCount();
-    std::vector<bool> isVertexVisited(instanceSize, false);
-
-    outSolution.emplace_back(0);
-    isVertexVisited[0] = true;
-
-    int currentRowValue, rowMinimum;
-    int rowMinimumIndex;
-    while (outSolution.size() != instanceSize) {
-        rowMinimum = std::numeric_limits<int>::max();
-        for (int j = 0; j < instanceSize; ++j) {
-            if (isVertexVisited[j]) {
-                continue;
-            }
-            currentRowValue = tspInstance->getEdgeParameter(outSolution.back(), j);
-            if (currentRowValue < rowMinimum) {
-                rowMinimum = currentRowValue;
-                rowMinimumIndex = j;
-            }
-        }
-        outSolution.emplace_back(rowMinimumIndex);
-        isVertexVisited[rowMinimumIndex] = true;
-    }
-    return TSPUtils::calculateTargetFunctionValue(tspInstance, outSolution);
-}
-
-int TSPAlgorithms::greedy(const IGraph *tspInstance, std::vector<int> &outSolution) {
-    const int instanceSize = tspInstance->getVertexCount();
-
-    std::list<TSPEdge> edgesList;
-    for (int i = 0; i < instanceSize; ++i) {
-        for (int j = 0; j < instanceSize; ++j) {
-            if (i == j) {
-                continue;
-            }
-            edgesList.emplace_back(i, j, tspInstance->getEdgeParameter(i, j));
-        }
-    }
-    edgesList.sort([](const TSPEdge &lhs, const TSPEdge &rhs) -> bool {
-        return lhs.cost < rhs.cost;
-    });
-
-    int iCityPathIdx, jCityPathIdx;
-    std::vector<std::list<int>> partialPaths;
-    // [i][0] -> true if the city was exited, [i][1] -> true if the city was entered
-    std::vector<std::vector<bool>> cityOnPath(instanceSize, std::vector<bool>(2, false));
-    while (!edgesList.empty()) {
-        if (cityOnPath[edgesList.front().i][0] || cityOnPath[edgesList.front().j][1]) {
-            edgesList.pop_front();
-            continue;
-        }
-        iCityPathIdx = -1;
-        jCityPathIdx = -1;
-        for (int k = 0; k != partialPaths.size(); ++k) {
-            if (partialPaths[k].back() == edgesList.front().i) {
-                iCityPathIdx = k;
-            }
-            if (partialPaths[k].front() == edgesList.front().j) {
-                jCityPathIdx = k;
-            }
-            if (iCityPathIdx != -1 && jCityPathIdx != -1) {
-                break;
-            }
-        }
-
-        if (iCityPathIdx == -1 && jCityPathIdx == -1) {
-            partialPaths.emplace_back();
-            auto newPathIt = partialPaths.end();
-            --newPathIt;
-            newPathIt->emplace_back(edgesList.front().i);
-            newPathIt->emplace_back(edgesList.front().j);
-        } else if (iCityPathIdx != -1 && jCityPathIdx == -1) {
-            partialPaths[iCityPathIdx].emplace_back(edgesList.front().j);
-        } else if (iCityPathIdx == -1 /*&& jCityPathIdx != -1*/) {
-            partialPaths[jCityPathIdx].emplace_front(edgesList.front().i);
-        } else if (iCityPathIdx != jCityPathIdx) {
-            partialPaths[iCityPathIdx].splice(partialPaths[iCityPathIdx].end(),
-                                              partialPaths[jCityPathIdx]);
-            partialPaths.erase(partialPaths.begin() + jCityPathIdx);
-        } else { // iCityPathIdx == jCityPathIdx
-            edgesList.pop_front();
-            continue;
-        }
-
-        cityOnPath[edgesList.front().i][0] = true;
-        cityOnPath[edgesList.front().j][1] = true;
-        edgesList.pop_front();
-    }
-    for (const auto &vertex : partialPaths.front()) {
-        outSolution.emplace_back(vertex);
-    }
-    return TSPUtils::calculateTargetFunctionValue(tspInstance, outSolution);
-}
-
-int TSPAlgorithms::branchAndBound0Heuristics(const IGraph *tspInstance, std::vector<int> &outSolution) {
+int TSPExactAlgorithms::branchAndBound0Heuristics(const IGraph *tspInstance, std::vector<int> &outSolution) {
     const int instanceSize = tspInstance->getVertexCount();
 
     auto bbNodeComparator =
@@ -614,7 +511,7 @@ int TSPAlgorithms::branchAndBound0Heuristics(const IGraph *tspInstance, std::vec
     return upperBound;
 }
 
-int TSPAlgorithms::branchAndBoundNNHeuristic(const IGraph *tspInstance, std::vector<int> &outSolution) {
+int TSPExactAlgorithms::branchAndBoundNNHeuristic(const IGraph *tspInstance, std::vector<int> &outSolution) {
     const int instanceSize = tspInstance->getVertexCount();
 
     auto bbNodeComparator =
@@ -627,7 +524,7 @@ int TSPAlgorithms::branchAndBoundNNHeuristic(const IGraph *tspInstance, std::vec
     std::priority_queue<BBNodeData, std::vector<BBNodeData>, decltype(bbNodeComparator)> bbNodes(bbNodeComparator);
 
     std::vector<int> heuristicSolution;
-    int upperBound = nearestNeighbour(tspInstance, heuristicSolution);
+    int upperBound = TSPGreedyAlgorithms::nearestNeighbour(tspInstance, heuristicSolution);
     std::list<int> tspSolution;
     for (const auto &vertex : heuristicSolution) {
         tspSolution.emplace_back(vertex);
@@ -680,7 +577,7 @@ int TSPAlgorithms::branchAndBoundNNHeuristic(const IGraph *tspInstance, std::vec
     return upperBound;
 }
 
-int TSPAlgorithms::branchAndBoundGHeuristic(const IGraph *tspInstance, std::vector<int> &outSolution) {
+int TSPExactAlgorithms::branchAndBoundGHeuristic(const IGraph *tspInstance, std::vector<int> &outSolution) {
     const int instanceSize = tspInstance->getVertexCount();
 
     auto bbNodeComparator =
@@ -693,7 +590,7 @@ int TSPAlgorithms::branchAndBoundGHeuristic(const IGraph *tspInstance, std::vect
     std::priority_queue<BBNodeData, std::vector<BBNodeData>, decltype(bbNodeComparator)> bbNodes(bbNodeComparator);
 
     std::vector<int> heuristicSolution;
-    int upperBound = greedy(tspInstance, heuristicSolution);
+    int upperBound = TSPGreedyAlgorithms::greedy(tspInstance, heuristicSolution);
     std::list<int> tspSolution;
     for (const auto &vertex : heuristicSolution) {
         tspSolution.emplace_back(vertex);
@@ -746,7 +643,7 @@ int TSPAlgorithms::branchAndBoundGHeuristic(const IGraph *tspInstance, std::vect
     return upperBound;
 }
 
-int TSPAlgorithms::branchAndBound2Heuristics(const IGraph *tspInstance, std::vector<int> &outSolution) {
+int TSPExactAlgorithms::branchAndBound2Heuristics(const IGraph *tspInstance, std::vector<int> &outSolution) {
     const int instanceSize = tspInstance->getVertexCount();
 
     auto bbNodeComparator =
@@ -763,11 +660,11 @@ int TSPAlgorithms::branchAndBound2Heuristics(const IGraph *tspInstance, std::vec
     int heuristicSolutionValue;
     std::list<std::pair<int, std::vector<int>>> heuristicsStorage;
 
-    heuristicSolutionValue = nearestNeighbour(tspInstance, heuristicSolution);
+    heuristicSolutionValue = TSPGreedyAlgorithms::nearestNeighbour(tspInstance, heuristicSolution);
     heuristicsStorage.emplace_back(heuristicSolutionValue, heuristicSolution);
 
     heuristicSolution.clear();
-    heuristicSolutionValue = greedy(tspInstance, heuristicSolution);
+    heuristicSolutionValue = TSPGreedyAlgorithms::greedy(tspInstance, heuristicSolution);
     heuristicsStorage.emplace_back(heuristicSolutionValue, heuristicSolution);
     // endregion heuristics
 
