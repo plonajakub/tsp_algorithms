@@ -1,5 +1,4 @@
 #include "TSPUtils.h"
-#include "TSPRandom.h"
 
 
 std::string TSPUtils::loadTSPInstance(IGraph **pGraph, const std::string &path, TSPUtils::TSPType tspType) {

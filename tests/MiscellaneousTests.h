@@ -3,9 +3,10 @@
 
 #include <cassert>
 #include <iostream>
+#include <iomanip>
 
 
-#include "../utilities/TSPRandom.h"
+#include "../utilities/Random.h"
 
 using std::cout;
 using std::endl;
