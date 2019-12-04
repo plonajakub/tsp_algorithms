@@ -11,18 +11,20 @@
 #include <string>
 
 #include "TSPGreedyAlgorithms.h"
+#include "TSPHelperStructures.h"
 #include "../utilities/Random.h"
 #include "../structures/graphs/IGraph.h"
 
 class TSPLocalSearchAlgorithms {
 
 public:
-    static int simulatedAnnealing(const IGraph *tspInstance, const std::map<std::string, std::string> &parameters,
+    static int simulatedAnnealing(const IGraph *tspInstance, const LocalSearchParameters &parameters,
                                   std::vector<int> &outSolution);
 
 private:
     [[nodiscard]] inline static double
-    geometricCoolingScheme(double temperature, double multiplier, int iterationOrTime);
+    geometricCoolingScheme(double currentTemperature, double initialTemperature,
+                           double multiplier, int currentIterationOrTime);
 
     [[nodiscard]] inline static std::vector<int> swapNeighbourhood(int i, int j, std::vector<int> currentSolution);
 

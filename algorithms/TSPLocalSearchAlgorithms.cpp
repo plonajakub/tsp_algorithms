@@ -2,57 +2,38 @@
 
 
 int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
-                                                 const std::map<std::string, std::string> &parameters,
+                                                 const LocalSearchParameters &parameters,
                                                  std::vector<int> &outSolution) {
-    const int INSTANCE_SIZE = tspInstance->getVertexCount();
+    const int instanceSize = tspInstance->getVertexCount();
 
-    double temperature = std::stod(parameters.at("temperature"));
-    double coolingSchemeMultiplier = std::stod(parameters.at("coolingSchemeMultiplier"));
-    int epochIterationsCount = std::stoi(parameters.at("epochIterationsCount"));
-    int currentEpochIteration = 0;
-    int iterationsCount = std::stoi(parameters.at("iterationsCount"));
-    int currentIteration = 0;
+    double currentTemperature = parameters.initialTemperature;
+    int currentEpochIterationIdx = 0;
+    int currentIterationIdx = 0;
+
+    fCoolingScheme getNextTemperature = parameters.coolingSchemeFunction;
+    TSPGreedyAlgorithms::fTSPAlgorithm designateInitialSolution = parameters.initialSolutionFunction;
+    fNeighbourhood getNextNeighbour = parameters.nextNeighbourFunction;
+    fNeighbourhoodDiff calculateNextSolutionTargetFunctionValue = nullptr;
+    if (getNextNeighbour == swapNeighbourhood) {
+        calculateNextSolutionTargetFunctionValue = swapNeighbourhoodTFDifference;
+    } // 2 more to come
+
     std::vector<int> currentSolution, nextSolution, bestSolution;
     int currentSolutionValue, nextSolutionValue, bestSolutionValue;
+    currentSolutionValue = designateInitialSolution(tspInstance, currentSolution);
 
-    fCoolingScheme applyCoolingScheme = nullptr;
-    TSPGreedyAlgorithms::fTSPAlgorithm startSolution = nullptr;
-    fNeighbourhood getNextNeighbour = nullptr;
-    fNeighbourhoodDiff applyTargetFunctionDifference = nullptr;
-
-    if (parameters.at("applyCoolingScheme") == "geometricCoolingScheme") {
-        applyCoolingScheme = geometricCoolingScheme;
-    }
-
-    if (parameters.at("startSolution") == "greedy") {
-        startSolution = TSPGreedyAlgorithms::greedy;
-    }
-
-    if (parameters.at("getNextNeighbour") == "swapNeighbourhood") {
-        getNextNeighbour = swapNeighbourhood;
-        applyTargetFunctionDifference = swapNeighbourhoodTFDifference;
-    }
-
-    if (applyCoolingScheme == nullptr || startSolution == nullptr || getNextNeighbour == nullptr ||
-        applyTargetFunctionDifference ==
-        nullptr) {
-        throw std::exception();
-    }
-
-    currentSolutionValue = startSolution(tspInstance, currentSolution);
-    nextSolution = currentSolution;
-    nextSolutionValue = currentSolutionValue;
     bestSolution = currentSolution;
     bestSolutionValue = currentSolutionValue;
+
     int i, j;
-    while (currentIteration < iterationsCount) {
-        while (currentEpochIteration < epochIterationsCount) {
-            i = Random::getInt(0, INSTANCE_SIZE - 1);
-            j = Random::getInt(0, INSTANCE_SIZE - 1);
+    while (currentIterationIdx < parameters.iterationsNumber) {
+        while (currentEpochIterationIdx < parameters.epochIterationsNumber) {
+            i = Random::getInt(0, instanceSize - 1);
+            j = Random::getInt(0, instanceSize - 1);
             if (i == j) {
                 if (Random::getBool(true, 0.5)) {
                     // Go upward if true
-                    if (j != INSTANCE_SIZE - 1) {
+                    if (j != instanceSize - 1) {
                         ++j;
                     } else {
                         j = 0;
@@ -62,17 +43,18 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                     if (j != 0) {
                         --j;
                     } else {
-                        j = INSTANCE_SIZE - 1;
+                        j = instanceSize - 1;
                     }
                 }
             }
 
             nextSolution = getNextNeighbour(i, j, currentSolution);
-            nextSolutionValue = applyTargetFunctionDifference(tspInstance, i, j, currentSolution, nextSolution,
-                                                              currentSolutionValue);
-
+            nextSolutionValue = calculateNextSolutionTargetFunctionValue(tspInstance, i, j, currentSolution,
+                                                                         nextSolution,
+                                                                         currentSolutionValue);
+            // Core of the algorithm
             if (Random::getRealClosed(0.0, 1.0) <=
-                sigmoidFunction(currentSolutionValue - nextSolutionValue) / temperature) {
+                sigmoidFunction(currentSolutionValue - nextSolutionValue) / currentTemperature) {
                 currentSolution = nextSolution;
                 currentSolutionValue = nextSolutionValue;
             }
@@ -80,18 +62,20 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                 bestSolutionValue = nextSolutionValue;
                 bestSolution = nextSolution;
             }
-            ++currentEpochIteration;
+            ++currentEpochIterationIdx;
         }
-        ++currentIteration;
-        temperature = applyCoolingScheme(coolingSchemeMultiplier, temperature, currentEpochIteration);
+        currentTemperature = getNextTemperature(currentTemperature, parameters.initialTemperature,
+                                                parameters.coolingSchemeMultiplier, currentIterationIdx);
+        ++currentIterationIdx;
     }
     outSolution = bestSolution;
     return bestSolutionValue;
 }
 
 
-double TSPLocalSearchAlgorithms::geometricCoolingScheme(double temperature, double multiplier, int iterationOrTime) {
-    return temperature * multiplier;
+double TSPLocalSearchAlgorithms::geometricCoolingScheme(double currentTemperature, double initialTemperature,
+                                                        double multiplier, int currentIterationOrTime) {
+    return currentTemperature * multiplier;
 }
 
 
