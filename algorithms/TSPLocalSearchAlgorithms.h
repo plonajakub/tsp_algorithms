@@ -21,16 +21,22 @@ public:
                                   std::vector<int> &outSolution);
 
 private:
-    inline static void geometricCoolingScheme(double multiplier, double &temperature);
+    [[nodiscard]] inline static double
+    geometricCoolingScheme(double temperature, double multiplier, int iterationOrTime);
 
-    inline static std::vector<int> swapNeighbourhood(int i, int j, std::vector<int> currentSolution);
+    [[nodiscard]] inline static std::vector<int> swapNeighbourhood(int i, int j, std::vector<int> currentSolution);
 
-    inline static int swapNeighbourhoodTFDifference(const IGraph *tspInstance, int i, int j,
-                                                    const std::vector<int> &currentSolution,
-                                                    const std::vector<int> &nextSolution,
-                                                    int currentSolutionValue);
+    [[nodiscard]] inline static int swapNeighbourhoodTFDifference(const IGraph *tspInstance, int i, int j,
+                                                                  const std::vector<int> &currentSolution,
+                                                                  const std::vector<int> &nextSolution,
+                                                                  int currentSolutionValue);
 
-    inline static double sigmoidFunction(double x);
+    [[nodiscard]] inline static double sigmoidFunction(double x);
+
+    using fCoolingScheme = decltype(&geometricCoolingScheme);
+    using fNeighbourhood = decltype(&swapNeighbourhood);
+    using fNeighbourhoodDiff = decltype(&swapNeighbourhoodTFDifference);
+
 };
 
 

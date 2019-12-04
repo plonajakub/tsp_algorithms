@@ -1,5 +1,6 @@
 #include "TSPLocalSearchAlgorithms.h"
 
+
 int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                                                  const std::map<std::string, std::string> &parameters,
                                                  std::vector<int> &outSolution) {
@@ -14,13 +15,10 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
     std::vector<int> currentSolution, nextSolution, bestSolution;
     int currentSolutionValue, nextSolutionValue, bestSolutionValue;
 
-    void (*applyCoolingScheme)(double coefficient, double &temperature) = nullptr;
-    int (*startSolution)(const IGraph *tspInstance, std::vector<int> &outSolution) = nullptr;
-    std::vector<int> (*getNextNeighbour)(int i, int j, std::vector<int> currentSolution) = nullptr;
-    int (*applyTargetFunctionDifference)(const IGraph *tspInstance, int i, int j,
-                                         const std::vector<int> &currentSolution,
-                                         const std::vector<int> &nextSolution,
-                                         int currentSolutionValue) = nullptr;
+    fCoolingScheme applyCoolingScheme = nullptr;
+    TSPGreedyAlgorithms::fTSPAlgorithm startSolution = nullptr;
+    fNeighbourhood getNextNeighbour = nullptr;
+    fNeighbourhoodDiff applyTargetFunctionDifference = nullptr;
 
     if (parameters.at("applyCoolingScheme") == "geometricCoolingScheme") {
         applyCoolingScheme = geometricCoolingScheme;
@@ -84,22 +82,24 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
             }
             ++currentEpochIteration;
         }
-        applyCoolingScheme(coolingSchemeMultiplier, temperature);
         ++currentIteration;
+        temperature = applyCoolingScheme(coolingSchemeMultiplier, temperature, currentEpochIteration);
     }
     outSolution = bestSolution;
     return bestSolutionValue;
 }
 
-void TSPLocalSearchAlgorithms::geometricCoolingScheme(double multiplier,
-                                                      double &temperature) {
-    temperature *= multiplier;
+
+double TSPLocalSearchAlgorithms::geometricCoolingScheme(double temperature, double multiplier, int iterationOrTime) {
+    return temperature * multiplier;
 }
+
 
 std::vector<int> TSPLocalSearchAlgorithms::swapNeighbourhood(int i, int j, std::vector<int> currentSolution) {
     std::swap(currentSolution[i], currentSolution[j]);
     return currentSolution;
 }
+
 
 int TSPLocalSearchAlgorithms::swapNeighbourhoodTFDifference(const IGraph *tspInstance, int i, int j,
                                                             const std::vector<int> &currentSolution,

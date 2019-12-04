@@ -20,6 +20,8 @@ public:
     static int greedy(const IGraph *tspInstance, std::vector<int> &outSolution);
 
     static int createNaturalPermutation(const IGraph *tspInstance, std::vector<int> &outSolution);
+
+    using fTSPAlgorithm = decltype(&nearestNeighbour);
 };
 
 
