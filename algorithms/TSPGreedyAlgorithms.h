@@ -1,7 +1,6 @@
 #ifndef PEA_P1_TSPGREEDYALGORITHMS_H
 #define PEA_P1_TSPGREEDYALGORITHMS_H
 
-
 #include <vector>
 #include <queue>
 #include <list>
@@ -9,7 +8,6 @@
 #include <algorithm>
 
 #include "../utilities/TSPUtils.h"
-#include "TSPHelperStructures.h"
 
 // outSolution is a permutation of vertices (not cycle) - MUST be provided (as an argument) empty
 class TSPGreedyAlgorithms {
@@ -23,6 +21,5 @@ public:
 
     using fTSPAlgorithm = decltype(&nearestNeighbour);
 };
-
 
 #endif //PEA_P1_TSPGREEDYALGORITHMS_H

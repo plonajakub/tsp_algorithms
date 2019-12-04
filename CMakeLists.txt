@@ -11,6 +11,7 @@ add_executable(
         structures/Table.h
         structures/DoublyLinkedList.h structures/DoublyLinkedList.cpp
         structures/Stack.h
+
         structures/graphs/IGraph.h structures/graphs/IGraph.cpp
         structures/graphs/misc/Edge.h
         structures/graphs/MatrixGraph.h structures/graphs/MatrixGraph.cpp
@@ -18,15 +19,21 @@ add_executable(
 
         tests/MatrixGraphTest.h tests/MatrixGraphTest.cpp
         tests/ListGraphTest.h tests/ListGraphTest.cpp
-        tests/TSPAlgorithmsTest.cpp tests/TSPAlgorithmsTest.h
 
         menu/MenuItem.h menu/MenuItem.cpp
         menu/ConsoleMenu.h menu/ConsoleMenu.cpp
 
+        utilities/Random.cpp utilities/Random.h
         utilities/TSPUtils.h utilities/TSPUtils.cpp
 
+        algorithms/helper_structures/TSPHelperStructures.h
         algorithms/TSPExactAlgorithms.h algorithms/TSPExactAlgorithms.cpp
-        algorithms/TSPHelperStructures.h
 
+        algorithms/TSPGreedyAlgorithms.h algorithms/TSPGreedyAlgorithms.cpp
+        algorithms/TSPLocalSearchAlgorithms.h algorithms/TSPLocalSearchAlgorithms.cpp
+        algorithms/helper_structures/LocalSearchParameters.h
+
+        tests/TSPAlgorithmsTest.h tests/TSPAlgorithmsTest.cpp
+        tests/MiscellaneousTests.h tests/MiscellaneousTests.cpp
         time_tests/TimeMeasurement.h time_tests/TimeMeasurement.cpp
-        algorithms/TSPGreedyAlgorithms.cpp algorithms/TSPGreedyAlgorithms.h algorithms/TSPLocalSearchAlgorithms.cpp algorithms/TSPLocalSearchAlgorithms.h utilities/Random.cpp utilities/Random.h tests/MiscellaneousTests.cpp tests/MiscellaneousTests.h)
+)

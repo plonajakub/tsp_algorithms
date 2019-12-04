@@ -8,7 +8,7 @@
 #include <algorithm>
 
 #include "../utilities/TSPUtils.h"
-#include "TSPHelperStructures.h"
+#include "helper_structures/TSPHelperStructures.h"
 #include "TSPGreedyAlgorithms.h"
 
 // outSolution is a permutation of vertices (not cycle) - MUST be provided (as an argument) empty

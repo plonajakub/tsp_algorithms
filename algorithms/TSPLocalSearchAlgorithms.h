@@ -11,15 +11,18 @@
 #include <string>
 
 #include "TSPGreedyAlgorithms.h"
-#include "TSPHelperStructures.h"
 #include "../utilities/Random.h"
 #include "../structures/graphs/IGraph.h"
+
+class LocalSearchParameters;
 
 class TSPLocalSearchAlgorithms {
 
 public:
     static int simulatedAnnealing(const IGraph *tspInstance, const LocalSearchParameters &parameters,
                                   std::vector<int> &outSolution);
+
+//    using LocalSearchAlgorithm = decltype(&simulatedAnealing);
 
 private:
     [[nodiscard]] inline static double
@@ -39,7 +42,9 @@ private:
     using fNeighbourhood = decltype(&swapNeighbourhood);
     using fNeighbourhoodDiff = decltype(&swapNeighbourhoodTFDifference);
 
+    friend class LocalSearchParameters;
 };
 
+#include "helper_structures/LocalSearchParameters.h"
 
 #endif //PEA_P1_TSPLOCALSEARCHALGORITHMS_H
