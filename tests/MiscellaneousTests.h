@@ -7,6 +7,8 @@
 
 
 #include "../utilities/Random.h"
+#include "../utilities/TSPUtils.h"
+#include "../algorithms/TSPLocalSearchAlgorithms.h"
 
 using std::cout;
 using std::endl;
@@ -19,6 +21,7 @@ public:
 
 private:
     void randomNumberGenerationTest() const;
+    void neighbourhoodTFDifferenceDesignationTest() const;
 };
 
 

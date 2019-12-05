@@ -22,21 +22,20 @@ public:
     static int simulatedAnnealing(const IGraph *tspInstance, const LocalSearchParameters &parameters,
                                   std::vector<int> &outSolution);
 
-//    using LocalSearchAlgorithm = decltype(&simulatedAnealing);
+    using fLocalSearchAlgorithm = decltype(&simulatedAnnealing);
 
-private:
-    [[nodiscard]] inline static double
+    [[nodiscard]] static double
     geometricCoolingScheme(double currentTemperature, double initialTemperature,
                            double multiplier, int currentIterationOrTime);
 
-    [[nodiscard]] inline static std::vector<int> swapNeighbourhood(int i, int j, std::vector<int> currentSolution);
+    [[nodiscard]] static std::vector<int> swapNeighbourhood(int i, int j, std::vector<int> currentSolution);
 
-    [[nodiscard]] inline static int swapNeighbourhoodTFDifference(const IGraph *tspInstance, int i, int j,
+    [[nodiscard]] static int swapNeighbourhoodTFDifference(const IGraph *tspInstance, int i, int j,
                                                                   const std::vector<int> &currentSolution,
                                                                   const std::vector<int> &nextSolution,
                                                                   int currentSolutionValue);
 
-    [[nodiscard]] inline static double sigmoidFunction(double x);
+    [[nodiscard]] static double sigmoidFunction(double x);
 
     using fCoolingScheme = decltype(&geometricCoolingScheme);
     using fNeighbourhood = decltype(&swapNeighbourhood);

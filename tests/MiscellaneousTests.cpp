@@ -3,6 +3,7 @@
 
 void MiscellaneousTests::run() const {
     randomNumberGenerationTest();
+    neighbourhoodTFDifferenceDesignationTest();
 }
 
 void MiscellaneousTests::randomNumberGenerationTest() const {
@@ -100,4 +101,44 @@ void MiscellaneousTests::randomNumberGenerationTest() const {
     }
     cout << Random::getBool(false, 0.1) << ']' << endl;
     cout << endl;
+}
+
+void MiscellaneousTests::neighbourhoodTFDifferenceDesignationTest() const {
+    cout << "neighbourhoodTFDifferenceDesignationTest...";
+    IGraph *tspInstance = nullptr;
+    std::string instanceFilePath = "ATSP/data443.txt";
+    TSPUtils::loadTSPInstance(&tspInstance, instanceFilePath, TSPUtils::getTSPType(instanceFilePath));
+    int instanceSize = tspInstance->getVertexCount();
+    std::vector<int> currentSolution, nextSolution;
+    int currentSolutionValue, nextSolutionValue;
+    currentSolutionValue = TSPGreedyAlgorithms::greedy(tspInstance, currentSolution);
+    int i, j;
+    for (int counter = 0; counter < 1000000; ++counter) {
+        i = Random::getInt(0, instanceSize - 1);
+        j = Random::getInt(0, instanceSize - 1);
+        if (i == j) {
+            if (Random::getBool(true, 0.5)) {
+                // Go upward if true
+                if (j != instanceSize - 1) {
+                    ++j;
+                } else {
+                    j = 0;
+                }
+            } else {
+                // Go downward if false
+                if (j != 0) {
+                    --j;
+                } else {
+                    j = instanceSize - 1;
+                }
+            }
+        }
+
+        nextSolution = TSPLocalSearchAlgorithms::swapNeighbourhood(i, j, currentSolution);
+        nextSolutionValue = TSPLocalSearchAlgorithms::swapNeighbourhoodTFDifference(tspInstance, i, j, currentSolution,
+                                                                                    nextSolution, currentSolutionValue);
+        assert(nextSolutionValue == TSPUtils::calculateTargetFunctionValue(tspInstance, nextSolution));
+    }
+    delete tspInstance;
+    cout << "FINISHED" << endl;
 }

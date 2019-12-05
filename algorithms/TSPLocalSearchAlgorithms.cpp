@@ -6,6 +6,10 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                                                  std::vector<int> &outSolution) {
     const int instanceSize = tspInstance->getVertexCount();
 
+    if (instanceSize <= 2) {
+        return TSPGreedyAlgorithms::createNaturalPermutation(tspInstance, outSolution);
+    }
+
     double currentTemperature = parameters.initialTemperature;
     int currentEpochIterationIdx = 0;
     int currentIterationIdx = 0;
