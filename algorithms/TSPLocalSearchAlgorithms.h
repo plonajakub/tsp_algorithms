@@ -24,9 +24,20 @@ public:
 
     using fLocalSearchAlgorithm = decltype(&simulatedAnnealing);
 
+    // initialTemperature > 0, parameter > 0
+    [[nodiscard]] static double
+    linearCoolingScheme(double currentTemperature, double initialTemperature,
+                        double parameter, int currentIterationOrTime);
+
+    // initialTemperature > 0, parameter in (0, 1)
     [[nodiscard]] static double
     geometricCoolingScheme(double currentTemperature, double initialTemperature,
-                           double multiplier, int currentIterationOrTime);
+                           double parameter, int currentIterationOrTime);
+
+    // initialTemperature > 0, parameter > 0
+    [[nodiscard]] static double
+    logarithmicCoolingScheme(double currentTemperature, double initialTemperature,
+                             double parameter, int currentIterationOrTime);
 
     [[nodiscard]] static std::vector<int> swapNeighbourhood(int i, int j, std::vector<int> currentSolution);
 

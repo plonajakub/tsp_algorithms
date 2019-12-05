@@ -69,7 +69,7 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
             ++currentEpochIterationIdx;
         }
         currentTemperature = getNextTemperature(currentTemperature, parameters.initialTemperature,
-                                                parameters.coolingSchemeMultiplier, currentIterationIdx);
+                                                parameters.coolingSchemeParameter, currentIterationIdx);
         ++currentIterationIdx;
     }
     outSolution = bestSolution;
@@ -77,17 +77,31 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
 }
 
 
-double TSPLocalSearchAlgorithms::geometricCoolingScheme(double currentTemperature, double initialTemperature,
-                                                        double multiplier, int currentIterationOrTime) {
-    return currentTemperature * multiplier;
+double
+TSPLocalSearchAlgorithms::linearCoolingScheme(double currentTemperature, double initialTemperature, double parameter,
+                                              int currentIterationOrTime) {
+    double nextTemperature = currentTemperature - parameter;
+    return ((nextTemperature > 0) ? nextTemperature : std::nextafter(0, std::numeric_limits<double>::max()));
 }
 
+
+double TSPLocalSearchAlgorithms::geometricCoolingScheme(double currentTemperature, double initialTemperature,
+                                                        double parameter, int currentIterationOrTime) {
+    double nextTemperature = currentTemperature * parameter;
+    return ((nextTemperature > 0) ? nextTemperature : std::nextafter(0, std::numeric_limits<double>::max()));
+}
+
+
+double TSPLocalSearchAlgorithms::logarithmicCoolingScheme(double currentTemperature, double initialTemperature,
+                                                          double parameter, int currentIterationOrTime) {
+    double nextTemperature = initialTemperature / (1 + parameter * log((currentIterationOrTime + 1) + 1));
+    return ((nextTemperature > 0) ? nextTemperature : std::nextafter(0, std::numeric_limits<double>::max()));
+}
 
 std::vector<int> TSPLocalSearchAlgorithms::swapNeighbourhood(int i, int j, std::vector<int> currentSolution) {
     std::swap(currentSolution[i], currentSolution[j]);
     return currentSolution;
 }
-
 
 int TSPLocalSearchAlgorithms::swapNeighbourhoodTFDifference(const IGraph *tspInstance, int i, int j,
                                                             const std::vector<int> &currentSolution,

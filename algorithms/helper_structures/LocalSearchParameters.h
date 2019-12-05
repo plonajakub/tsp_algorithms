@@ -8,22 +8,22 @@ class LocalSearchParameters {
 
 public:
     double initialTemperature;
-    double coolingSchemeMultiplier;
+    double coolingSchemeParameter;
     int epochIterationsNumber;
     int iterationsNumber;
     TSPLocalSearchAlgorithms::fCoolingScheme coolingSchemeFunction;
     TSPLocalSearchAlgorithms::fNeighbourhood nextNeighbourFunction;
     TSPGreedyAlgorithms::fTSPAlgorithm initialSolutionFunction;
 
-    LocalSearchParameters() : initialTemperature(-1), coolingSchemeMultiplier(-1), epochIterationsNumber(-1),
+    LocalSearchParameters() : initialTemperature(-1), coolingSchemeParameter(-1), epochIterationsNumber(-1),
                               iterationsNumber(-1), coolingSchemeFunction(nullptr), nextNeighbourFunction(nullptr),
                               initialSolutionFunction(nullptr) {}
 
-    LocalSearchParameters(double initialTemperature, double coolingSchemeMultiplier, int epochIterationsNumber,
+    LocalSearchParameters(double initialTemperature, double coolingSchemeParameter, int epochIterationsNumber,
                           int iterationsNumber, TSPLocalSearchAlgorithms::fCoolingScheme coolingSchemeFunction,
                           TSPLocalSearchAlgorithms::fNeighbourhood nextNeighbourFunction,
                           TSPGreedyAlgorithms::fTSPAlgorithm initialSolutionFunction)
-            : initialTemperature(initialTemperature), coolingSchemeMultiplier(coolingSchemeMultiplier),
+            : initialTemperature(initialTemperature), coolingSchemeParameter(coolingSchemeParameter),
               epochIterationsNumber(epochIterationsNumber), iterationsNumber(iterationsNumber),
               coolingSchemeFunction(coolingSchemeFunction), nextNeighbourFunction(nextNeighbourFunction),
               initialSolutionFunction(initialSolutionFunction) {}

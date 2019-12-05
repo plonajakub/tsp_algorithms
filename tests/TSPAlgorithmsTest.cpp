@@ -577,7 +577,7 @@ void TSPAlgorithmsTest::simulatedAnnealingTest() const {
 
     LocalSearchParameters parameters;
     parameters.initialTemperature = 1000;
-    parameters.coolingSchemeMultiplier = 0.9;
+    parameters.coolingSchemeParameter = 0.9;
     parameters.epochIterationsNumber = 1000;
     parameters.iterationsNumber = 1000;
     parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
