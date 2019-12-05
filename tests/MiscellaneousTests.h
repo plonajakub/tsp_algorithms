@@ -22,6 +22,7 @@ public:
 private:
     void randomNumberGenerationTest() const;
     void neighbourhoodTFDifferenceDesignationTest() const;
+    void createRandomPermutationTest() const;
 };
 
 

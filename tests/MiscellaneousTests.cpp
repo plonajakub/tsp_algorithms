@@ -1,9 +1,9 @@
-
 #include "MiscellaneousTests.h"
 
 void MiscellaneousTests::run() const {
-    randomNumberGenerationTest();
-    neighbourhoodTFDifferenceDesignationTest();
+//    randomNumberGenerationTest();
+//    neighbourhoodTFDifferenceDesignationTest();
+    createRandomPermutationTest();
 }
 
 void MiscellaneousTests::randomNumberGenerationTest() const {
@@ -138,6 +138,23 @@ void MiscellaneousTests::neighbourhoodTFDifferenceDesignationTest() const {
         nextSolutionValue = TSPLocalSearchAlgorithms::swapNeighbourhoodTFDifference(tspInstance, i, j, currentSolution,
                                                                                     nextSolution, currentSolutionValue);
         assert(nextSolutionValue == TSPUtils::calculateTargetFunctionValue(tspInstance, nextSolution));
+    }
+    delete tspInstance;
+    cout << "FINISHED" << endl;
+}
+
+void MiscellaneousTests::createRandomPermutationTest() const {
+    cout << "createRandomPermutationTest...";
+    IGraph *tspInstance = nullptr;
+    std::string instanceFilePath = "ATSP/data443.txt";
+    TSPUtils::loadTSPInstance(&tspInstance, instanceFilePath, TSPUtils::getTSPType(instanceFilePath));
+    std::vector<int> randomPermutation;
+    int randomPermutationValue;
+
+    for (int i = 0; i < 1000; ++i) {
+        randomPermutation.clear();
+        randomPermutationValue = TSPGreedyAlgorithms::createRandomPermutation(tspInstance, randomPermutation);
+        assert(TSPUtils::isSolutionValid(tspInstance, randomPermutation, randomPermutationValue));
     }
     delete tspInstance;
     cout << "FINISHED" << endl;

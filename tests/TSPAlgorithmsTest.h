@@ -43,9 +43,6 @@ private:
     void testLocalSearchAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,
                                     TSPLocalSearchAlgorithms::fLocalSearchAlgorithm fLocalSearchAlgorithm,
                                     const LocalSearchParameters &parameters, const std::string &testName) const;
-
-    bool isSolutionValid(IGraph *tspInstance, const std::vector<int> &solutionPermutation,
-                         int solutionPathCost) const;
 };
 
 

@@ -1,4 +1,9 @@
 #include "TSPGreedyAlgorithms.h"
+#include "../utilities/Random.h"
+
+#include <vector>
+#include <list>
+#include <limits>
 
 int TSPGreedyAlgorithms::nearestNeighbour(const IGraph *tspInstance, std::vector<int> &outSolution) {
     const int instanceSize = tspInstance->getVertexCount();
@@ -99,5 +104,19 @@ int TSPGreedyAlgorithms::createNaturalPermutation(const IGraph *tspInstance, std
     for (int i = 0; i != tspInstance->getVertexCount(); ++i) {
         outSolution.emplace_back(i);
     }
+    return TSPUtils::calculateTargetFunctionValue(tspInstance, outSolution);
+}
+
+int TSPGreedyAlgorithms::createRandomPermutation(const IGraph *tspInstance, std::vector<int> &outSolution) {
+    std::vector<int> availableCities;
+    createNaturalPermutation(tspInstance, availableCities);
+
+    int randomIndex;
+    while (availableCities.size() > 1) {
+        randomIndex = Random::getInt(0, availableCities.size() - 1);
+        outSolution.emplace_back(availableCities[randomIndex]);
+        availableCities.erase(availableCities.begin() + randomIndex);
+    }
+    outSolution.emplace_back(availableCities[0]);
     return TSPUtils::calculateTargetFunctionValue(tspInstance, outSolution);
 }

@@ -44,6 +44,9 @@ public:
     static int calculateTargetFunctionValue(const IGraph *tspInstance, int fixedStartVertex,
                                             const std::list<int> &vertexPermutation);
 
+    bool static isSolutionValid(IGraph *tspInstance, const std::vector<int> &solutionPermutation,
+                         int solutionPathCost);
+
 private:
 
 };

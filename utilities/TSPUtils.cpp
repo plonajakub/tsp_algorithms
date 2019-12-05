@@ -222,3 +222,26 @@ std::ostream &operator<<(std::ostream &ostr, std::vector<int> permutation) {
     ostr << "]";
     return ostr;
 }
+
+bool TSPUtils::isSolutionValid(IGraph *tspInstance, const std::vector<int> &solutionPermutation,
+                                        int solutionPathCost) {
+    const int instanceSize = tspInstance->getVertexCount();
+
+    if (solutionPermutation.size() != instanceSize) {
+        return false;
+    }
+
+    std::vector<int> cityInSolutionCount(instanceSize, 0);
+    for (const auto &city : solutionPermutation) {
+        if (city < 0 || city >= instanceSize) {
+            return false;
+        }
+        ++cityInSolutionCount[city];
+    }
+    for (const auto &cityOccurrences : cityInSolutionCount) {
+        if (cityOccurrences != 1) {
+            return false;
+        }
+    }
+    return solutionPathCost == TSPUtils::calculateTargetFunctionValue(tspInstance, solutionPermutation);
+}

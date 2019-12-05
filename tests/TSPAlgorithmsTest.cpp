@@ -1,5 +1,4 @@
 #include "TSPAlgorithmsTest.h"
-#include <cmath>
 
 void TSPAlgorithmsTest::run() const {
 //    bruteForceTest();
@@ -610,7 +609,7 @@ void TSPAlgorithmsTest::testExactOrGreedyAlgorithm(const std::map<std::string, s
             algorithmSolutionValue = tspAlgorithm(tspInstance, algorithmSolution);
             fileSolutionValue = solutions.at(pair.second[i].substr(0, pair.second[i].find('.')));
             if ((isSolutionApproximated || algorithmSolutionValue == fileSolutionValue) &&
-                isSolutionValid(tspInstance, algorithmSolution, algorithmSolutionValue)) {
+                TSPUtils::isSolutionValid(tspInstance, algorithmSolution, algorithmSolutionValue)) {
                 std::cout << "SUCCESS";
             } else {
                 std::cout << "FAIL" << " [Returned solution cost: " << algorithmSolutionValue << "]";
@@ -648,7 +647,7 @@ void TSPAlgorithmsTest::testLocalSearchAlgorithm(const std::map<std::string, std
             fileSolutionValue = solutions.at(pair.second[i].substr(0, pair.second[i].find('.')));
             algorithmErrorToFileSolutionValuePercentage =
                     100 * (algorithmSolutionValue - fileSolutionValue) / static_cast<double>(fileSolutionValue);
-            if (isSolutionValid(tspInstance, algorithmSolution, algorithmSolutionValue)) {
+            if (TSPUtils::isSolutionValid(tspInstance, algorithmSolution, algorithmSolutionValue)) {
                 std::cout << "SUCCESS";
             } else {
                 std::cout << "FAIL";
@@ -661,29 +660,6 @@ void TSPAlgorithmsTest::testLocalSearchAlgorithm(const std::map<std::string, std
     }
     delete tspInstance;
     std::cout << std::string(10, '-') << "Test \"" + testName + "\"" + " finished" << std::string(10, '-') << std::endl;
-}
-
-bool TSPAlgorithmsTest::isSolutionValid(IGraph *tspInstance, const std::vector<int> &solutionPermutation,
-                                        int solutionPathCost) const {
-    const int instanceSize = tspInstance->getVertexCount();
-
-    if (solutionPermutation.size() != instanceSize) {
-        return false;
-    }
-
-    std::vector<int> cityInSolutionCount(instanceSize, 0);
-    for (const auto &city : solutionPermutation) {
-        if (city < 0 || city >= instanceSize) {
-            return false;
-        }
-        ++cityInSolutionCount[city];
-    }
-    for (const auto &cityOccurrences : cityInSolutionCount) {
-        if (cityOccurrences != 1) {
-            return false;
-        }
-    }
-    return solutionPathCost == TSPUtils::calculateTargetFunctionValue(tspInstance, solutionPermutation);
 }
 
 
