@@ -41,16 +41,16 @@ public:
 
     [[nodiscard]] static std::vector<int> swapNeighbourhood(int i, int j, std::vector<int> currentSolution);
 
-    [[nodiscard]] static int swapNeighbourhoodTFDifference(const IGraph *tspInstance, int i, int j,
-                                                                  const std::vector<int> &currentSolution,
-                                                                  const std::vector<int> &nextSolution,
-                                                                  int currentSolutionValue);
+    [[nodiscard]] static int swapNeighbourhoodTFValue(const IGraph *tspInstance, int i, int j,
+                                                      const std::vector<int> &currentSolution,
+                                                      const std::vector<int> &nextSolution,
+                                                      int currentSolutionValue);
 
     [[nodiscard]] static double sigmoidFunction(double x);
 
     using fCoolingScheme = decltype(&geometricCoolingScheme);
     using fNeighbourhood = decltype(&swapNeighbourhood);
-    using fNeighbourhoodDiff = decltype(&swapNeighbourhoodTFDifference);
+    using fNeighbourhoodDiff = decltype(&swapNeighbourhoodTFValue);
 
     friend class LocalSearchParameters;
 };

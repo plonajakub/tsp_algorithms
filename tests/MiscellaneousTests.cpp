@@ -2,8 +2,8 @@
 
 void MiscellaneousTests::run() const {
 //    randomNumberGenerationTest();
-    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::swapNeighbourhood, 10e5,
-                                 "ATSP/data443.txt", "swapNeighbourhood");
+    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::swapNeighbourhood, 10e7,
+                                 "SMALL/data10.txt", "swapNeighbourhood");
 //    createRandomPermutationTest();
 }
 
@@ -138,13 +138,15 @@ void MiscellaneousTests::neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::
 
         nextSolution = nextNeighbourFunction(i, j, currentSolution);
         if (nextNeighbourFunction == TSPLocalSearchAlgorithms::swapNeighbourhood) {
-            nextSolutionValue = TSPLocalSearchAlgorithms::swapNeighbourhoodTFDifference(tspInstance, i, j,
-                                                                                        currentSolution,
-                                                                                        nextSolution,
-                                                                                        currentSolutionValue);
+            nextSolutionValue = TSPLocalSearchAlgorithms::swapNeighbourhoodTFValue(tspInstance, i, j,
+                                                                                   currentSolution,
+                                                                                   nextSolution,
+                                                                                   currentSolutionValue);
         }
 
-        assert(TSPUtils::isSolutionValid(tspInstance, nextSolution, nextSolutionValue));
+        if (!TSPUtils::isSolutionValid(tspInstance, nextSolution, nextSolutionValue)) {
+            throw std::exception();
+        }
     }
     delete tspInstance;
     cout << "FINISHED" << endl;

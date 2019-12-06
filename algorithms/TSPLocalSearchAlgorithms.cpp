@@ -19,7 +19,7 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
     fNeighbourhood getNextNeighbour = parameters.nextNeighbourFunction;
     fNeighbourhoodDiff calculateNextSolutionTargetFunctionValue = nullptr;
     if (getNextNeighbour == swapNeighbourhood) {
-        calculateNextSolutionTargetFunctionValue = swapNeighbourhoodTFDifference;
+        calculateNextSolutionTargetFunctionValue = swapNeighbourhoodTFValue;
     } // 2 more to come
 
     std::vector<int> currentSolution, nextSolution, bestSolution;
@@ -103,10 +103,10 @@ std::vector<int> TSPLocalSearchAlgorithms::swapNeighbourhood(int i, int j, std::
     return currentSolution;
 }
 
-int TSPLocalSearchAlgorithms::swapNeighbourhoodTFDifference(const IGraph *tspInstance, int i, int j,
-                                                            const std::vector<int> &currentSolution,
-                                                            const std::vector<int> &nextSolution,
-                                                            int currentSolutionValue) {
+int TSPLocalSearchAlgorithms::swapNeighbourhoodTFValue(const IGraph *tspInstance, int i, int j,
+                                                       const std::vector<int> &currentSolution,
+                                                       const std::vector<int> &nextSolution,
+                                                       int currentSolutionValue) {
     const int lastVertexIdx = tspInstance->getVertexCount() - 1;
     if (j < i) {
         std::swap(i, j);
@@ -140,17 +140,30 @@ int TSPLocalSearchAlgorithms::swapNeighbourhoodTFDifference(const IGraph *tspIns
         jRight = j + 1;
     }
 
-    std::set<std::pair<int, int>> edges;
-    edges.emplace(iLeft, i);
-    edges.emplace(i, iRight);
-    edges.emplace(jLeft, j);
-    edges.emplace(j, jRight);
+    if (i == 0 && j == lastVertexIdx) {
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[jLeft], currentSolution[j]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[jLeft], nextSolution[j]);
 
-    for (const auto &edge : edges) {
-        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[edge.first],
-                                                              currentSolution[edge.second]);
-        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[edge.first],
-                                                              nextSolution[edge.second]);
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[j], currentSolution[i]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[j], nextSolution[i]);
+
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[i], currentSolution[iRight]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[i], nextSolution[iRight]);
+        return currentSolutionValue;
+    }
+
+    currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[iLeft], currentSolution[i]);
+    currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[iLeft], nextSolution[i]);
+
+    currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[j], currentSolution[jRight]);
+    currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[j], nextSolution[jRight]);
+
+    currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[i], currentSolution[iRight]);
+    currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[i], nextSolution[iRight]);
+
+    if (j - i != 1) {
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[jLeft], currentSolution[j]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[jLeft], nextSolution[j]);
     }
     return currentSolutionValue;
 }
