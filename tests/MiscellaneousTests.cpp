@@ -4,8 +4,10 @@ void MiscellaneousTests::run() const {
 //    randomNumberGenerationTest();
 //    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::swapNeighbourhood, 10e7,
 //                                 "SMALL/data10.txt", "swapNeighbourhood");
-    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::insertNeighbourhood, 10e7,
-                                 "SMALL/data10.txt", "insertNeighbourhood");
+//    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::insertNeighbourhood, 10e7,
+//                                 "SMALL/data10.txt", "insertNeighbourhood");
+    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::invertNeighbourhood, 10e7,
+                                 "SMALL/data10.txt", "invertNeighbourhood");
 //    createRandomPermutationTest();
 }
 
@@ -149,6 +151,11 @@ void MiscellaneousTests::neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::
                                                                                    currentSolution,
                                                                                    nextSolution,
                                                                                    currentSolutionValue);
+        } else if (nextNeighbourFunction == TSPLocalSearchAlgorithms::invertNeighbourhood) {
+            nextSolutionValue = TSPLocalSearchAlgorithms::invertNeighbourhoodTFValue(tspInstance, i, j,
+                                                                                     currentSolution,
+                                                                                     nextSolution,
+                                                                                     currentSolutionValue);
         }
 
         if (!TSPUtils::isSolutionValid(tspInstance, nextSolution, nextSolutionValue)) {

@@ -1,6 +1,5 @@
 #include "TSPLocalSearchAlgorithms.h"
 
-
 int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                                                  const LocalSearchParameters &parameters,
                                                  std::vector<int> &outSolution) {
@@ -233,6 +232,95 @@ int TSPLocalSearchAlgorithms::insertNeighbourhoodTFValue(const IGraph *tspInstan
         currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[j], currentSolution[jRight]);
         currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[iLeft], nextSolution[i]);
     }
+    return currentSolutionValue;
+}
+
+std::vector<int> TSPLocalSearchAlgorithms::invertNeighbourhood(int i, int j, std::vector<int> currentSolution) {
+    std::list<int> invertedSlice;
+    int idx = i;
+    while (idx != j) {
+        invertedSlice.emplace_front(currentSolution[idx]);
+        if (idx == currentSolution.size() - 1) {
+            idx = 0;
+        } else {
+            ++idx;
+        }
+    }
+    invertedSlice.emplace_front(currentSolution[idx]);
+
+    idx = i;
+    auto sliceIt = invertedSlice.begin();
+    while (sliceIt != invertedSlice.end()) {
+        currentSolution[idx] = *sliceIt;
+        if (idx == currentSolution.size() - 1) {
+            idx = 0;
+        } else {
+            ++idx;
+        }
+        ++sliceIt;
+    }
+    return currentSolution;
+}
+
+int TSPLocalSearchAlgorithms::invertNeighbourhoodTFValue(const IGraph *tspInstance, int i, int j,
+                                                         const std::vector<int> &currentSolution,
+                                                         const std::vector<int> &nextSolution,
+                                                         int currentSolutionValue) {
+    const int lastVertexIdx = tspInstance->getVertexCount() - 1;
+
+    int iLeft;
+    if (i == 0) {
+        iLeft = lastVertexIdx;
+    } else {
+        iLeft = i - 1;
+    }
+
+//    int iRight;
+//    if (i == lastVertexIdx) {
+//        iRight = 0;
+//    } else {
+//        iRight = i + 1;
+//    }
+
+    int jLeft;
+    if (j == 0) {
+        jLeft = lastVertexIdx;
+    } else {
+        jLeft = j - 1;
+    }
+
+    int jRight;
+    if (j == lastVertexIdx) {
+        jRight = 0;
+    } else {
+        jRight = j + 1;
+    }
+
+    if (i - j == 1 || (i == 0 && j == lastVertexIdx)) {
+        return TSPUtils::calculateTargetFunctionValue(tspInstance, nextSolution);
+    }
+
+    int idxL = iLeft;
+    int idxR = i;
+    while (idxR != j) {
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[idxL], currentSolution[idxR]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[idxL], nextSolution[idxR]);
+        if (idxL == lastVertexIdx) {
+            idxL = 0;
+        } else {
+            ++idxL;
+        }
+        if (idxR == lastVertexIdx) {
+            idxR = 0;
+        } else {
+            ++idxR;
+        }
+    }
+    currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[jLeft], currentSolution[j]);
+    currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[jLeft], nextSolution[j]);
+
+    currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[j], currentSolution[jRight]);
+    currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[j], nextSolution[jRight]);
     return currentSolutionValue;
 }
 

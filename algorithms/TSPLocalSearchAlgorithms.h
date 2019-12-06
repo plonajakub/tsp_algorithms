@@ -43,6 +43,8 @@ public:
 
     [[nodiscard]] static std::vector<int> insertNeighbourhood(int i, int j, std::vector<int> currentSolution);
 
+    [[nodiscard]] static std::vector<int> invertNeighbourhood(int i, int j, std::vector<int> currentSolution);
+
     [[nodiscard]] static int swapNeighbourhoodTFValue(const IGraph *tspInstance, int i, int j,
                                                       const std::vector<int> &currentSolution,
                                                       const std::vector<int> &nextSolution,
@@ -52,6 +54,11 @@ public:
                                                       const std::vector<int> &currentSolution,
                                                       const std::vector<int> &nextSolution,
                                                       int currentSolutionValue);
+
+    [[nodiscard]] static int invertNeighbourhoodTFValue(const IGraph *tspInstance, int i, int j,
+                                                        const std::vector<int> &currentSolution,
+                                                        const std::vector<int> &nextSolution,
+                                                        int currentSolutionValue);
 
     [[nodiscard]] static double sigmoidFunction(double x);
 
