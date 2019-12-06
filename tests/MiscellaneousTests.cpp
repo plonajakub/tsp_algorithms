@@ -2,8 +2,9 @@
 
 void MiscellaneousTests::run() const {
 //    randomNumberGenerationTest();
-//    neighbourhoodTFDifferenceDesignationTest();
-    createRandomPermutationTest();
+    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::swapNeighbourhood, 10e5,
+                                 "ATSP/data443.txt", "swapNeighbourhood");
+//    createRandomPermutationTest();
 }
 
 void MiscellaneousTests::randomNumberGenerationTest() const {
@@ -103,17 +104,18 @@ void MiscellaneousTests::randomNumberGenerationTest() const {
     cout << endl;
 }
 
-void MiscellaneousTests::neighbourhoodTFDifferenceDesignationTest() const {
-    cout << "neighbourhoodTFDifferenceDesignationTest...";
+void MiscellaneousTests::neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::fNeighbourhood nextNeighbourFunction,
+                                                      int neighbourNumberToTest, const std::string &instanceFileToTest,
+                                                      const std::string &testName) const {
+    cout << "Test \"" << testName << "\" on instance \"" << instanceFileToTest << "\"...";
     IGraph *tspInstance = nullptr;
-    std::string instanceFilePath = "ATSP/data443.txt";
-    TSPUtils::loadTSPInstance(&tspInstance, instanceFilePath, TSPUtils::getTSPType(instanceFilePath));
+    TSPUtils::loadTSPInstance(&tspInstance, instanceFileToTest, TSPUtils::getTSPType(instanceFileToTest));
     int instanceSize = tspInstance->getVertexCount();
     std::vector<int> currentSolution, nextSolution;
-    int currentSolutionValue, nextSolutionValue;
+    int currentSolutionValue, nextSolutionValue = -1;
     currentSolutionValue = TSPGreedyAlgorithms::greedy(tspInstance, currentSolution);
     int i, j;
-    for (int counter = 0; counter < 1000000; ++counter) {
+    for (int counter = 0; counter < neighbourNumberToTest; ++counter) {
         i = Random::getInt(0, instanceSize - 1);
         j = Random::getInt(0, instanceSize - 1);
         if (i == j) {
@@ -134,10 +136,15 @@ void MiscellaneousTests::neighbourhoodTFDifferenceDesignationTest() const {
             }
         }
 
-        nextSolution = TSPLocalSearchAlgorithms::swapNeighbourhood(i, j, currentSolution);
-        nextSolutionValue = TSPLocalSearchAlgorithms::swapNeighbourhoodTFDifference(tspInstance, i, j, currentSolution,
-                                                                                    nextSolution, currentSolutionValue);
-        assert(nextSolutionValue == TSPUtils::calculateTargetFunctionValue(tspInstance, nextSolution));
+        nextSolution = nextNeighbourFunction(i, j, currentSolution);
+        if (nextNeighbourFunction == TSPLocalSearchAlgorithms::swapNeighbourhood) {
+            nextSolutionValue = TSPLocalSearchAlgorithms::swapNeighbourhoodTFDifference(tspInstance, i, j,
+                                                                                        currentSolution,
+                                                                                        nextSolution,
+                                                                                        currentSolutionValue);
+        }
+
+        assert(TSPUtils::isSolutionValid(tspInstance, nextSolution, nextSolutionValue));
     }
     delete tspInstance;
     cout << "FINISHED" << endl;
