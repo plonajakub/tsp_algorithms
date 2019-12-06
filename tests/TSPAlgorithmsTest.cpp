@@ -580,12 +580,34 @@ void TSPAlgorithmsTest::simulatedAnnealingTest() const {
     parameters.coolingSchemeParameter = 0.9;
     parameters.epochIterationsNumber = 1000;
     parameters.iterationsNumber = 1000;
-    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
+    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::linearCoolingScheme;
     parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
     parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
 
+    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::linearCoolingScheme;
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
     testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
-                             "Simulated annealing");
+                             "Simulated annealing, linearCoolingScheme, swapNeighbourhood");
+
+    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
+                             "Simulated annealing, geometricCoolingScheme, swapNeighbourhood");
+
+    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::logarithmicCoolingScheme;
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
+                             "Simulated annealing, logarithmicCoolingScheme, swapNeighbourhood");
+
+    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::insertNeighbourhood;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
+                             "Simulated annealing, geometricCoolingScheme, insertNeighbourhood");
+
+    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::invertNeighbourhood;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
+                             "Simulated annealing, geometricCoolingScheme, invertNeighbourhood");
 }
 
 void TSPAlgorithmsTest::testExactOrGreedyAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,

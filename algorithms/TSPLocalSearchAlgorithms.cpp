@@ -19,7 +19,11 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
     fNeighbourhoodDiff calculateNextSolutionTargetFunctionValue = nullptr;
     if (getNextNeighbour == swapNeighbourhood) {
         calculateNextSolutionTargetFunctionValue = swapNeighbourhoodTFValue;
-    } // 2 more to come
+    } else if (getNextNeighbour == insertNeighbourhood) {
+        calculateNextSolutionTargetFunctionValue = insertNeighbourhoodTFValue;
+    } else {
+        calculateNextSolutionTargetFunctionValue = invertNeighbourhoodTFValue;
+    }
 
     std::vector<int> currentSolution, nextSolution, bestSolution;
     int currentSolutionValue, nextSolutionValue, bestSolutionValue;
