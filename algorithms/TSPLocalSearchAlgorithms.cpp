@@ -168,6 +168,74 @@ int TSPLocalSearchAlgorithms::swapNeighbourhoodTFValue(const IGraph *tspInstance
     return currentSolutionValue;
 }
 
+std::vector<int> TSPLocalSearchAlgorithms::insertNeighbourhood(int i, int j, std::vector<int> currentSolution) {
+    int movedElement = currentSolution[j];
+    currentSolution.erase(currentSolution.begin() + j);
+    currentSolution.insert(currentSolution.begin() + i, movedElement);
+    return currentSolution;
+}
+
+int TSPLocalSearchAlgorithms::insertNeighbourhoodTFValue(const IGraph *tspInstance, int i, int j,
+                                                         const std::vector<int> &currentSolution,
+                                                         const std::vector<int> &nextSolution,
+                                                         int currentSolutionValue) {
+    const int lastVertexIdx = tspInstance->getVertexCount() - 1;
+
+    int iLeft;
+    if (i == 0) {
+        iLeft = lastVertexIdx;
+    } else {
+        iLeft = i - 1;
+    }
+
+    int iRight;
+    if (i == lastVertexIdx) {
+        iRight = 0;
+    } else {
+        iRight = i + 1;
+    }
+
+    int jLeft;
+    if (j == 0) {
+        jLeft = lastVertexIdx;
+    } else {
+        jLeft = j - 1;
+    }
+
+    int jRight;
+    if (j == lastVertexIdx) {
+        jRight = 0;
+    } else {
+        jRight = j + 1;
+    }
+
+    if ((i == 0 && j == lastVertexIdx) || (j == 0 && i == lastVertexIdx)) {
+        return currentSolutionValue;
+    }
+
+    if (i < j) {
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[j], currentSolution[jRight]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[j], nextSolution[jRight]);
+
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[iLeft], currentSolution[i]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[iLeft], nextSolution[i]);
+
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[jLeft], currentSolution[j]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[i], nextSolution[iRight]);
+
+    } else {
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[jLeft], currentSolution[j]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[jLeft], nextSolution[j]);
+
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[i], currentSolution[iRight]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[i], nextSolution[iRight]);
+
+        currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[j], currentSolution[jRight]);
+        currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[iLeft], nextSolution[i]);
+    }
+    return currentSolutionValue;
+}
+
 double TSPLocalSearchAlgorithms::sigmoidFunction(double x) {
     return 1.0 / (1.0 + exp(-x));
 }
