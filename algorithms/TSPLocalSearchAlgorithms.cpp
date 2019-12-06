@@ -60,11 +60,15 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                                                                          nextSolution,
                                                                          currentSolutionValue);
             // Core of the algorithm
-            if (Random::getRealClosed(0.0, 1.0) <=
+            if (nextSolutionValue < currentSolutionValue) {
+                currentSolution = nextSolution;
+                currentSolutionValue = nextSolutionValue;
+            } else if (Random::getRealClosed(0.0, 1.0) <=
                 sigmoidFunction(currentSolutionValue - nextSolutionValue) / currentTemperature) {
                 currentSolution = nextSolution;
                 currentSolutionValue = nextSolutionValue;
             }
+
             if (nextSolutionValue < bestSolutionValue) {
                 bestSolutionValue = nextSolutionValue;
                 bestSolution = nextSolution;
