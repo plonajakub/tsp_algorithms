@@ -224,7 +224,7 @@ std::ostream &operator<<(std::ostream &ostr, std::vector<int> permutation) {
 }
 
 bool TSPUtils::isSolutionValid(IGraph *tspInstance, const std::vector<int> &solutionPermutation,
-                                        int solutionPathCost) {
+                               int solutionPathCost) {
     const int instanceSize = tspInstance->getVertexCount();
 
     if (solutionPermutation.size() != instanceSize) {
@@ -244,4 +244,16 @@ bool TSPUtils::isSolutionValid(IGraph *tspInstance, const std::vector<int> &solu
         }
     }
     return solutionPathCost == TSPUtils::calculateTargetFunctionValue(tspInstance, solutionPermutation);
+}
+
+bool TSPUtils::areSolutionsEqual(const std::vector<int> &solution1, const std::vector<int> &solution2) {
+    if (solution1.size() != solution2.size()) {
+        return false;
+    }
+    for (int i = 0; i < solution1.size(); ++i) {
+        if (solution1[i] != solution2[i]) {
+            return false;
+        }
+    }
+    return true;
 }

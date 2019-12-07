@@ -2,12 +2,12 @@
 
 void MiscellaneousTests::run() const {
 //    randomNumberGenerationTest();
-//    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::swapNeighbourhood, 10e7,
-//                                 "SMALL/data10.txt", "swapNeighbourhood");
-//    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::insertNeighbourhood, 10e7,
-//                                 "SMALL/data10.txt", "insertNeighbourhood");
-    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::invertNeighbourhood, 10e7,
-                                 "SMALL/data10.txt", "invertNeighbourhood");
+    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::swapNeighbourhood, "SMALL/data10.txt",
+                                 "swapNeighbourhood");
+    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::insertNeighbourhood, "SMALL/data10.txt",
+                                 "insertNeighbourhood");
+    neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::invertNeighbourhood, "SMALL/data10.txt",
+                                 "invertNeighbourhood");
 //    createRandomPermutationTest();
 }
 
@@ -109,61 +109,43 @@ void MiscellaneousTests::randomNumberGenerationTest() const {
 }
 
 void MiscellaneousTests::neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::fNeighbourhood nextNeighbourFunction,
-                                                      int neighbourNumberToTest, const std::string &instanceFileToTest,
+                                                      const std::string &instanceFileToTest,
                                                       const std::string &testName) const {
     cout << "Test \"" << testName << "\" on instance \"" << instanceFileToTest << "\"...";
     IGraph *tspInstance = nullptr;
     TSPUtils::loadTSPInstance(&tspInstance, instanceFileToTest, TSPUtils::getTSPType(instanceFileToTest));
     int instanceSize = tspInstance->getVertexCount();
+    TSPLocalSearchAlgorithms::fNeighbourhoodDiff nextNeighbourTFValue;
+    if (nextNeighbourFunction == TSPLocalSearchAlgorithms::swapNeighbourhood) {
+        nextNeighbourTFValue = TSPLocalSearchAlgorithms::swapNeighbourhoodTFValue;
+    } else if (nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
+        nextNeighbourTFValue = TSPLocalSearchAlgorithms::insertNeighbourhoodTFValue;
+    } else {
+        nextNeighbourTFValue = TSPLocalSearchAlgorithms::invertNeighbourhoodTFValue;
+    }
     std::vector<int> currentSolution, nextSolution;
-    int currentSolutionValue, nextSolutionValue = -1;
+    int currentSolutionValue, nextSolutionValue;
     currentSolutionValue = TSPGreedyAlgorithms::greedy(tspInstance, currentSolution);
-    int i, j;
-    for (int counter = 0; counter < neighbourNumberToTest; ++counter) {
-        i = Random::getInt(0, instanceSize - 1);
-        j = Random::getInt(0, instanceSize - 1);
-        if (i == j) {
-            if (Random::getBool(true, 0.5)) {
-                // Go upward if true
-                if (j != instanceSize - 1) {
-                    ++j;
-                } else {
-                    j = 0;
-                }
-            } else {
-                // Go downward if false
-                if (j != 0) {
-                    --j;
-                } else {
-                    j = instanceSize - 1;
-                }
+
+    for (int i = 0; i < instanceSize; ++i) {
+        for (int j = 0; j < instanceSize; ++j) {
+            if (i == j) {
+                continue;
+            }
+            nextSolution = nextNeighbourFunction(i, j, currentSolution);
+            nextSolutionValue = nextNeighbourTFValue(tspInstance, i, j, currentSolution, nextSolution,
+                                                     currentSolutionValue);
+            if (TSPUtils::areSolutionsEqual(currentSolution, nextSolution)) {
+                throw std::exception();
+            }
+            if (!TSPUtils::isSolutionValid(tspInstance, nextSolution, nextSolutionValue)) {
+                throw std::exception();
             }
         }
-
-        nextSolution = nextNeighbourFunction(i, j, currentSolution);
-        if (nextNeighbourFunction == TSPLocalSearchAlgorithms::swapNeighbourhood) {
-            nextSolutionValue = TSPLocalSearchAlgorithms::swapNeighbourhoodTFValue(tspInstance, i, j,
-                                                                                   currentSolution,
-                                                                                   nextSolution,
-                                                                                   currentSolutionValue);
-        } else if (nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
-            nextSolutionValue = TSPLocalSearchAlgorithms::insertNeighbourhoodTFValue(tspInstance, i, j,
-                                                                                   currentSolution,
-                                                                                   nextSolution,
-                                                                                   currentSolutionValue);
-        } else if (nextNeighbourFunction == TSPLocalSearchAlgorithms::invertNeighbourhood) {
-            nextSolutionValue = TSPLocalSearchAlgorithms::invertNeighbourhoodTFValue(tspInstance, i, j,
-                                                                                     currentSolution,
-                                                                                     nextSolution,
-                                                                                     currentSolutionValue);
-        }
-
-        if (!TSPUtils::isSolutionValid(tspInstance, nextSolution, nextSolutionValue)) {
-            throw std::exception();
-        }
     }
+
     delete tspInstance;
-    cout << "FINISHED" << endl;
+    cout << "SUCCESS" << endl;
 }
 
 void MiscellaneousTests::createRandomPermutationTest() const {

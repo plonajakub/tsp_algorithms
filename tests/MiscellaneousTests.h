@@ -22,7 +22,7 @@ public:
 private:
     void randomNumberGenerationTest() const;
     void neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::fNeighbourhood nextNeighbourFunction,
-                                      int neighbourNumberToTest, const std::string &instanceFileToTest,
+                                      const std::string &instanceFileToTest,
                                       const std::string &testName) const;
     void createRandomPermutationTest() const;
 };

@@ -47,6 +47,8 @@ public:
     bool static isSolutionValid(IGraph *tspInstance, const std::vector<int> &solutionPermutation,
                          int solutionPathCost);
 
+    bool static areSolutionsEqual(const std::vector<int> &solution1, const std::vector<int> &solution2);
+
 private:
 
 };
