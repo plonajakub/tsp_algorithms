@@ -650,11 +650,11 @@ void TSPAlgorithmsTest::tabuSearchTest() const {
     filePaths.emplace_back("data43.txt");
     filePaths.emplace_back("data45.txt");
     filePaths.emplace_back("data48.txt");
-    filePaths.emplace_back("data53.txt");
-    filePaths.emplace_back("data56.txt");
-    filePaths.emplace_back("data65.txt");
-    filePaths.emplace_back("data70.txt");
-    filePaths.emplace_back("data71.txt");
+//    filePaths.emplace_back("data53.txt");
+//    filePaths.emplace_back("data56.txt");
+//    filePaths.emplace_back("data65.txt");
+//    filePaths.emplace_back("data70.txt");
+//    filePaths.emplace_back("data71.txt");
 //    filePaths.emplace_back("data100.txt");
 //    filePaths.emplace_back("data171.txt");
 //    filePaths.emplace_back("data323.txt");
@@ -708,16 +708,40 @@ void TSPAlgorithmsTest::tabuSearchTest() const {
     parameters.iterationsNumber = 1000;
     parameters.tabuListSize = 100;
     parameters.cadenzaLengthParameter = 1.0/8;
-    parameters.iterationsWithoutImprovementToRestart = 20;
+    parameters.iterationsWithoutImprovementToRestart = 50;
     parameters.patternsNumberToCache = 2;
+//    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
+//    parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
+
     parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
     parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchList, parameters,
+                             "Tabu search, list, swap, greedy");
 
-//    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchList, parameters,
-//                             "Tabu search, list");
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::insertNeighbourhood;
+    parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchList, parameters,
+                             "Tabu search, list, insert, greedy");
 
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::invertNeighbourhood;
+    parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchList, parameters,
+                             "Tabu search, list, invert, greedy");
+
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::invertNeighbourhood;
+    parameters.initialSolutionFunction = TSPGreedyAlgorithms::createNaturalPermutation;
     testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchMatrix, parameters,
-                             "Tabu search, matrix");
+                             "Tabu search, matrix, invert, natural");
+
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::invertNeighbourhood;
+    parameters.initialSolutionFunction = TSPGreedyAlgorithms::createRandomPermutation;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchMatrix, parameters,
+                             "Tabu search, matrix, invert, random");
+
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::invertNeighbourhood;
+    parameters.initialSolutionFunction = TSPGreedyAlgorithms::nearestNeighbour;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchMatrix, parameters,
+                             "Tabu search, matrix, invert, nearestNeighbour");
 }
 
 void TSPAlgorithmsTest::testExactOrGreedyAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,

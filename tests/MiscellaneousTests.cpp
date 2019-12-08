@@ -8,7 +8,7 @@ void MiscellaneousTests::run() const {
                                  "insertNeighbourhood");
     neighbourhoodDesignationTest(TSPLocalSearchAlgorithms::invertNeighbourhood, "SMALL/data10.txt",
                                  "invertNeighbourhood");
-//    createRandomPermutationTest();
+    createRandomPermutationTest();
 }
 
 void MiscellaneousTests::randomNumberGenerationTest() const {
