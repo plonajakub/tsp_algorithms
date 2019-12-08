@@ -92,10 +92,10 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
             } else if (Random::getRealClosed(0.0, 1.0) <=
                        2 * sigmoidFunction((currentSolutionValue - nextSolutionValue) / currentTemperature)
                     ) {
-                std::cout << "currentSolutionValue - nextSolutionValue = " << currentSolutionValue - nextSolutionValue
-                          << " T = " << currentTemperature << " Probability = "
-                          << 2 * sigmoidFunction((currentSolutionValue - nextSolutionValue) / currentTemperature)
-                          << std::endl;
+//                std::cout << "currentSolutionValue - nextSolutionValue = " << currentSolutionValue - nextSolutionValue
+//                          << " T = " << currentTemperature << " Probability = "
+//                          << 2 * sigmoidFunction((currentSolutionValue - nextSolutionValue) / currentTemperature)
+//                          << std::endl;
                 currentSolution = nextSolution;
                 currentSolutionValue = nextSolutionValue;
             }
