@@ -378,7 +378,7 @@ int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalS
     std::pair<std::pair<int, int>, int> tabuMove;
     for (int currentIteration = 0; currentIteration < parameters.iterationsNumber; ++currentIteration) {
         nextSolution.clear();
-        nextSolutionValue = -1;
+        nextSolutionValue = std::numeric_limits<int>::max();
         for (int i = 0; i < instanceSize; ++i) {
             int j;
             if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
@@ -407,7 +407,13 @@ int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalS
                 if (neighbourInTabu && neighbourSolutionValue >= bestSolutionValue) {
                     continue;
                 }
-                // TODO Patterns
+
+                // Patterns
+                for (const auto &cachedSolution : cachedSolutions) {
+                    if (TSPUtils::areSolutionsEqual(neighbourSolution, cachedSolution)) {
+                        continue;
+                    }
+                }
 
                 if (nextSolution.empty() || neighbourSolutionValue < nextSolutionValue) {
                     nextSolution = neighbourSolution;
@@ -435,12 +441,26 @@ int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalS
             } else {
                 ++iterationsWithoutImprovement;
             }
+
+            // Tabu move insertion
             if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
                 std::swap(tabuMove.first.first, tabuMove.first.second);
             }
-            tabuList.emplace_back(tabuMove);
+            if (tabuList.size() < parameters.tabuListSize) {
+                tabuList.emplace_back(tabuMove);
+            }
+
+            // Perform move
             currentSolution = nextSolution;
             currentSolutionValue = nextSolutionValue;
+
+            // Update patterns cache
+            if (cachedSolutions.size() >= parameters.patternsNumberToCache) {
+                cachedSolutions.erase(cachedSolutions.begin());
+            }
+            if (cachedSolutions.size() < parameters.patternsNumberToCache) {
+                cachedSolutions.emplace_back(currentSolution);
+            }
         }
         // Critical event
         if (iterationsWithoutImprovement == parameters.iterationsWithoutImprovementToRestart) {
