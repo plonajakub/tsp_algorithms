@@ -17,11 +17,11 @@ public:
     TSPGreedyAlgorithms::fTSPAlgorithm initialSolutionFunction;
 
     // Tabu search
-//    int iterationsNumber;
-    int tabuListSize;
-    double cadenzaLengthParameter;
-    int iterationsWithoutImprovementToRestart;
-    int patternsNumberToCache;
+//    int iterationsNumber; // > 0
+    int tabuListSize; // > 0
+    double cadenzaLengthParameter; // > 0
+    int iterationsWithoutImprovementToRestart; // > 0
+    int patternsNumberToCache; // > 0
 //    TSPGreedyAlgorithms::fTSPAlgorithm initialSolutionFunction;
 //    TSPLocalSearchAlgorithms::fNeighbourhood nextNeighbourFunction;
 

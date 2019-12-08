@@ -246,27 +246,19 @@ int TSPLocalSearchAlgorithms::insertNeighbourhoodTFValue(const IGraph *tspInstan
 }
 
 std::vector<int> TSPLocalSearchAlgorithms::invertNeighbourhood(int i, int j, std::vector<int> currentSolution) {
-    std::list<int> invertedSlice;
-    int idx = i;
-    while (idx != j) {
-        invertedSlice.emplace_front(currentSolution[idx]);
-        if (idx == currentSolution.size() - 1) {
-            idx = 0;
-        } else {
-            ++idx;
-        }
+    if (j < i) {
+        std::swap(i, j);
     }
-    invertedSlice.emplace_front(currentSolution[idx]);
+    std::list<int> invertedSlice;
+    for (int idx = i; idx != j + 1; ++idx) {
+        invertedSlice.emplace_front(currentSolution[idx]);
+    }
 
-    idx = i;
+    int idx = i;
     auto sliceIt = invertedSlice.begin();
     while (sliceIt != invertedSlice.end()) {
         currentSolution[idx] = *sliceIt;
-        if (idx == currentSolution.size() - 1) {
-            idx = 0;
-        } else {
-            ++idx;
-        }
+        ++idx;
         ++sliceIt;
     }
     return currentSolution;
@@ -277,6 +269,9 @@ int TSPLocalSearchAlgorithms::invertNeighbourhoodTFValue(const IGraph *tspInstan
                                                          const std::vector<int> &nextSolution,
                                                          int currentSolutionValue) {
     const int lastVertexIdx = tspInstance->getVertexCount() - 1;
+    if (j < i) {
+        std::swap(i, j);
+    }
 
     int iLeft;
     if (i == 0) {
@@ -292,12 +287,12 @@ int TSPLocalSearchAlgorithms::invertNeighbourhoodTFValue(const IGraph *tspInstan
 //        iRight = i + 1;
 //    }
 
-    int jLeft;
-    if (j == 0) {
-        jLeft = lastVertexIdx;
-    } else {
-        jLeft = j - 1;
-    }
+//    int jLeft;
+//    if (j == 0) {
+//        jLeft = lastVertexIdx;
+//    } else {
+//        jLeft = j - 1;
+//    }
 
     int jRight;
     if (j == lastVertexIdx) {
@@ -306,31 +301,29 @@ int TSPLocalSearchAlgorithms::invertNeighbourhoodTFValue(const IGraph *tspInstan
         jRight = j + 1;
     }
 
-    if (i - j == 1 || (i == 0 && j == lastVertexIdx)) {
+    if (i == 0 && j == lastVertexIdx) {
         return TSPUtils::calculateTargetFunctionValue(tspInstance, nextSolution);
     }
 
     int idxL = iLeft;
     int idxR = i;
-    while (idxR != j) {
+    currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[idxL], currentSolution[idxR]);
+    currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[idxL], nextSolution[idxR]);
+    if (idxL == lastVertexIdx) {
+        idxL = 0;
+    } else {
+        ++idxL;
+    }
+    ++idxR;
+    while (idxR != j + 1) {
         currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[idxL], currentSolution[idxR]);
         currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[idxL], nextSolution[idxR]);
-        if (idxL == lastVertexIdx) {
-            idxL = 0;
-        } else {
-            ++idxL;
-        }
-        if (idxR == lastVertexIdx) {
-            idxR = 0;
-        } else {
-            ++idxR;
-        }
+        ++idxL;
+        ++idxR;
     }
-    currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[jLeft], currentSolution[j]);
-    currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[jLeft], nextSolution[j]);
-
     currentSolutionValue -= tspInstance->getEdgeParameter(currentSolution[j], currentSolution[jRight]);
     currentSolutionValue += tspInstance->getEdgeParameter(nextSolution[j], nextSolution[jRight]);
+
     return currentSolutionValue;
 }
 
@@ -342,8 +335,24 @@ double TSPLocalSearchAlgorithms::sigmoidFunction(double x) {
 
 int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalSearchParameters &parameters,
                                          std::vector<int> &outSolution) {
+    if (parameters.iterationsNumber <= 0 || parameters.tabuListSize <= 0 || parameters.cadenzaLengthParameter <= 0
+        || parameters.iterationsWithoutImprovementToRestart <= 0 || parameters.patternsNumberToCache <= 0) {
+        throw std::invalid_argument("Tabu search started with invalid parameters");
+    }
+    if (parameters.nextNeighbourFunction != TSPLocalSearchAlgorithms::swapNeighbourhood
+        && parameters.nextNeighbourFunction != TSPLocalSearchAlgorithms::insertNeighbourhood
+        && parameters.nextNeighbourFunction != TSPLocalSearchAlgorithms::invertNeighbourhood) {
+        throw std::invalid_argument("Tabu search started with invalid neighbour designation function");
+    }
+    if (parameters.initialSolutionFunction != TSPGreedyAlgorithms::createNaturalPermutation
+        && parameters.initialSolutionFunction != TSPGreedyAlgorithms::createRandomPermutation
+        && parameters.initialSolutionFunction != TSPGreedyAlgorithms::greedy
+        && parameters.initialSolutionFunction != TSPGreedyAlgorithms::nearestNeighbour) {
+        throw std::invalid_argument("Tabu search started with invalid initial solution designation function");
+    }
+
     const int instanceSize = tspInstance->getVertexCount();
-    const int cadenzaLength = static_cast<int>(instanceSize / parameters.cadenzaLengthParameter);
+    const int cadenzaLength = static_cast<int>(instanceSize * parameters.cadenzaLengthParameter);
 
     std::vector<int> currentSolution, nextSolution, neighbourSolution, bestSolution;
     int currentSolutionValue, nextSolutionValue, neighbourSolutionValue, bestSolutionValue;
@@ -365,7 +374,7 @@ int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalS
     std::list<std::vector<int>> cachedSolutions;
 
     int iterationsWithoutImprovement = 0;
-    bool inTabu;
+    bool neighbourInTabu;
     std::pair<std::pair<int, int>, int> tabuMove;
     for (int currentIteration = 0; currentIteration < parameters.iterationsNumber; ++currentIteration) {
         nextSolution.clear();
@@ -386,10 +395,10 @@ int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalS
                     i == j + 1) {
                     continue;
                 }
-                inTabu = false;
+                neighbourInTabu = false;
                 for (const auto &move : tabuList) {
                     if (std::pair<int, int>(i, j) == move.first) {
-                        inTabu = true;
+                        neighbourInTabu = true;
                         break;
                     }
                 }
@@ -397,7 +406,7 @@ int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalS
                 neighbourSolutionValue = nextSolutionTFValue(tspInstance, i, j, currentSolution, neighbourSolution,
                                                              currentSolutionValue);
                 // Aspiration criterium
-                if (inTabu && neighbourSolutionValue >= bestSolutionValue) {
+                if (neighbourInTabu && neighbourSolutionValue >= bestSolutionValue) {
                     continue;
                 }
                 // TODO Patterns
