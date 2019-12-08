@@ -596,13 +596,13 @@ void TSPAlgorithmsTest::simulatedAnnealingTest() const {
 //    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
 //    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
 //                             "Simulated annealing, greedy, geometricCoolingScheme, swapNeighbourhood");
-//
-//    parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
-//    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::logarithmicCoolingScheme;
-//    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
-//    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
-//                             "Simulated annealing, greedy, logarithmicCoolingScheme, swapNeighbourhood");
-//
+
+    parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
+    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::logarithmicCoolingScheme;
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
+                             "Simulated annealing, greedy, logarithmicCoolingScheme, swapNeighbourhood");
+
 //    parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
 //    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
 //    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::insertNeighbourhood;
@@ -693,7 +693,7 @@ void TSPAlgorithmsTest::tabuSearchTest() const {
     filePaths.emplace_back("data29.txt");
     filePaths.emplace_back("data42.txt");
     filePaths.emplace_back("data58.txt");
-    filePaths.emplace_back("data120.txt");
+//    filePaths.emplace_back("data120.txt");
     fileGroups.insert({"TSP", filePaths});
     filePaths.clear();
 
@@ -733,6 +733,11 @@ void TSPAlgorithmsTest::tabuSearchTest() const {
     parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
     testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchList, parameters,
                              "Tabu search, list, invert, greedy");
+
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
+    parameters.initialSolutionFunction = TSPGreedyAlgorithms::createNaturalPermutation;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchMatrix, parameters,
+                             "Tabu search, matrix, swap, natural");
 
     parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::invertNeighbourhood;
     parameters.initialSolutionFunction = TSPGreedyAlgorithms::createNaturalPermutation;
