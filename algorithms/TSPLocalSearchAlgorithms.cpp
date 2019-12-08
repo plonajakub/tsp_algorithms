@@ -5,6 +5,31 @@
 int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                                                  const LocalSearchParameters &parameters,
                                                  std::vector<int> &outSolution) {
+    if (parameters.initialTemperature <= 0 || parameters.coolingSchemeParameter <= 0
+        || parameters.epochIterationsNumber <= 0 || parameters.iterationsNumber <= 0) {
+        throw std::invalid_argument("Simulated annealing started with invalid parameters");
+    }
+    if (parameters.coolingSchemeFunction != TSPLocalSearchAlgorithms::linearCoolingScheme
+        && parameters.coolingSchemeFunction != TSPLocalSearchAlgorithms::geometricCoolingScheme
+        && parameters.coolingSchemeFunction != TSPLocalSearchAlgorithms::logarithmicCoolingScheme) {
+        throw std::invalid_argument("Simulated annealing started with invalid cooling scheme function");
+    }
+    if (parameters.nextNeighbourFunction != TSPLocalSearchAlgorithms::swapNeighbourhood
+        && parameters.nextNeighbourFunction != TSPLocalSearchAlgorithms::insertNeighbourhood
+        && parameters.nextNeighbourFunction != TSPLocalSearchAlgorithms::invertNeighbourhood) {
+        throw std::invalid_argument("Simulated annealing started with invalid neighbour designation function");
+    }
+    if (parameters.initialSolutionFunction != TSPGreedyAlgorithms::createNaturalPermutation
+        && parameters.initialSolutionFunction != TSPGreedyAlgorithms::createRandomPermutation
+        && parameters.initialSolutionFunction != TSPGreedyAlgorithms::greedy
+        && parameters.initialSolutionFunction != TSPGreedyAlgorithms::nearestNeighbour) {
+        throw std::invalid_argument("Tabu search started with invalid initial solution designation function");
+    }
+    if (parameters.coolingSchemeFunction == TSPLocalSearchAlgorithms::geometricCoolingScheme
+    && parameters.coolingSchemeParameter >= 1) {
+        throw std::invalid_argument("Tabu search started with coolingSchemeParameter > 1 for geometricCoolingScheme");
+    }
+
     const int instanceSize = tspInstance->getVertexCount();
 
     if (instanceSize <= 2) {

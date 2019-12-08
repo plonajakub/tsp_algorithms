@@ -8,10 +8,10 @@ class LocalSearchParameters {
 
 public:
     // Simulated annealing
-    double initialTemperature;
-    double coolingSchemeParameter;
-    int epochIterationsNumber;
-    int iterationsNumber;
+    double initialTemperature; // > 0
+    double coolingSchemeParameter; // > 0, for geometricCoolingScheme also < 1
+    int epochIterationsNumber; // > 0
+    int iterationsNumber; // > 0
     TSPLocalSearchAlgorithms::fCoolingScheme coolingSchemeFunction;
     TSPLocalSearchAlgorithms::fNeighbourhood nextNeighbourFunction;
     TSPGreedyAlgorithms::fTSPAlgorithm initialSolutionFunction;
