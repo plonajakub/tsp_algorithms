@@ -713,8 +713,11 @@ void TSPAlgorithmsTest::tabuSearchTest() const {
     parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
     parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
 
-    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearch, parameters,
-                             "Tabu search");
+//    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchList, parameters,
+//                             "Tabu search, list");
+
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::tabuSearchMatrix, parameters,
+                             "Tabu search, matrix");
 }
 
 void TSPAlgorithmsTest::testExactOrGreedyAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,

@@ -333,8 +333,8 @@ double TSPLocalSearchAlgorithms::sigmoidFunction(double x) {
 
 //endregion
 
-int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalSearchParameters &parameters,
-                                         std::vector<int> &outSolution) {
+int TSPLocalSearchAlgorithms::tabuSearchList(const IGraph *tspInstance, const LocalSearchParameters &parameters,
+                                             std::vector<int> &outSolution) {
     if (parameters.iterationsNumber <= 0 || parameters.tabuListSize <= 0 || parameters.cadenzaLengthParameter <= 0
         || parameters.iterationsWithoutImprovementToRestart <= 0 || parameters.patternsNumberToCache <= 0) {
         throw std::invalid_argument("Tabu search started with invalid parameters");
@@ -356,7 +356,7 @@ int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalS
         return TSPGreedyAlgorithms::createNaturalPermutation(tspInstance, outSolution);
     }
 
-    const int cadenzaLength = static_cast<int>(instanceSize * parameters.cadenzaLengthParameter);
+    const int cadenzaLength = std::max(static_cast<int>(instanceSize * parameters.cadenzaLengthParameter), 1);
 
     std::vector<int> currentSolution, nextSolution, neighbourSolution, bestSolution;
     int currentSolutionValue, nextSolutionValue, neighbourSolutionValue, bestSolutionValue;
@@ -452,6 +452,155 @@ int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalS
             }
             if (tabuList.size() < parameters.tabuListSize) {
                 tabuList.emplace_back(tabuMove);
+            }
+
+            // Perform move
+            currentSolution = nextSolution;
+            currentSolutionValue = nextSolutionValue;
+
+            // Update patterns cache
+            if (cachedSolutions.size() >= parameters.patternsNumberToCache) {
+                cachedSolutions.erase(cachedSolutions.begin());
+            }
+            if (cachedSolutions.size() < parameters.patternsNumberToCache) {
+                cachedSolutions.emplace_back(currentSolution);
+            }
+        }
+        // Critical event
+        if (iterationsWithoutImprovement == parameters.iterationsWithoutImprovementToRestart) {
+            currentSolution.clear();
+            currentSolutionValue = TSPGreedyAlgorithms::createRandomPermutation(tspInstance, currentSolution);
+            if (currentSolutionValue < bestSolutionValue) {
+                bestSolution = currentSolution;
+                bestSolutionValue = currentSolutionValue;
+            }
+            iterationsWithoutImprovement = 0;
+        }
+    }
+    outSolution = bestSolution;
+    return bestSolutionValue;
+}
+
+int TSPLocalSearchAlgorithms::tabuSearchMatrix(const IGraph *tspInstance, const LocalSearchParameters &parameters,
+                                               std::vector<int> &outSolution) {
+    if (parameters.iterationsNumber <= 0 || parameters.tabuListSize <= 0 || parameters.cadenzaLengthParameter <= 0
+        || parameters.iterationsWithoutImprovementToRestart <= 0 || parameters.patternsNumberToCache <= 0) {
+        throw std::invalid_argument("Tabu search started with invalid parameters");
+    }
+    if (parameters.nextNeighbourFunction != TSPLocalSearchAlgorithms::swapNeighbourhood
+        && parameters.nextNeighbourFunction != TSPLocalSearchAlgorithms::insertNeighbourhood
+        && parameters.nextNeighbourFunction != TSPLocalSearchAlgorithms::invertNeighbourhood) {
+        throw std::invalid_argument("Tabu search started with invalid neighbour designation function");
+    }
+    if (parameters.initialSolutionFunction != TSPGreedyAlgorithms::createNaturalPermutation
+        && parameters.initialSolutionFunction != TSPGreedyAlgorithms::createRandomPermutation
+        && parameters.initialSolutionFunction != TSPGreedyAlgorithms::greedy
+        && parameters.initialSolutionFunction != TSPGreedyAlgorithms::nearestNeighbour) {
+        throw std::invalid_argument("Tabu search started with invalid initial solution designation function");
+    }
+
+    const int instanceSize = tspInstance->getVertexCount();
+    if (instanceSize <= 2) {
+        return TSPGreedyAlgorithms::createNaturalPermutation(tspInstance, outSolution);
+    }
+
+    const int cadenzaLength = std::max(static_cast<int>(instanceSize * parameters.cadenzaLengthParameter), 1);
+
+    std::vector<int> currentSolution, nextSolution, neighbourSolution, bestSolution;
+    int currentSolutionValue, nextSolutionValue, neighbourSolutionValue, bestSolutionValue;
+    currentSolutionValue = parameters.initialSolutionFunction(tspInstance, currentSolution);
+    bestSolution = currentSolution;
+    bestSolutionValue = currentSolutionValue;
+
+    TSPLocalSearchAlgorithms::fNeighbourhoodDiff nextSolutionTFValue;
+    if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::swapNeighbourhood) {
+        nextSolutionTFValue = TSPLocalSearchAlgorithms::swapNeighbourhoodTFValue;
+    } else if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
+        nextSolutionTFValue = TSPLocalSearchAlgorithms::insertNeighbourhoodTFValue;
+    } else {
+        nextSolutionTFValue = TSPLocalSearchAlgorithms::invertNeighbourhoodTFValue;
+    }
+
+    // [i][j] = cadenza
+    std::vector<std::vector<int>> tabuMatrix(instanceSize, std::vector<int>(instanceSize, 0));
+    std::list<std::vector<int>> cachedSolutions;
+
+    int iterationsWithoutImprovement = 0;
+    bool neighbourInTabu;
+    std::pair<std::pair<int, int>, int> tabuMove;
+    int movesInTabuMatrix = 0;
+    for (int currentIteration = 0; currentIteration < parameters.iterationsNumber; ++currentIteration) {
+        nextSolution.clear();
+        nextSolutionValue = std::numeric_limits<int>::max();
+        for (int i = 0; i < instanceSize; ++i) {
+            int j;
+            if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
+                j = 0;
+            } else {
+                // swapNeighbourhood or invertNeighbourhood
+                j = i + 1;
+            }
+            for (; j < instanceSize; ++j) {
+                if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
+                    if (i == j || i == j + 1) {
+                        continue;
+                    }
+                }
+                neighbourInTabu = false;
+                if (tabuMatrix[i][j] != 0) {
+                    neighbourInTabu = true;
+                }
+                neighbourSolution = parameters.nextNeighbourFunction(i, j, currentSolution);
+                neighbourSolutionValue = nextSolutionTFValue(tspInstance, i, j, currentSolution, neighbourSolution,
+                                                             currentSolutionValue);
+                // Aspiration criterium
+                if (neighbourInTabu && neighbourSolutionValue >= bestSolutionValue) {
+                    continue;
+                }
+
+                // Patterns
+                for (const auto &cachedSolution : cachedSolutions) {
+                    if (TSPUtils::areSolutionsEqual(neighbourSolution, cachedSolution)) {
+                        continue;
+                    }
+                }
+
+                if (nextSolution.empty() || neighbourSolutionValue < nextSolutionValue) {
+                    nextSolution = neighbourSolution;
+                    nextSolutionValue = neighbourSolutionValue;
+                    tabuMove.first.first = i;
+                    tabuMove.first.second = j;
+                    tabuMove.second = cadenzaLength;
+                }
+            }
+        }
+
+        for (int k = 0; k < instanceSize; ++k) {
+            for (int l = 0; l < instanceSize; ++l) {
+                if (tabuMatrix[k][l] == 1) {
+                    --movesInTabuMatrix;
+                }
+                if (tabuMatrix[k][l] > 0) {
+                    --tabuMatrix[k][l];
+                }
+            }
+        }
+
+        if (!nextSolution.empty()) {
+            if (nextSolutionValue < bestSolutionValue) {
+                bestSolution = nextSolution;
+                bestSolutionValue = nextSolutionValue;
+            } else {
+                ++iterationsWithoutImprovement;
+            }
+
+            // Tabu move insertion
+            if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
+                std::swap(tabuMove.first.first, tabuMove.first.second);
+            }
+            if (movesInTabuMatrix < parameters.tabuListSize) {
+                tabuMatrix[tabuMove.first.first][tabuMove.first.second] = tabuMove.second;
+                ++movesInTabuMatrix;
             }
 
             // Perform move

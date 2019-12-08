@@ -22,8 +22,11 @@ public:
     static int simulatedAnnealing(const IGraph *tspInstance, const LocalSearchParameters &parameters,
                                   std::vector<int> &outSolution);
 
-    static int tabuSearch(const IGraph *tspInstance, const LocalSearchParameters &parameters,
-                                  std::vector<int> &outSolution);
+    static int tabuSearchList(const IGraph *tspInstance, const LocalSearchParameters &parameters,
+                              std::vector<int> &outSolution);
+
+    static int tabuSearchMatrix(const IGraph *tspInstance, const LocalSearchParameters &parameters,
+                              std::vector<int> &outSolution);
 
     using fLocalSearchAlgorithm = decltype(&simulatedAnnealing);
 
@@ -54,9 +57,9 @@ public:
                                                       int currentSolutionValue);
 
     [[nodiscard]] static int insertNeighbourhoodTFValue(const IGraph *tspInstance, int i, int j,
-                                                      const std::vector<int> &currentSolution,
-                                                      const std::vector<int> &nextSolution,
-                                                      int currentSolutionValue);
+                                                        const std::vector<int> &currentSolution,
+                                                        const std::vector<int> &nextSolution,
+                                                        int currentSolutionValue);
 
     [[nodiscard]] static int invertNeighbourhoodTFValue(const IGraph *tspInstance, int i, int j,
                                                         const std::vector<int> &currentSolution,
