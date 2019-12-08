@@ -514,51 +514,51 @@ void TSPAlgorithmsTest::simulatedAnnealingTest() const {
     filePaths.clear();
 
     // ATSP
-//    filePaths.emplace_back("best.txt");
-//    filePaths.emplace_back("data17.txt");
-//    filePaths.emplace_back("data34.txt");
-//    filePaths.emplace_back("data36.txt");
-//    filePaths.emplace_back("data39.txt");
-//    filePaths.emplace_back("data43.txt");
-//    filePaths.emplace_back("data45.txt");
-//    filePaths.emplace_back("data48.txt");
-//    filePaths.emplace_back("data53.txt");
-//    filePaths.emplace_back("data56.txt");
-//    filePaths.emplace_back("data65.txt");
-//    filePaths.emplace_back("data70.txt");
-//    filePaths.emplace_back("data71.txt");
-//    filePaths.emplace_back("data100.txt");
-//    filePaths.emplace_back("data171.txt");
-//    filePaths.emplace_back("data323.txt");
-//    filePaths.emplace_back("data358.txt");
-//    filePaths.emplace_back("data403.txt");
-//    filePaths.emplace_back("data443.txt");
+    filePaths.emplace_back("best.txt");
+    filePaths.emplace_back("data17.txt");
+    filePaths.emplace_back("data34.txt");
+    filePaths.emplace_back("data36.txt");
+    filePaths.emplace_back("data39.txt");
+    filePaths.emplace_back("data43.txt");
+    filePaths.emplace_back("data45.txt");
+    filePaths.emplace_back("data48.txt");
+    filePaths.emplace_back("data53.txt");
+    filePaths.emplace_back("data56.txt");
+    filePaths.emplace_back("data65.txt");
+    filePaths.emplace_back("data70.txt");
+    filePaths.emplace_back("data71.txt");
+    filePaths.emplace_back("data100.txt");
+    filePaths.emplace_back("data171.txt");
+    filePaths.emplace_back("data323.txt");
+    filePaths.emplace_back("data358.txt");
+    filePaths.emplace_back("data403.txt");
+    filePaths.emplace_back("data443.txt");
     fileGroups.insert({"ATSP", filePaths});
     filePaths.clear();
 
     // SMALL
-//    filePaths.emplace_back("opt.txt");
-//    filePaths.emplace_back("data10.txt");
-//    filePaths.emplace_back("data11.txt");
-//    filePaths.emplace_back("data12.txt");
-//    filePaths.emplace_back("data13.txt");
-//    filePaths.emplace_back("data14.txt");
-//    filePaths.emplace_back("data15.txt");
-//    filePaths.emplace_back("data16.txt");
-//    filePaths.emplace_back("data17.txt");
-//    filePaths.emplace_back("data18.txt");
+    filePaths.emplace_back("opt.txt");
+    filePaths.emplace_back("data10.txt");
+    filePaths.emplace_back("data11.txt");
+    filePaths.emplace_back("data12.txt");
+    filePaths.emplace_back("data13.txt");
+    filePaths.emplace_back("data14.txt");
+    filePaths.emplace_back("data15.txt");
+    filePaths.emplace_back("data16.txt");
+    filePaths.emplace_back("data17.txt");
+    filePaths.emplace_back("data18.txt");
     fileGroups.insert({"SMALL", filePaths});
     filePaths.clear();
 
     // TSP
     filePaths.emplace_back("best.txt");
     filePaths.emplace_back("data17.txt");
-//    filePaths.emplace_back("data21.txt");
-//    filePaths.emplace_back("data24.txt");
-//    filePaths.emplace_back("data26.txt");
-//    filePaths.emplace_back("data29.txt");
-//    filePaths.emplace_back("data42.txt");
-//    filePaths.emplace_back("data58.txt");
+    filePaths.emplace_back("data21.txt");
+    filePaths.emplace_back("data24.txt");
+    filePaths.emplace_back("data26.txt");
+    filePaths.emplace_back("data29.txt");
+    filePaths.emplace_back("data42.txt");
+    filePaths.emplace_back("data58.txt");
     filePaths.emplace_back("data120.txt");
     fileGroups.insert({"TSP", filePaths});
     filePaths.clear();
@@ -578,8 +578,8 @@ void TSPAlgorithmsTest::simulatedAnnealingTest() const {
 
     LocalSearchParameters parameters;
     parameters.initialTemperature = 1000;
-    parameters.coolingSchemeParameter = 0.99;
-    parameters.epochIterationsNumber = 10;
+    parameters.coolingSchemeParameter = 0.95;
+    parameters.epochIterationsNumber = 500;
     parameters.iterationsNumber = 1000;
 //    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::linearCoolingScheme;
 //    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
@@ -590,18 +590,18 @@ void TSPAlgorithmsTest::simulatedAnnealingTest() const {
 //    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
 //    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
 //                             "Simulated annealing, greedy, linearCoolingScheme, swapNeighbourhood");
-
+//
 //    parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
 //    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
 //    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
 //    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
 //                             "Simulated annealing, greedy, geometricCoolingScheme, swapNeighbourhood");
 //
-    parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
-    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::logarithmicCoolingScheme;
-    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
-    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
-                             "Simulated annealing, greedy, logarithmicCoolingScheme, swapNeighbourhood");
+//    parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
+//    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::logarithmicCoolingScheme;
+//    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
+//    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
+//                             "Simulated annealing, greedy, logarithmicCoolingScheme, swapNeighbourhood");
 //
 //    parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
 //    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
@@ -615,12 +615,18 @@ void TSPAlgorithmsTest::simulatedAnnealingTest() const {
 //    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
 //                             "Simulated annealing, greedy, geometricCoolingScheme, invertNeighbourhood");
 //
-//    parameters.initialSolutionFunction = TSPGreedyAlgorithms::createNaturalPermutation;
+//    parameters.initialSolutionFunction = TSPGreedyAlgorithms::nearestNeighbour;
 //    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
 //    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::invertNeighbourhood;
 //    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
-//                             "Simulated annealing, createNaturalPermutation, geometricCoolingScheme, invertNeighbourhood");
-//
+//                             "Simulated annealing, nearestNeighbour, geometricCoolingScheme, invertNeighbourhood");
+
+    parameters.initialSolutionFunction = TSPGreedyAlgorithms::createNaturalPermutation;
+    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
+    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::invertNeighbourhood;
+    testLocalSearchAlgorithm(fileGroups, TSPLocalSearchAlgorithms::simulatedAnnealing, parameters,
+                             "Simulated annealing, createNaturalPermutation, geometricCoolingScheme, invertNeighbourhood");
+
 //    parameters.initialSolutionFunction = TSPGreedyAlgorithms::createRandomPermutation;
 //    parameters.coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
 //    parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::invertNeighbourhood;
