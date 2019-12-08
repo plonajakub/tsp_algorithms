@@ -381,19 +381,17 @@ int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalS
         nextSolutionValue = -1;
         for (int i = 0; i < instanceSize; ++i) {
             int j;
-            if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::swapNeighbourhood) {
-                j = i + 1;
-            } else {
-                // insertNeighbourhood or invertNeighbourhood
+            if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
                 j = 0;
+            } else {
+                // swapNeighbourhood or invertNeighbourhood
+                j = i + 1;
             }
             for (; j < instanceSize; ++j) {
-                if (i == j) {
-                    continue;
-                }
-                if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood &&
-                    i == j + 1) {
-                    continue;
+                if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
+                    if (i == j || i == j + 1) {
+                        continue;
+                    }
                 }
                 neighbourInTabu = false;
                 for (const auto &move : tabuList) {
