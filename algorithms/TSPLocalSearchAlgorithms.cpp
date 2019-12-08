@@ -26,8 +26,8 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
         throw std::invalid_argument("Tabu search started with invalid initial solution designation function");
     }
     if (parameters.coolingSchemeFunction == TSPLocalSearchAlgorithms::geometricCoolingScheme
-    && parameters.coolingSchemeParameter >= 1) {
-        throw std::invalid_argument("Tabu search started with coolingSchemeParameter > 1 for geometricCoolingScheme");
+        && parameters.coolingSchemeParameter >= 1) {
+        throw std::invalid_argument("Tabu search started with coolingSchemeParameter >= 1 for geometricCoolingScheme");
     }
 
     const int instanceSize = tspInstance->getVertexCount();
@@ -36,13 +36,10 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
         return TSPGreedyAlgorithms::createNaturalPermutation(tspInstance, outSolution);
     }
 
-    double currentTemperature = parameters.initialTemperature;
-    int currentEpochIterationIdx = 0;
-    int currentIterationIdx = 0;
-
     fCoolingScheme getNextTemperature = parameters.coolingSchemeFunction;
     TSPGreedyAlgorithms::fTSPAlgorithm designateInitialSolution = parameters.initialSolutionFunction;
     fNeighbourhood getNextNeighbour = parameters.nextNeighbourFunction;
+
     fNeighbourhoodDiff calculateNextSolutionTargetFunctionValue = nullptr;
     if (getNextNeighbour == swapNeighbourhood) {
         calculateNextSolutionTargetFunctionValue = swapNeighbourhoodTFValue;
@@ -60,8 +57,10 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
     bestSolutionValue = currentSolutionValue;
 
     int i, j;
-    while (currentIterationIdx < parameters.iterationsNumber) {
-        while (currentEpochIterationIdx < parameters.epochIterationsNumber) {
+    double currentTemperature = parameters.initialTemperature;
+    for (int currentIterationIdx = 0; currentIterationIdx < parameters.iterationsNumber; ++currentIterationIdx) {
+        for (int currentEpochIterationIdx = 0;
+             currentEpochIterationIdx < parameters.epochIterationsNumber; ++currentEpochIterationIdx) {
             i = Random::getInt(0, instanceSize - 1);
             j = Random::getInt(0, instanceSize - 1);
             if (i == j) {
@@ -91,7 +90,12 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                 currentSolution = nextSolution;
                 currentSolutionValue = nextSolutionValue;
             } else if (Random::getRealClosed(0.0, 1.0) <=
-                       sigmoidFunction(currentSolutionValue - nextSolutionValue) / currentTemperature) {
+                       2 * sigmoidFunction((currentSolutionValue - nextSolutionValue) / currentTemperature)
+                    ) {
+                std::cout << "currentSolutionValue - nextSolutionValue = " << currentSolutionValue - nextSolutionValue
+                          << " T = " << currentTemperature << " Probability = "
+                          << 2 * sigmoidFunction((currentSolutionValue - nextSolutionValue) / currentTemperature)
+                          << std::endl;
                 currentSolution = nextSolution;
                 currentSolutionValue = nextSolutionValue;
             }
@@ -100,11 +104,9 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                 bestSolutionValue = nextSolutionValue;
                 bestSolution = nextSolution;
             }
-            ++currentEpochIterationIdx;
         }
         currentTemperature = getNextTemperature(currentTemperature, parameters.initialTemperature,
                                                 parameters.coolingSchemeParameter, currentIterationIdx);
-        ++currentIterationIdx;
     }
     outSolution = bestSolution;
     return bestSolutionValue;
