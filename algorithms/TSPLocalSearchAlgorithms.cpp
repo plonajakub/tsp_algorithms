@@ -352,6 +352,10 @@ int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalS
     }
 
     const int instanceSize = tspInstance->getVertexCount();
+    if (instanceSize <= 2) {
+        return TSPGreedyAlgorithms::createNaturalPermutation(tspInstance, outSolution);
+    }
+
     const int cadenzaLength = static_cast<int>(instanceSize * parameters.cadenzaLengthParameter);
 
     std::vector<int> currentSolution, nextSolution, neighbourSolution, bestSolution;

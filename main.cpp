@@ -9,11 +9,11 @@ int main() {
 //    ListGraphTest lgt;
 //    lgt.run();
 
-//    TSPAlgorithmsTest tspAlgorithmsTest;
-//    tspAlgorithmsTest.run();
+    TSPAlgorithmsTest tspAlgorithmsTest;
+    tspAlgorithmsTest.run();
 
-    MiscellaneousTests mt;
-    mt.run();
+//    MiscellaneousTests mt;
+//    mt.run();
 
 //    ConsoleMenu cm;
 //    cm.start();

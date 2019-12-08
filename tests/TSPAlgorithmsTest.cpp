@@ -655,12 +655,12 @@ void TSPAlgorithmsTest::tabuSearchTest() const {
     filePaths.emplace_back("data65.txt");
     filePaths.emplace_back("data70.txt");
     filePaths.emplace_back("data71.txt");
-    filePaths.emplace_back("data100.txt");
-    filePaths.emplace_back("data171.txt");
-    filePaths.emplace_back("data323.txt");
-    filePaths.emplace_back("data358.txt");
-    filePaths.emplace_back("data403.txt");
-    filePaths.emplace_back("data443.txt");
+//    filePaths.emplace_back("data100.txt");
+//    filePaths.emplace_back("data171.txt");
+//    filePaths.emplace_back("data323.txt");
+//    filePaths.emplace_back("data358.txt");
+//    filePaths.emplace_back("data403.txt");
+//    filePaths.emplace_back("data443.txt");
     fileGroups.insert({"ATSP", filePaths});
     filePaths.clear();
 
@@ -706,9 +706,10 @@ void TSPAlgorithmsTest::tabuSearchTest() const {
 
     LocalSearchParameters parameters;
     parameters.iterationsNumber = 1000;
-    parameters.cadenzaLengthParameter = 10;
-    parameters.iterationsWithoutImprovementToRestart = 50;
-    parameters.patternsNumberToCache = 5;
+    parameters.tabuListSize = 100;
+    parameters.cadenzaLengthParameter = 1.0/8;
+    parameters.iterationsWithoutImprovementToRestart = 20;
+    parameters.patternsNumberToCache = 2;
     parameters.nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
     parameters.initialSolutionFunction = TSPGreedyAlgorithms::greedy;
 
