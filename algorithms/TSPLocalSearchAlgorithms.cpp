@@ -1,5 +1,7 @@
 #include "TSPLocalSearchAlgorithms.h"
 
+//region Simulated annealing
+
 int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                                                  const LocalSearchParameters &parameters,
                                                  std::vector<int> &outSolution) {
@@ -64,7 +66,7 @@ int TSPLocalSearchAlgorithms::simulatedAnnealing(const IGraph *tspInstance,
                 currentSolution = nextSolution;
                 currentSolutionValue = nextSolutionValue;
             } else if (Random::getRealClosed(0.0, 1.0) <=
-                sigmoidFunction(currentSolutionValue - nextSolutionValue) / currentTemperature) {
+                       sigmoidFunction(currentSolutionValue - nextSolutionValue) / currentTemperature) {
                 currentSolution = nextSolution;
                 currentSolutionValue = nextSolutionValue;
             }
@@ -335,3 +337,117 @@ int TSPLocalSearchAlgorithms::invertNeighbourhoodTFValue(const IGraph *tspInstan
 double TSPLocalSearchAlgorithms::sigmoidFunction(double x) {
     return 1.0 / (1.0 + exp(-x));
 }
+
+//endregion
+
+int TSPLocalSearchAlgorithms::tabuSearch(const IGraph *tspInstance, const LocalSearchParameters &parameters,
+                                         std::vector<int> &outSolution) {
+    const int instanceSize = tspInstance->getVertexCount();
+    const int cadenzaLength = static_cast<int>(instanceSize / parameters.cadenzaLengthParameter);
+
+    std::vector<int> currentSolution, nextSolution, neighbourSolution, bestSolution;
+    int currentSolutionValue, nextSolutionValue, neighbourSolutionValue, bestSolutionValue;
+    currentSolutionValue = parameters.initialSolutionFunction(tspInstance, currentSolution);
+    bestSolution = currentSolution;
+    bestSolutionValue = currentSolutionValue;
+
+    TSPLocalSearchAlgorithms::fNeighbourhoodDiff nextSolutionTFValue;
+    if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::swapNeighbourhood) {
+        nextSolutionTFValue = TSPLocalSearchAlgorithms::swapNeighbourhoodTFValue;
+    } else if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
+        nextSolutionTFValue = TSPLocalSearchAlgorithms::insertNeighbourhoodTFValue;
+    } else {
+        nextSolutionTFValue = TSPLocalSearchAlgorithms::invertNeighbourhoodTFValue;
+    }
+
+    // ((i, j), cadenza)
+    std::list<std::pair<std::pair<int, int>, int>> tabuList;
+    std::list<std::vector<int>> cachedSolutions;
+
+    int iterationsWithoutImprovement = 0;
+    bool inTabu;
+    std::pair<std::pair<int, int>, int> tabuMove;
+    for (int currentIteration = 0; currentIteration < parameters.iterationsNumber; ++currentIteration) {
+        nextSolution.clear();
+        nextSolutionValue = -1;
+        for (int i = 0; i < instanceSize; ++i) {
+            int j;
+            if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::swapNeighbourhood) {
+                j = i + 1;
+            } else {
+                // insertNeighbourhood or invertNeighbourhood
+                j = 0;
+            }
+            for (; j < instanceSize; ++j) {
+                if (i == j) {
+                    continue;
+                }
+                if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood &&
+                    i == j + 1) {
+                    continue;
+                }
+                inTabu = false;
+                for (const auto &move : tabuList) {
+                    if (std::pair<int, int>(i, j) == move.first) {
+                        inTabu = true;
+                        break;
+                    }
+                }
+                neighbourSolution = parameters.nextNeighbourFunction(i, j, currentSolution);
+                neighbourSolutionValue = nextSolutionTFValue(tspInstance, i, j, currentSolution, neighbourSolution,
+                                                             currentSolutionValue);
+                // Aspiration criterium
+                if (inTabu && neighbourSolutionValue >= bestSolutionValue) {
+                    continue;
+                }
+                // TODO Patterns
+
+                if (nextSolution.empty() || neighbourSolutionValue < nextSolutionValue) {
+                    nextSolution = neighbourSolution;
+                    nextSolutionValue = neighbourSolutionValue;
+                    tabuMove.first.first = i;
+                    tabuMove.first.second = j;
+                    tabuMove.second = cadenzaLength;
+                }
+            }
+        }
+
+        for (auto it = tabuList.begin(); it != tabuList.end();) {
+            --it->second;
+            if (it->second == 0) {
+                it = tabuList.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        if (!nextSolution.empty()) {
+            if (nextSolutionValue < bestSolutionValue) {
+                bestSolution = nextSolution;
+                bestSolutionValue = nextSolutionValue;
+            } else {
+                ++iterationsWithoutImprovement;
+            }
+            if (parameters.nextNeighbourFunction == TSPLocalSearchAlgorithms::insertNeighbourhood) {
+                std::swap(tabuMove.first.first, tabuMove.first.second);
+            }
+            tabuList.emplace_back(tabuMove);
+            currentSolution = nextSolution;
+            currentSolutionValue = nextSolutionValue;
+        }
+        // Critical event
+        if (iterationsWithoutImprovement == parameters.iterationsWithoutImprovementToRestart) {
+            currentSolution.clear();
+            currentSolutionValue = TSPGreedyAlgorithms::createRandomPermutation(tspInstance, currentSolution);
+            if (currentSolutionValue < bestSolutionValue) {
+                bestSolution = currentSolution;
+                bestSolutionValue = currentSolutionValue;
+            }
+            iterationsWithoutImprovement = 0;
+        }
+    }
+    outSolution = bestSolution;
+    return bestSolutionValue;
+}
+
+

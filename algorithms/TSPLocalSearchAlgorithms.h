@@ -22,6 +22,9 @@ public:
     static int simulatedAnnealing(const IGraph *tspInstance, const LocalSearchParameters &parameters,
                                   std::vector<int> &outSolution);
 
+    static int tabuSearch(const IGraph *tspInstance, const LocalSearchParameters &parameters,
+                                  std::vector<int> &outSolution);
+
     using fLocalSearchAlgorithm = decltype(&simulatedAnnealing);
 
     // initialTemperature > 0, parameter > 0

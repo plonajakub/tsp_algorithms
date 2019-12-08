@@ -7,17 +7,25 @@
 class LocalSearchParameters {
 
 public:
+    // simulated annealing
     double initialTemperature;
     double coolingSchemeParameter;
     int epochIterationsNumber;
-    int iterationsNumber;
+    int iterationsNumber; // and tabu search
     TSPLocalSearchAlgorithms::fCoolingScheme coolingSchemeFunction;
-    TSPLocalSearchAlgorithms::fNeighbourhood nextNeighbourFunction;
-    TSPGreedyAlgorithms::fTSPAlgorithm initialSolutionFunction;
+    TSPLocalSearchAlgorithms::fNeighbourhood nextNeighbourFunction; // and tabu search
+    TSPGreedyAlgorithms::fTSPAlgorithm initialSolutionFunction; // and tabu search
+
+    // tabu search
+    int tabuListSize;
+    double cadenzaLengthParameter;
+    int iterationsWithoutImprovementToRestart;
+    int patternsNumberToCache;
 
     LocalSearchParameters() : initialTemperature(-1), coolingSchemeParameter(-1), epochIterationsNumber(-1),
                               iterationsNumber(-1), coolingSchemeFunction(nullptr), nextNeighbourFunction(nullptr),
-                              initialSolutionFunction(nullptr) {}
+                              initialSolutionFunction(nullptr), tabuListSize(-1), cadenzaLengthParameter(-1),
+                              iterationsWithoutImprovementToRestart(-1), patternsNumberToCache(-1) {}
 
     LocalSearchParameters(double initialTemperature, double coolingSchemeParameter, int epochIterationsNumber,
                           int iterationsNumber, TSPLocalSearchAlgorithms::fCoolingScheme coolingSchemeFunction,
