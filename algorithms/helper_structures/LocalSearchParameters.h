@@ -50,6 +50,16 @@ public:
             iterationsWithoutImprovementToRestart(iterationsWithoutImprovementToRestart),
             patternsNumberToCache(patternsNumberToCache), initialSolutionFunction(initialSolutionFunction),
             nextNeighbourFunction(nextNeighbourFunction) {}
+
+    void setSimulatedAnnealingDefaultParameters() {
+        initialTemperature = 1000;
+        coolingSchemeParameter = 0.95;
+        epochIterationsNumber = 500;
+        iterationsNumber = 1000;
+        coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
+        nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
+        initialSolutionFunction = TSPGreedyAlgorithms::nearestNeighbour;
+    }
 };
 
 

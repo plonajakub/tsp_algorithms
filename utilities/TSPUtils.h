@@ -27,10 +27,17 @@ public:
     static std::string
     loadTSPInstance(IGraph **pGraph, const std::string &path, TSPUtils::TSPType tspType = Asymmetric);
 
+    static std::string loadTSPInstanceAbsolutePath(IGraph **pGraph, const std::string &path, TSPType tspType);
+
     // Returns map with entries {<instance file name>, <solution value>}
     static std::map<std::string, int> loadTSPSolutionValues(const std::string &file);
 
+    static std::map<std::string, int> loadTSPSolutionValuesAbsolutePath(const std::string &file);
+
     static TSPType getTSPType(const std::string &path);
+
+    static TSPType getTSPTypeAbsolutePath(const std::string &path);
+
 
     static int calculateTargetFunctionValue(const IGraph *tspInstance, const DoublyLinkedList<int> &vertexPermutation);
 
@@ -50,6 +57,7 @@ public:
     bool static areSolutionsEqual(const std::vector<int> &solution1, const std::vector<int> &solution2);
 
 private:
+
 
 };
 
