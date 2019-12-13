@@ -7,14 +7,18 @@
 #include <map>
 
 void LSParameterAnalysis::run() {
-    performSimulatedAnnealingParameterRangeTests(LocalSearchParameters::SAParameters::INITIAL_TEMPERATURE,
-                                                 5, 1, 10001, 3);
-//    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::linearCoolingScheme, 2,
-//                                                         1, 100, 2);
-//    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::geometricCoolingScheme, 2,
-//                                                         0.01, 0.99, 2);
-//    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::logarithmicCoolingScheme, 2,
-//                                                         1, 100, 2);
+    performSimulatedAnnealingParameterRangeTests<double>(LocalSearchParameters::SAParameters::INITIAL_TEMPERATURE,
+                                                 2, 1, 10001, 2);
+    performSimulatedAnnealingParameterRangeTests<int>(LocalSearchParameters::SAParameters::ITERATIONS_NUMBER,
+                                                 2, 1, 1000, 2);
+    performSimulatedAnnealingParameterRangeTests<int>(LocalSearchParameters::SAParameters::EPOCH_ITERATIONS_NUMBER,
+                                                 2, 1, 500, 2);
+    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::linearCoolingScheme, 2,
+                                                         1, 100, 2);
+    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::geometricCoolingScheme, 2,
+                                                         0.01, 0.99, 2);
+    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::logarithmicCoolingScheme, 2,
+                                                         1, 100, 2);
 }
 
 std::map<std::string, std::vector<std::string>> LSParameterAnalysis::getInstancePaths() const {
@@ -125,14 +129,14 @@ LSParameterAnalysis::performSimulatedAnnealingParameterRangeTests(LocalSearchPar
     std::chrono::high_resolution_clock::time_point start, finish;
     std::chrono::duration<double, std::milli> elapsed = std::chrono::duration<double, std::milli>();
 
-    T parameterStep = (endParameter - startParameter) / nSteps;
+    T parameterStep = ceil(static_cast<double>(endParameter - startParameter) / nSteps);
     int analysedInstances = 0;
     for (const auto &tspInstance : tspInstances) {
         ++analysedInstances;
         for (T currentParameterValue = startParameter;
              currentParameterValue < endParameter; currentParameterValue += parameterStep) {
             std::cout << "Instance " << analysedInstances << '/' << tspInstances.size() << ": "
-                      << round((currentParameterValue / endParameter) * 100) << " %" << std::endl;
+                      << round((static_cast<double>(currentParameterValue) / endParameter) * 100) << " %" << std::endl;
             parameterPoint = AnalysisPoint<T>();
             parameters.setSimulatedAnnealingDefaultParameters();
 
