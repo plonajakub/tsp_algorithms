@@ -47,6 +47,8 @@ private:
 
     void performSimulatedAnnealingInitialSolutionTests(int nRepetitions);
 
+    void performSimulatedAnnealingNeighbourhoodTests(int nRepetitions);
+
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getInstancePaths() const;
 
     // <instance, optimal solution>

@@ -25,8 +25,10 @@ void LSParameterAnalysis::run() {
 //                                                         0.01, 0.99, 2);
 //    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::logarithmicCoolingScheme, 2,
 //                                                         1, 100, 2);
-    performSimulatedAnnealingInitialSolutionTests(2);
+//    performSimulatedAnnealingInitialSolutionTests(2);
+    performSimulatedAnnealingNeighbourhoodTests(2);
 }
+
 
 std::map<std::string, std::vector<std::string>> LSParameterAnalysis::getInstancePaths() const {
     std::map<std::string, std::vector<std::string>> fileGroups;
@@ -342,6 +344,74 @@ void LSParameterAnalysis::performSimulatedAnnealingInitialSolutionTests(int nRep
         delete item.first;
     }
     std::cout << "SA: initial solution algorithm analysis DONE" << std::endl;
+}
+
+void LSParameterAnalysis::performSimulatedAnnealingNeighbourhoodTests(int nRepetitions) {
+    std::map<std::string, TSPLocalSearchAlgorithms::fNeighbourhood> neighbourhoodAlgorithms = {
+            {"swap",   TSPLocalSearchAlgorithms::swapNeighbourhood},
+            {"insert", TSPLocalSearchAlgorithms::insertNeighbourhood},
+            {"invert", TSPLocalSearchAlgorithms::invertNeighbourhood}
+    };
+
+    std::cout << "SA: neighbourhood algorithm analysis START" << std::endl;
+    std::vector<std::pair<IGraph *, int>> tspInstances = loadInstances(getInstancePaths());
+
+    LocalSearchParameters parameters;
+    std::vector<int> tmpSolution;
+    int tmpSolutionValue, bestSolutionValue;
+
+    std::vector<AnalysisPoint<std::string>> neighbourhoodAnalysisPoints;
+    AnalysisPoint<std::string> neighbourhoodParameterPoint;
+
+    std::chrono::high_resolution_clock::time_point start, finish;
+    std::chrono::duration<double, std::milli> elapsed = std::chrono::duration<double, std::milli>();
+
+    int analysedInstances = 0;
+    for (const auto &tspInstance : tspInstances) {
+        ++analysedInstances;
+        for (const auto &neighbourhoodAlgorithm : neighbourhoodAlgorithms) {
+            std::cout << "Instance " << analysedInstances << '/' << tspInstances.size() << ": algorithm \""
+                      << neighbourhoodAlgorithm.first << "\"" << std::endl;
+            neighbourhoodParameterPoint = AnalysisPoint<std::string>();
+            parameters.setSimulatedAnnealingDefaultParameters();
+            parameters.nextNeighbourFunction = neighbourhoodAlgorithm.second;
+            bestSolutionValue = std::numeric_limits<int>::max();
+            for (int repetition = 0; repetition < nRepetitions; ++repetition) {
+                tmpSolution.clear();
+
+                start = std::chrono::high_resolution_clock::now();
+                tmpSolutionValue = TSPLocalSearchAlgorithms::simulatedAnnealing(tspInstance.first, parameters,
+                                                                                tmpSolution);
+                finish = std::chrono::high_resolution_clock::now();
+                elapsed = finish - start;
+                neighbourhoodParameterPoint.time += elapsed.count();
+
+                neighbourhoodParameterPoint.algorithmMeanSolution += tmpSolutionValue;
+                if (tmpSolutionValue < bestSolutionValue) {
+                    bestSolutionValue = tmpSolutionValue;
+                }
+
+            }
+            neighbourhoodParameterPoint.instanceSize = tspInstance.first->getVertexCount();
+            neighbourhoodParameterPoint.fileSolution = tspInstance.second;
+            neighbourhoodParameterPoint.algorithmBeastSolution = bestSolutionValue;
+            neighbourhoodParameterPoint.algorithmMeanSolution /= nRepetitions;
+            neighbourhoodParameterPoint.parameterName = "neighbourhood_algorithm";
+            neighbourhoodParameterPoint.parameterValue = neighbourhoodAlgorithm.first;
+            neighbourhoodParameterPoint.time /= nRepetitions;
+            neighbourhoodAnalysisPoints.emplace_back(neighbourhoodParameterPoint);
+        }
+    }
+
+    std::cout << "Writing collected data to file...";
+    writeResultsToFile("simulated_annealing", neighbourhoodAnalysisPoints, nRepetitions);
+    std::cout << "DONE" << std::endl;
+
+    // Cleanup
+    for (const auto &item : tspInstances) {
+        delete item.first;
+    }
+    std::cout << "SA: neighbourhood algorithm analysis DONE" << std::endl;
 }
 
 
