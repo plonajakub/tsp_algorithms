@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include "../../structures/graphs/IGraph.h"
+#include "../../algorithms/TSPLocalSearchAlgorithms.h"
 #include <algorithm>
 #include <fstream>
 
@@ -35,8 +36,14 @@ public:
 
 private:
 
-    void performSimulatedAnnealingTemperatureTests(int nRepetitions, double startTemperature,
-                                                   double endTemperature, int nSteps);
+    template<class T>
+    void performSimulatedAnnealingParameterRangeTests(LocalSearchParameters::SAParameters parameterID, int nRepetitions,
+                                                      T startParameter, T endParameter, int nSteps);
+
+    void
+    performSimulatedAnnealingCoolingSchemeParameterTests(
+            TSPLocalSearchAlgorithms::fCoolingScheme coolingSchemeFunction, int nRepetitions, double startParameter,
+            double endParameter, int nSteps);
 
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getInstancePaths() const;
 

@@ -7,6 +7,12 @@
 class LocalSearchParameters {
 
 public:
+    enum class SAParameters {
+        INITIAL_TEMPERATURE,
+        COOLING_SCHEME_PARAMETER,
+        EPOCH_ITERATIONS_NUMBER,
+        ITERATIONS_NUMBER
+    };
     // Simulated annealing
     double initialTemperature; // > 0
     double coolingSchemeParameter; // > 0, for geometricCoolingScheme also < 1
@@ -16,6 +22,13 @@ public:
     TSPLocalSearchAlgorithms::fNeighbourhood nextNeighbourFunction;
     TSPGreedyAlgorithms::fTSPAlgorithm initialSolutionFunction;
 
+    enum class TSParameter {
+        ITERATIONS_NUMBER,
+        TABU_LIST_SIZE,
+        CADENZA_LENGTH_PARAMETER,
+        ITERATIONS_WITHOUT_IMPROVEMENT_TO_RESTART,
+        PATTERNS_NUMBER_TO_CACHE
+    };
     // Tabu search
 //    int iterationsNumber; // > 0
     int tabuListSize; // > 0
