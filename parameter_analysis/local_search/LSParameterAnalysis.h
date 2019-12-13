@@ -45,6 +45,8 @@ private:
             TSPLocalSearchAlgorithms::fCoolingScheme coolingSchemeFunction, int nRepetitions, double startParameter,
             double endParameter, int nSteps);
 
+    void performSimulatedAnnealingInitialSolutionTests(int nRepetitions);
+
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getInstancePaths() const;
 
     // <instance, optimal solution>
