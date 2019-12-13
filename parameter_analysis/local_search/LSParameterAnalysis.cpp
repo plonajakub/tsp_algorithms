@@ -7,7 +7,7 @@
 #include <map>
 
 void LSParameterAnalysis::run() {
-    performSimulatedAnnealingTemperatureTests(3, 1, 10001, 2);
+    performSimulatedAnnealingTemperatureTests(10, 1, 10001, 10);
 }
 
 std::map<std::string, std::vector<std::string>> LSParameterAnalysis::getInstancePaths() const {
@@ -87,6 +87,7 @@ LSParameterAnalysis::loadInstances(const std::map<std::string, std::vector<std::
 
 void LSParameterAnalysis::performSimulatedAnnealingTemperatureTests(int nRepetitions, double startTemperature,
                                                                     double endTemperature, int nSteps) {
+    std::cout << "SA: temperature analysis START" << std::endl;
     std::vector<std::pair<IGraph *, int>> tspInstances = loadInstances(getInstancePaths());
 
     LocalSearchParameters parameters;
@@ -100,9 +101,12 @@ void LSParameterAnalysis::performSimulatedAnnealingTemperatureTests(int nRepetit
     std::chrono::duration<double, std::milli> elapsed = std::chrono::duration<double, std::milli>();
 
     double temperatureStep = (endTemperature - startTemperature) / nSteps;
+    int analysedInstances = 0;
     for (const auto &tspInstance : tspInstances) {
+        ++analysedInstances;
         for (double currentTemperature = startTemperature;
              currentTemperature < endTemperature; currentTemperature += temperatureStep) {
+            std::cout << "Instance "  << analysedInstances << '/' << tspInstances.size() << ": " << round((currentTemperature / endTemperature) * 100) << " %" << std::endl;
             temperaturePoint = AnalysisPoint<double>();
             parameters.setSimulatedAnnealingDefaultParameters();
             parameters.initialTemperature = currentTemperature;
@@ -134,12 +138,15 @@ void LSParameterAnalysis::performSimulatedAnnealingTemperatureTests(int nRepetit
         }
     }
 
+    std::cout << "Writing collected data to file...";
     writeResultsToFile("simulated_annealing", temperatureAnalysisPoints, nRepetitions);
+    std::cout << "DONE" << std::endl;
 
     // Cleanup
     for (const auto &item : tspInstances) {
         delete item.first;
     }
+    std::cout << "SA: temperature analysis DONE" << std::endl;
 }
 
 
