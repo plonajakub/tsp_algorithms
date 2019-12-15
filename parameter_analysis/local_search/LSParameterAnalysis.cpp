@@ -97,6 +97,61 @@ std::map<std::string, std::vector<std::string>> LSParameterAnalysis::getInstance
     return fileGroups;
 }
 
+std::map<std::string, std::vector<std::string>> LSParameterAnalysis::getInstancePathsTimeTests() const {
+    std::map<std::string, std::vector<std::string>> fileGroups;
+    std::vector<std::string> filePaths;
+
+    // SMALL
+    filePaths.emplace_back("opt.txt");
+    filePaths.emplace_back("data10.txt");
+    filePaths.emplace_back("data11.txt");
+    filePaths.emplace_back("data12.txt");
+    filePaths.emplace_back("data13.txt");
+    filePaths.emplace_back("data14.txt");
+    filePaths.emplace_back("data15.txt");
+    filePaths.emplace_back("data16.txt");
+    filePaths.emplace_back("data18.txt");
+    fileGroups.insert({"../input_data/SMALL", filePaths});
+    filePaths.clear();
+
+    // ATSP
+    filePaths.emplace_back("best.txt");
+    filePaths.emplace_back("data17.txt");
+    filePaths.emplace_back("data34.txt");
+    filePaths.emplace_back("data36.txt");
+    filePaths.emplace_back("data39.txt");
+    filePaths.emplace_back("data43.txt");
+    filePaths.emplace_back("data45.txt");
+    filePaths.emplace_back("data48.txt");
+    filePaths.emplace_back("data53.txt");
+    filePaths.emplace_back("data56.txt");
+    filePaths.emplace_back("data65.txt");
+    filePaths.emplace_back("data70.txt");
+    filePaths.emplace_back("data71.txt");
+    filePaths.emplace_back("data100.txt");
+//    filePaths.emplace_back("data171.txt");
+//    filePaths.emplace_back("data323.txt");
+//    filePaths.emplace_back("data358.txt");
+//    filePaths.emplace_back("data403.txt");
+//    filePaths.emplace_back("data443.txt");
+    fileGroups.insert({"../input_data/ATSP", filePaths});
+    filePaths.clear();
+
+    // TSP
+    filePaths.emplace_back("best.txt");
+    filePaths.emplace_back("data21.txt");
+    filePaths.emplace_back("data24.txt");
+    filePaths.emplace_back("data26.txt");
+    filePaths.emplace_back("data29.txt");
+    filePaths.emplace_back("data42.txt");
+    filePaths.emplace_back("data58.txt");
+//    filePaths.emplace_back("data120.txt");
+    fileGroups.insert({"../input_data/TSP", filePaths});
+    filePaths.clear();
+
+    return fileGroups;
+}
+
 std::vector<std::pair<IGraph *, int>>
 LSParameterAnalysis::loadInstances(const std::map<std::string, std::vector<std::string>> &instancePaths) {
     std::vector<std::pair<IGraph *, int>> tspInstances;
@@ -568,7 +623,7 @@ void LSParameterAnalysis::performTabuSearchInitialSolutionTests(int nRepetitions
 
                 start = std::chrono::high_resolution_clock::now();
                 tmpSolutionValue = TSPLocalSearchAlgorithms::tabuSearchList(tspInstance.first, parameters,
-                                                                                tmpSolution);
+                                                                            tmpSolution);
                 finish = std::chrono::high_resolution_clock::now();
                 elapsed = finish - start;
                 initialSolutionParameterPoint.time += elapsed.count();
@@ -636,7 +691,7 @@ void LSParameterAnalysis::performTabuSearchNeighbourhoodTests(int nRepetitions) 
 
                 start = std::chrono::high_resolution_clock::now();
                 tmpSolutionValue = TSPLocalSearchAlgorithms::tabuSearchList(tspInstance.first, parameters,
-                                                                                tmpSolution);
+                                                                            tmpSolution);
                 finish = std::chrono::high_resolution_clock::now();
                 elapsed = finish - start;
                 neighbourhoodParameterPoint.time += elapsed.count();
@@ -667,4 +722,70 @@ void LSParameterAnalysis::performTabuSearchNeighbourhoodTests(int nRepetitions) 
         delete item.first;
     }
     std::cout << "TS: neighbourhood algorithm analysis DONE" << std::endl;
+}
+
+void LSParameterAnalysis::performTimeBenchmark(TSPLocalSearchAlgorithms::fLocalSearchAlgorithm algorithm,
+                                               LocalSearchParameters parameters, int nRepetitions) {
+    std::string algorithmName;
+    if (algorithm == TSPLocalSearchAlgorithms::simulatedAnnealing) {
+        algorithmName = "simulated_annealing";
+    } else if (algorithm == TSPLocalSearchAlgorithms::tabuSearchList) {
+        algorithmName = "tabu_search_list";
+    } else {
+        algorithmName = "tabu_search_matrix";
+    }
+
+    std::cout << algorithmName << ": time benchmark START" << std::endl;
+    std::vector<std::pair<IGraph *, int>> tspInstances = loadInstances(getInstancePathsTimeTests());
+
+    std::vector<int> tmpSolution;
+    int tmpSolutionValue, bestSolutionValue;
+
+    std::vector<AnalysisPoint<std::string>> timeAnalysisPoints;
+    AnalysisPoint<std::string> timePoint;
+
+    std::chrono::high_resolution_clock::time_point start, finish;
+    std::chrono::duration<double, std::milli> elapsed = std::chrono::duration<double, std::milli>();
+
+    int analysedInstances = 0;
+    for (const auto &tspInstance : tspInstances) {
+        ++analysedInstances;
+        timePoint = AnalysisPoint<std::string>();
+        bestSolutionValue = std::numeric_limits<int>::max();
+        for (int repetition = 0; repetition < nRepetitions; ++repetition) {
+            std::cout << "Instance " << analysedInstances << '/' << tspInstances.size() << ": repetition "
+                      << repetition << "/" << nRepetitions << std::endl;
+            tmpSolution.clear();
+
+            start = std::chrono::high_resolution_clock::now();
+            tmpSolutionValue = algorithm(tspInstance.first, parameters, tmpSolution);
+            finish = std::chrono::high_resolution_clock::now();
+            elapsed = finish - start;
+            timePoint.time += elapsed.count();
+
+            timePoint.algorithmMeanSolution += tmpSolutionValue;
+            if (tmpSolutionValue < bestSolutionValue) {
+                bestSolutionValue = tmpSolutionValue;
+            }
+
+        }
+        timePoint.instanceSize = tspInstance.first->getVertexCount();
+        timePoint.fileSolution = tspInstance.second;
+        timePoint.algorithmBeastSolution = bestSolutionValue;
+        timePoint.algorithmMeanSolution /= nRepetitions;
+        timePoint.parameterName = algorithmName + "_benchmark";
+        timePoint.parameterValue = '-';
+        timePoint.time /= nRepetitions;
+        timeAnalysisPoints.emplace_back(timePoint);
+    }
+
+    std::cout << "Writing collected data to file...";
+    writeResultsToFile(algorithmName, timeAnalysisPoints, nRepetitions);
+    std::cout << "DONE" << std::endl;
+
+    // Cleanup
+    for (const auto &item : tspInstances) {
+        delete item.first;
+    }
+    std::cout << algorithmName << ": time benchmark DONE" << std::endl;
 }

@@ -105,6 +105,12 @@ private:
     void performTabuSearchInitialSolutionTests(int nRepetitions);
 
     void performTabuSearchNeighbourhoodTests(int nRepetitions);
+
+    std::map<std::string, std::vector<std::string>> getInstancePathsTimeTests() const;
+
+    void
+    performTimeBenchmark(TSPLocalSearchAlgorithms::fLocalSearchAlgorithm algorithm, LocalSearchParameters parameters,
+                         int nRepetitions);
 };
 
 
