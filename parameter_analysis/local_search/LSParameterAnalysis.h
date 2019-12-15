@@ -95,6 +95,12 @@ private:
         }
         file.close();
     }
+
+    template<class T>
+    void
+    performTabuSearchParameterRangeTests(LocalSearchParameters::TSParameter parameterID, int nRepetitions,
+                                         T startParameter,
+                                         T endParameter, int nSteps);
 };
 
 

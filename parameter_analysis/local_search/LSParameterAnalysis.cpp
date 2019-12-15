@@ -26,7 +26,7 @@ void LSParameterAnalysis::run() {
 //    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::logarithmicCoolingScheme, 2,
 //                                                         1, 100, 2);
 //    performSimulatedAnnealingInitialSolutionTests(2);
-    performSimulatedAnnealingNeighbourhoodTests(2);
+//    performSimulatedAnnealingNeighbourhoodTests(2);
 }
 
 
@@ -414,4 +414,108 @@ void LSParameterAnalysis::performSimulatedAnnealingNeighbourhoodTests(int nRepet
     std::cout << "SA: neighbourhood algorithm analysis DONE" << std::endl;
 }
 
+template<class T>
+void
+LSParameterAnalysis::performTabuSearchParameterRangeTests(LocalSearchParameters::TSParameter parameterID,
+                                                          int nRepetitions, T startParameter, T endParameter,
+                                                          int nSteps) {
+    std::string parameterName;
+    switch (parameterID) {
 
+        case LocalSearchParameters::TSParameter::ITERATIONS_NUMBER:
+            parameterName = "iterations_number";
+            break;
+        case LocalSearchParameters::TSParameter::TABU_LIST_SIZE:
+            parameterName = "tabu_list_size";
+            break;
+        case LocalSearchParameters::TSParameter::CADENZA_LENGTH_PARAMETER:
+            parameterName = "cadenza_length_parameter";
+            break;
+        case LocalSearchParameters::TSParameter::ITERATIONS_WITHOUT_IMPROVEMENT_TO_RESTART:
+            parameterName = "iterations_without_improvement_to_restart";
+            break;
+        case LocalSearchParameters::TSParameter::PATTERNS_NUMBER_TO_CACHE:
+            parameterName = "patterns_number_to_cache";
+            break;
+    }
+    std::cout << "TS: " << parameterName << " analysis START" << std::endl;
+    std::vector<std::pair<IGraph *, int>> tspInstances = loadInstances(getInstancePaths());
+
+    LocalSearchParameters parameters;
+    std::vector<int> tmpSolution;
+    int tmpSolutionValue, bestSolutionValue;
+
+    std::vector<AnalysisPoint<T>> parameterAnalysisPoints;
+    AnalysisPoint<T> parameterPoint;
+
+    std::chrono::high_resolution_clock::time_point start, finish;
+    std::chrono::duration<double, std::milli> elapsed = std::chrono::duration<double, std::milli>();
+
+    T parameterStep = ceil(static_cast<double>(endParameter - startParameter) / nSteps);
+    int analysedInstances = 0;
+    for (const auto &tspInstance : tspInstances) {
+        ++analysedInstances;
+        for (T currentParameterValue = startParameter;
+             currentParameterValue < endParameter; currentParameterValue += parameterStep) {
+            std::cout << "Instance " << analysedInstances << '/' << tspInstances.size() << ": "
+                      << round((static_cast<double>(currentParameterValue) / endParameter) * 100) << " %" << std::endl;
+            parameterPoint = AnalysisPoint<T>();
+            parameters.setTabuSearchDefaultParameters();
+
+            switch (parameterID) {
+
+                case LocalSearchParameters::TSParameter::ITERATIONS_NUMBER:
+                    parameters.iterationsNumber = currentParameterValue;
+                    break;
+                case LocalSearchParameters::TSParameter::TABU_LIST_SIZE:
+                    parameters.tabuListSize = currentParameterValue;
+                    break;
+                case LocalSearchParameters::TSParameter::CADENZA_LENGTH_PARAMETER:
+                    parameters.cadenzaLengthParameter = currentParameterValue;
+                    break;
+                case LocalSearchParameters::TSParameter::ITERATIONS_WITHOUT_IMPROVEMENT_TO_RESTART:
+                    parameters.iterationsWithoutImprovementToRestart = currentParameterValue;
+                    break;
+                case LocalSearchParameters::TSParameter::PATTERNS_NUMBER_TO_CACHE:
+                    parameters.patternsNumberToCache = currentParameterValue;
+                    break;
+            }
+
+            bestSolutionValue = std::numeric_limits<int>::max();
+            for (int repetition = 0; repetition < nRepetitions; ++repetition) {
+                tmpSolution.clear();
+
+                start = std::chrono::high_resolution_clock::now();
+                tmpSolutionValue = TSPLocalSearchAlgorithms::tabuSearchList(tspInstance.first, parameters,
+                                                                            tmpSolution);
+                finish = std::chrono::high_resolution_clock::now();
+                elapsed = finish - start;
+                parameterPoint.time += elapsed.count();
+
+                parameterPoint.algorithmMeanSolution += tmpSolutionValue;
+                if (tmpSolutionValue < bestSolutionValue) {
+                    bestSolutionValue = tmpSolutionValue;
+                }
+
+            }
+            parameterPoint.instanceSize = tspInstance.first->getVertexCount();
+            parameterPoint.fileSolution = tspInstance.second;
+            parameterPoint.algorithmBeastSolution = bestSolutionValue;
+            parameterPoint.algorithmMeanSolution /= nRepetitions;
+            parameterPoint.parameterName = parameterName;
+            parameterPoint.parameterValue = currentParameterValue;
+            parameterPoint.time /= nRepetitions;
+            parameterAnalysisPoints.emplace_back(parameterPoint);
+        }
+    }
+
+    std::cout << "Writing collected data to file...";
+    writeResultsToFile("tabu_search_list", parameterAnalysisPoints, nRepetitions);
+    std::cout << "DONE" << std::endl;
+
+    // Cleanup
+    for (const auto &item : tspInstances) {
+        delete item.first;
+    }
+    std::cout << "TS: " << parameterName << " analysis DONE" << std::endl;
+}
