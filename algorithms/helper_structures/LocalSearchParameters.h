@@ -71,7 +71,7 @@ public:
         iterationsNumber = 1000;
         coolingSchemeFunction = TSPLocalSearchAlgorithms::geometricCoolingScheme;
         nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
-        initialSolutionFunction = TSPGreedyAlgorithms::nearestNeighbour;
+        initialSolutionFunction = TSPGreedyAlgorithms::createNaturalPermutation;
     }
 
     void setTabuSearchDefaultParameters() {

@@ -13,20 +13,27 @@ AnalysisPoint<std::string>::AnalysisPoint() : instanceSize(-1), time(0), fileSol
                                               parameterValue("") {}
 
 void LSParameterAnalysis::run() {
-//    performSimulatedAnnealingParameterRangeTests<double>(LocalSearchParameters::SAParameters::INITIAL_TEMPERATURE,
-//                                                         2, 1, 10001, 2);
-//    performSimulatedAnnealingParameterRangeTests<int>(LocalSearchParameters::SAParameters::ITERATIONS_NUMBER,
-//                                                      2, 1, 1000, 2);
-//    performSimulatedAnnealingParameterRangeTests<int>(LocalSearchParameters::SAParameters::EPOCH_ITERATIONS_NUMBER,
-//                                                      2, 1, 500, 2);
-//    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::linearCoolingScheme, 2,
-//                                                         1, 100, 2);
-//    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::geometricCoolingScheme, 2,
-//                                                         0.01, 0.99, 2);
-//    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::logarithmicCoolingScheme, 2,
-//                                                         1, 100, 2);
-//    performSimulatedAnnealingInitialSolutionTests(2);
-//    performSimulatedAnnealingNeighbourhoodTests(2);
+    performSimulatedAnnealingParameterRangeTests<double>(LocalSearchParameters::SAParameters::INITIAL_TEMPERATURE,
+                                                         10, 1, 10001, 50);
+
+    performSimulatedAnnealingParameterRangeTests<int>(LocalSearchParameters::SAParameters::ITERATIONS_NUMBER,
+                                                      10, 1, 10000, 50);
+
+    performSimulatedAnnealingParameterRangeTests<int>(LocalSearchParameters::SAParameters::EPOCH_ITERATIONS_NUMBER,
+                                                      10, 1, 1000, 50);
+
+    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::linearCoolingScheme, 10,
+                                                         1, 100, 50);
+
+    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::geometricCoolingScheme, 10,
+                                                         0.01, 0.99, 50);
+
+    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::logarithmicCoolingScheme, 10,
+                                                         1, 100, 50);
+
+    performSimulatedAnnealingInitialSolutionTests(30);
+
+    performSimulatedAnnealingNeighbourhoodTests(30);
 
 //    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_NUMBER,
 //                                              2, 1, 100, 2);
@@ -41,16 +48,16 @@ void LSParameterAnalysis::run() {
 //    performTabuSearchInitialSolutionTests(2);
 //    performTabuSearchNeighbourhoodTests(2);
 
-    LocalSearchParameters parameters;
+//    LocalSearchParameters parameters;
 
 //    parameters.setSimulatedAnnealingDefaultParameters();
 //    performTimeBenchmark(TSPLocalSearchAlgorithms::simulatedAnnealing, parameters, 2);
 
 //    parameters.setTabuSearchDefaultParameters();
 //    performTimeBenchmark(TSPLocalSearchAlgorithms::tabuSearchList, parameters, 2);
-
-    parameters.setTabuSearchDefaultParameters();
-    performTimeBenchmark(TSPLocalSearchAlgorithms::tabuSearchMatrix, parameters, 2);
+//
+//    parameters.setTabuSearchDefaultParameters();
+//    performTimeBenchmark(TSPLocalSearchAlgorithms::tabuSearchMatrix, parameters, 2);
 }
 
 
