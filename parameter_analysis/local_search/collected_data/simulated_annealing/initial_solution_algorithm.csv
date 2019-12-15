@@ -1,0 +1,27 @@
+Parameter name,Repetitions,Time unit
+initial_solution_algorithm,30,millisecond
+Instance size,Parameter,Time,Optimal solution,Best algorithm solution,Mean algorithm solution
+10,greedy,342.321,212,212,212
+10,natural_permutation,344.439,212,212,212
+10,nearest_neighbour,356.897,212,212,212
+10,random_permutation,343.189,212,212,212
+18,greedy,348.701,187,187,226
+18,natural_permutation,343.967,187,201,229
+18,nearest_neighbour,345.238,187,203,224
+18,random_permutation,347.326,187,200,228
+24,greedy,356.453,1272,1272,1315
+24,natural_permutation,352.663,1272,1272,1332
+24,nearest_neighbour,349.752,1272,1272,1346
+24,random_permutation,347.23,1272,1272,1330
+42,greedy,344.997,699,751,814
+42,natural_permutation,345.613,699,699,699
+42,nearest_neighbour,347.801,699,714,797
+42,random_permutation,359.117,699,718,799
+65,greedy,352.085,1839,2311,2326
+65,natural_permutation,347.159,1839,2230,2502
+65,nearest_neighbour,342.933,1839,2307,2513
+65,random_permutation,348.249,1839,2270,2544
+100,greedy,370.946,36230,43654,43834
+100,natural_permutation,347.934,36230,46212,51655
+100,nearest_neighbour,346.212,36230,46991,47479
+100,random_permutation,348.175,36230,45439,51274
