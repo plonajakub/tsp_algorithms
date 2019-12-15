@@ -27,6 +27,7 @@ void LSParameterAnalysis::run() {
 //                                                         1, 100, 2);
 //    performSimulatedAnnealingInitialSolutionTests(2);
 //    performSimulatedAnnealingNeighbourhoodTests(2);
+
 //    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_NUMBER,
 //                                              2, 1, 100, 2);
 //    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::TABU_LIST_SIZE,
@@ -38,8 +39,20 @@ void LSParameterAnalysis::run() {
 //    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::PATTERNS_NUMBER_TO_CACHE,
 //                                              2, 1, 5, 2);
 //    performTabuSearchInitialSolutionTests(2);
-    performTabuSearchNeighbourhoodTests(2);
+//    performTabuSearchNeighbourhoodTests(2);
+
+    LocalSearchParameters parameters;
+
+//    parameters.setSimulatedAnnealingDefaultParameters();
+//    performTimeBenchmark(TSPLocalSearchAlgorithms::simulatedAnnealing, parameters, 2);
+
+//    parameters.setTabuSearchDefaultParameters();
+//    performTimeBenchmark(TSPLocalSearchAlgorithms::tabuSearchList, parameters, 2);
+
+    parameters.setTabuSearchDefaultParameters();
+    performTimeBenchmark(TSPLocalSearchAlgorithms::tabuSearchMatrix, parameters, 2);
 }
+
 
 
 std::map<std::string, std::vector<std::string>> LSParameterAnalysis::getInstancePaths() const {
