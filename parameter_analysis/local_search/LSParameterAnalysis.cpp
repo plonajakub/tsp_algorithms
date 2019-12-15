@@ -27,6 +27,16 @@ void LSParameterAnalysis::run() {
 //                                                         1, 100, 2);
 //    performSimulatedAnnealingInitialSolutionTests(2);
 //    performSimulatedAnnealingNeighbourhoodTests(2);
+//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_NUMBER,
+//                                              2, 1, 100, 2);
+//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::TABU_LIST_SIZE,
+//                                              2, 1, 100, 2);
+    performTabuSearchParameterRangeTests<double>(LocalSearchParameters::TSParameter::CADENZA_LENGTH_PARAMETER,
+                                              2, 0.1, 1, 2);
+//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_WITHOUT_IMPROVEMENT_TO_RESTART,
+//                                              2, 1, 100, 2);
+//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::PATTERNS_NUMBER_TO_CACHE,
+//                                              2, 1, 5, 2);
 }
 
 
@@ -451,7 +461,7 @@ LSParameterAnalysis::performTabuSearchParameterRangeTests(LocalSearchParameters:
     std::chrono::high_resolution_clock::time_point start, finish;
     std::chrono::duration<double, std::milli> elapsed = std::chrono::duration<double, std::milli>();
 
-    T parameterStep = ceil(static_cast<double>(endParameter - startParameter) / nSteps);
+    T parameterStep = static_cast<double>(endParameter - startParameter) / nSteps;
     int analysedInstances = 0;
     for (const auto &tspInstance : tspInstances) {
         ++analysedInstances;
