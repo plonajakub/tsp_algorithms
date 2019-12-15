@@ -103,6 +103,8 @@ private:
                                          T endParameter, int nSteps);
 
     void performTabuSearchInitialSolutionTests(int nRepetitions);
+
+    void performTabuSearchNeighbourhoodTests(int nRepetitions);
 };
 
 
