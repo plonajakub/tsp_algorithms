@@ -31,12 +31,13 @@ void LSParameterAnalysis::run() {
 //                                              2, 1, 100, 2);
 //    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::TABU_LIST_SIZE,
 //                                              2, 1, 100, 2);
-    performTabuSearchParameterRangeTests<double>(LocalSearchParameters::TSParameter::CADENZA_LENGTH_PARAMETER,
-                                              2, 0.1, 1, 2);
+//    performTabuSearchParameterRangeTests<double>(LocalSearchParameters::TSParameter::CADENZA_LENGTH_PARAMETER,
+//                                              2, 0.1, 1, 2);
 //    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_WITHOUT_IMPROVEMENT_TO_RESTART,
 //                                              2, 1, 100, 2);
 //    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::PATTERNS_NUMBER_TO_CACHE,
 //                                              2, 1, 5, 2);
+    performTabuSearchInitialSolutionTests(2);
 }
 
 
@@ -528,4 +529,73 @@ LSParameterAnalysis::performTabuSearchParameterRangeTests(LocalSearchParameters:
         delete item.first;
     }
     std::cout << "TS: " << parameterName << " analysis DONE" << std::endl;
+}
+
+void LSParameterAnalysis::performTabuSearchInitialSolutionTests(int nRepetitions) {
+    std::map<std::string, TSPGreedyAlgorithms::fTSPAlgorithm> initialSolutionAlgorithms = {
+            {"natural_permutation", TSPGreedyAlgorithms::createNaturalPermutation},
+            {"random_permutation",  TSPGreedyAlgorithms::createRandomPermutation},
+            {"nearest_neighbour",   TSPGreedyAlgorithms::nearestNeighbour},
+            {"greedy",              TSPGreedyAlgorithms::greedy}
+    };
+
+    std::cout << "TS: initial solution algorithm analysis START" << std::endl;
+    std::vector<std::pair<IGraph *, int>> tspInstances = loadInstances(getInstancePaths());
+
+    LocalSearchParameters parameters;
+    std::vector<int> tmpSolution;
+    int tmpSolutionValue, bestSolutionValue;
+
+    std::vector<AnalysisPoint<std::string>> initialSolutionAnalysisPoints;
+    AnalysisPoint<std::string> initialSolutionParameterPoint;
+
+    std::chrono::high_resolution_clock::time_point start, finish;
+    std::chrono::duration<double, std::milli> elapsed = std::chrono::duration<double, std::milli>();
+
+    int analysedInstances = 0;
+    for (const auto &tspInstance : tspInstances) {
+        ++analysedInstances;
+        for (const auto &initialSolutionAlgorithm : initialSolutionAlgorithms) {
+            std::cout << "Instance " << analysedInstances << '/' << tspInstances.size() << ": algorithm \""
+                      << initialSolutionAlgorithm.first << "\"" << std::endl;
+            initialSolutionParameterPoint = AnalysisPoint<std::string>();
+            parameters.setTabuSearchDefaultParameters();
+            parameters.initialSolutionFunction = initialSolutionAlgorithm.second;
+            bestSolutionValue = std::numeric_limits<int>::max();
+            for (int repetition = 0; repetition < nRepetitions; ++repetition) {
+                tmpSolution.clear();
+
+                start = std::chrono::high_resolution_clock::now();
+                tmpSolutionValue = TSPLocalSearchAlgorithms::tabuSearchList(tspInstance.first, parameters,
+                                                                                tmpSolution);
+                finish = std::chrono::high_resolution_clock::now();
+                elapsed = finish - start;
+                initialSolutionParameterPoint.time += elapsed.count();
+
+                initialSolutionParameterPoint.algorithmMeanSolution += tmpSolutionValue;
+                if (tmpSolutionValue < bestSolutionValue) {
+                    bestSolutionValue = tmpSolutionValue;
+                }
+
+            }
+            initialSolutionParameterPoint.instanceSize = tspInstance.first->getVertexCount();
+            initialSolutionParameterPoint.fileSolution = tspInstance.second;
+            initialSolutionParameterPoint.algorithmBeastSolution = bestSolutionValue;
+            initialSolutionParameterPoint.algorithmMeanSolution /= nRepetitions;
+            initialSolutionParameterPoint.parameterName = "initial_solution_algorithm";
+            initialSolutionParameterPoint.parameterValue = initialSolutionAlgorithm.first;
+            initialSolutionParameterPoint.time /= nRepetitions;
+            initialSolutionAnalysisPoints.emplace_back(initialSolutionParameterPoint);
+        }
+    }
+
+    std::cout << "Writing collected data to file...";
+    writeResultsToFile("tabu_search_list", initialSolutionAnalysisPoints, nRepetitions);
+    std::cout << "DONE" << std::endl;
+
+    // Cleanup
+    for (const auto &item : tspInstances) {
+        delete item.first;
+    }
+    std::cout << "TS: initial solution algorithm analysis DONE" << std::endl;
 }

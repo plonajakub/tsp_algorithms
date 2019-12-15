@@ -101,6 +101,8 @@ private:
     performTabuSearchParameterRangeTests(LocalSearchParameters::TSParameter parameterID, int nRepetitions,
                                          T startParameter,
                                          T endParameter, int nSteps);
+
+    void performTabuSearchInitialSolutionTests(int nRepetitions);
 };
 
 
