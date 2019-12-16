@@ -83,6 +83,16 @@ public:
         initialSolutionFunction = TSPGreedyAlgorithms::createNaturalPermutation;
         nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
     }
+
+    void setSimulatedAnnealingBestParameters() {
+        initialTemperature = 2000;
+        coolingSchemeParameter = 15;
+        epochIterationsNumber = 1000;
+        iterationsNumber = 500;
+        coolingSchemeFunction = TSPLocalSearchAlgorithms::logarithmicCoolingScheme;
+        nextNeighbourFunction = TSPLocalSearchAlgorithms::insertNeighbourhood;
+        initialSolutionFunction = TSPGreedyAlgorithms::greedy;
+    }
 };
 
 
