@@ -75,12 +75,12 @@ public:
     }
 
     void setTabuSearchDefaultParameters() {
-        iterationsNumber = 1000;
-        tabuListSize = 100;
+        iterationsNumber = 100;
+        tabuListSize = 50;
         cadenzaLengthParameter = 1.0 / 8;
         iterationsWithoutImprovementToRestart = 50;
         patternsNumberToCache = 2;
-        initialSolutionFunction = TSPGreedyAlgorithms::greedy;
+        initialSolutionFunction = TSPGreedyAlgorithms::createNaturalPermutation;
         nextNeighbourFunction = TSPLocalSearchAlgorithms::swapNeighbourhood;
     }
 };

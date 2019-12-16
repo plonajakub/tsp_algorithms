@@ -13,40 +13,46 @@ AnalysisPoint<std::string>::AnalysisPoint() : instanceSize(-1), time(0), fileSol
                                               parameterValue("") {}
 
 void LSParameterAnalysis::run() {
-    performSimulatedAnnealingParameterRangeTests<double>(LocalSearchParameters::SAParameters::INITIAL_TEMPERATURE,
-                                                         10, 1, 10001, 50);
+//    performSimulatedAnnealingParameterRangeTests<double>(LocalSearchParameters::SAParameters::INITIAL_TEMPERATURE,
+//                                                         10, 1, 10001, 50);
+//
+//    performSimulatedAnnealingParameterRangeTests<int>(LocalSearchParameters::SAParameters::ITERATIONS_NUMBER,
+//                                                      10, 1, 10000, 50);
+//
+//    performSimulatedAnnealingParameterRangeTests<int>(LocalSearchParameters::SAParameters::EPOCH_ITERATIONS_NUMBER,
+//                                                      10, 1, 1000, 50);
+//
+//    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::linearCoolingScheme, 10,
+//                                                         1, 100, 50);
+//
+//    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::geometricCoolingScheme, 10,
+//                                                         0.01, 0.99, 50);
+//
+//    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::logarithmicCoolingScheme, 10,
+//                                                         1, 100, 50);
+//
+//    performSimulatedAnnealingInitialSolutionTests(30);
+//
+//    performSimulatedAnnealingNeighbourhoodTests(30);
 
-    performSimulatedAnnealingParameterRangeTests<int>(LocalSearchParameters::SAParameters::ITERATIONS_NUMBER,
-                                                      10, 1, 10000, 50);
+    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_NUMBER,
+                                              10, 1, 1001, 50);
 
-    performSimulatedAnnealingParameterRangeTests<int>(LocalSearchParameters::SAParameters::EPOCH_ITERATIONS_NUMBER,
-                                                      10, 1, 1000, 50);
+    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::TABU_LIST_SIZE,
+                                              10, 1, 101, 50);
 
-    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::linearCoolingScheme, 10,
-                                                         1, 100, 50);
+    performTabuSearchParameterRangeTests<double>(LocalSearchParameters::TSParameter::CADENZA_LENGTH_PARAMETER,
+                                              10, 0.01, 2.01, 50);
 
-    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::geometricCoolingScheme, 10,
-                                                         0.01, 0.99, 50);
+    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_WITHOUT_IMPROVEMENT_TO_RESTART,
+                                              10, 1, 1001, 50);
 
-    performSimulatedAnnealingCoolingSchemeParameterTests(TSPLocalSearchAlgorithms::logarithmicCoolingScheme, 10,
-                                                         1, 100, 50);
+    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::PATTERNS_NUMBER_TO_CACHE,
+                                              10, 1, 101, 50);
 
-    performSimulatedAnnealingInitialSolutionTests(30);
+    performTabuSearchInitialSolutionTests(30);
 
-    performSimulatedAnnealingNeighbourhoodTests(30);
-
-//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_NUMBER,
-//                                              2, 1, 100, 2);
-//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::TABU_LIST_SIZE,
-//                                              2, 1, 100, 2);
-//    performTabuSearchParameterRangeTests<double>(LocalSearchParameters::TSParameter::CADENZA_LENGTH_PARAMETER,
-//                                              2, 0.1, 1, 2);
-//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_WITHOUT_IMPROVEMENT_TO_RESTART,
-//                                              2, 1, 100, 2);
-//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::PATTERNS_NUMBER_TO_CACHE,
-//                                              2, 1, 5, 2);
-//    performTabuSearchInitialSolutionTests(2);
-//    performTabuSearchNeighbourhoodTests(2);
+    performTabuSearchNeighbourhoodTests(30);
 
 //    LocalSearchParameters parameters;
 
