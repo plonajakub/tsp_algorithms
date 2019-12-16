@@ -35,35 +35,35 @@ void LSParameterAnalysis::run() {
 //
 //    performSimulatedAnnealingNeighbourhoodTests(30);
 
-    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_NUMBER,
-                                              10, 1, 1001, 50);
-
-    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::TABU_LIST_SIZE,
-                                              10, 1, 101, 50);
-
-    performTabuSearchParameterRangeTests<double>(LocalSearchParameters::TSParameter::CADENZA_LENGTH_PARAMETER,
-                                              10, 0.01, 2.01, 50);
-
-    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_WITHOUT_IMPROVEMENT_TO_RESTART,
-                                              10, 1, 1001, 50);
-
-    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::PATTERNS_NUMBER_TO_CACHE,
-                                              10, 1, 101, 50);
-
-    performTabuSearchInitialSolutionTests(30);
-
-    performTabuSearchNeighbourhoodTests(30);
-
-//    LocalSearchParameters parameters;
-
-//    parameters.setSimulatedAnnealingDefaultParameters();
-//    performTimeBenchmark(TSPLocalSearchAlgorithms::simulatedAnnealing, parameters, 2);
-
-//    parameters.setTabuSearchDefaultParameters();
-//    performTimeBenchmark(TSPLocalSearchAlgorithms::tabuSearchList, parameters, 2);
+//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_NUMBER,
+//                                              10, 1, 1001, 50);
 //
-//    parameters.setTabuSearchDefaultParameters();
-//    performTimeBenchmark(TSPLocalSearchAlgorithms::tabuSearchMatrix, parameters, 2);
+//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::TABU_LIST_SIZE,
+//                                              10, 1, 101, 50);
+//
+//    performTabuSearchParameterRangeTests<double>(LocalSearchParameters::TSParameter::CADENZA_LENGTH_PARAMETER,
+//                                              10, 0.01, 2.01, 50);
+//
+//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::ITERATIONS_WITHOUT_IMPROVEMENT_TO_RESTART,
+//                                              10, 1, 1001, 50);
+//
+//    performTabuSearchParameterRangeTests<int>(LocalSearchParameters::TSParameter::PATTERNS_NUMBER_TO_CACHE,
+//                                              10, 1, 101, 50);
+//
+//    performTabuSearchInitialSolutionTests(30);
+//
+//    performTabuSearchNeighbourhoodTests(30);
+
+    LocalSearchParameters parameters;
+
+    parameters.setSimulatedAnnealingBestParameters();
+    performTimeBenchmark(TSPLocalSearchAlgorithms::simulatedAnnealing, parameters, 30);
+
+    parameters.setTabuSearchBestParameters();
+    performTimeBenchmark(TSPLocalSearchAlgorithms::tabuSearchList, parameters, 30);
+
+    parameters.setTabuSearchBestParameters();
+    performTimeBenchmark(TSPLocalSearchAlgorithms::tabuSearchMatrix, parameters, 30);
 }
 
 
