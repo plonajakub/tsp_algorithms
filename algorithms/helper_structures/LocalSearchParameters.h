@@ -93,6 +93,16 @@ public:
         nextNeighbourFunction = TSPLocalSearchAlgorithms::insertNeighbourhood;
         initialSolutionFunction = TSPGreedyAlgorithms::greedy;
     }
+
+    void setTabuSearchBestParameters() {
+        iterationsNumber = 200;
+        tabuListSize = 20;
+        cadenzaLengthParameter = 0.5;
+        iterationsWithoutImprovementToRestart = 200;
+        patternsNumberToCache = 5;
+        initialSolutionFunction = TSPGreedyAlgorithms::greedy;
+        nextNeighbourFunction = TSPLocalSearchAlgorithms::insertNeighbourhood;
+    }
 };
 
 
