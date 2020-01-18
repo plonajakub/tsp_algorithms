@@ -7,6 +7,7 @@ public:
     int nGenerations; // >= 1
     int crossoverProbability; // in [0, 1]
     int mutationProbability; // in [0, 1]
+    int nElites; // [0, populationSize]
 
     TSPPopulationAlgorithms::TSelectionFunction selectionFunction;
 };

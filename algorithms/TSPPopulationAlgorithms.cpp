@@ -11,67 +11,67 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
 
     TSelectionFunction performSelection = parameters.selectionFunction;
 
-    TPopulation population;
-    TPopulation selected, notSelected;
-    TPopulation newGeneration;
-    TPopulation elite;
-    std::vector<int> bestSolution;
-    int bestSolutionValue = std::numeric_limits<int>::max();
+    std::vector<Specimen> population, selected, nextGeneration, elite;
+    Specimen bestSpecimen;
 
-    createRandomPopulation(tspInstance, parameters.populationSize, bestSolution, bestSolutionValue, population);
+    createRandomPopulation(tspInstance, parameters.populationSize, bestSpecimen, population);
 
     for (int generation = 0; generation < parameters.nGenerations; ++generation) {
-        performSelection(population, selected, notSelected);
+        std::sort(population.begin(), population.end(),
+                  [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
+        selected.clear();
+        performSelection(population, selected);
 //        selectElite(population, elite);
-//        performCrossover(selected, parameters.crossoverProbability, newGeneration, bestSolution, bestSolutionValue);
-//        performMutation(newGeneration, parameters.mutationProbability, bestSolution, bestSolutionValue);
-//        mergeNextGeneration(newGeneration, notSelected, elite, parameters.populationSize, population);
+//        performCrossover(selected, parameters.crossoverProbability, nextGeneration, bestSolution, bestSolutionValue);
+//        performMutation(nextGeneration, parameters.mutationProbability, bestSolution, bestSolutionValue);
+        population = nextGeneration;
     }
 
-    outSolution = bestSolution;
-    return bestSolutionValue;
+    outSolution = bestSpecimen.permutation;
+    return bestSpecimen.targetFunctionValue;
 }
 
 void
-TSPPopulationAlgorithms::createRandomPopulation(const IGraph *tspInstance, int populationSize,
-                                                std::vector<int> &outBestSolution, int &outBestSolutionValue,
-                                                TPopulation &outPopulation) {
-    outPopulation.clear();
-
-    std::vector<int> solution;
-    int solutionTargetFunctionValue;
+TSPPopulationAlgorithms::createRandomPopulation(const IGraph *tspInstance, int populationSize, Specimen &bestSpecimen,
+                                                std::vector<Specimen> &outPopulation) {
+    Specimen currentSpecimen;
+    int bestSpecimenIdx = -1;
 
     for (int specimenIdx = 0; specimenIdx < populationSize; ++specimenIdx) {
-        solution.clear();
-        solutionTargetFunctionValue = TSPGreedyAlgorithms::createRandomPermutation(tspInstance, solution);
-        if (solutionTargetFunctionValue < outBestSolutionValue) {
-            outBestSolution = solution;
-            outBestSolutionValue = solutionTargetFunctionValue;
+        currentSpecimen.permutation.clear();
+        currentSpecimen.targetFunctionValue = TSPGreedyAlgorithms::createRandomPermutation(tspInstance,
+                                                                                           currentSpecimen.permutation);
+        if (bestSpecimenIdx == -1 || currentSpecimen > outPopulation[bestSpecimenIdx]) {
+            bestSpecimenIdx = specimenIdx;
         }
-        outPopulation.emplace_back(solution, solutionTargetFunctionValue);
+        outPopulation.emplace_back(currentSpecimen.permutation, currentSpecimen.targetFunctionValue);
     }
+
+    bestSpecimen = outPopulation[bestSpecimenIdx];
 }
 
-void TSPPopulationAlgorithms::rouletteSelection(TSPPopulationAlgorithms::TPopulation &population,
-                                                TSPPopulationAlgorithms::TPopulation &outSelected,
-                                                TSPPopulationAlgorithms::TPopulation &outNotSelected) {
-    outSelected.clear();
-    outNotSelected.clear();
+void TSPPopulationAlgorithms::rouletteSelection(const std::vector<Specimen> &population,
+                                                std::vector<Specimen> &outSelected) {
+    double fitnessSumOverPopulation = 0;
+    // Holds edges of wheel chunks (cumulative values)
+    std::vector<double> rouletteWheel;
 
-    double fitnessFunctionSum = 0.0;
-    for (const auto &specimen : population) {
-        fitnessFunctionSum += specimen.getFitness();
+    for (const Specimen &specimen : population) {
+        fitnessSumOverPopulation += specimen.getFitness();
     }
 
-    population.sort(
-            [](const Specimen &s1, const Specimen &s2) { return s1.getFitness() < s2.targetFunctionValue; });
-
-    for (const auto &specimen : population) {
-        if (Random::getRealClosed(0, 1) <= specimen.getFitness() / fitnessFunctionSum) {
-            outSelected.emplace_back(specimen);
-        } else {
-            outNotSelected.emplace_back(specimen);
-        }
+    rouletteWheel[0] = population[0].getFitness() / fitnessSumOverPopulation;
+    for (int specimenIdx = 1; specimenIdx < population.size() - 1; ++specimenIdx) {
+        rouletteWheel[specimenIdx] = population[specimenIdx].getFitness() / fitnessSumOverPopulation;
+        rouletteWheel[specimenIdx] += rouletteWheel[specimenIdx - 1];
     }
+    rouletteWheel[population.size() - 1] = 1;
 
+    double roulettePick;
+    int specimenPickIdx;
+    while (outSelected.size() != population.size()) {
+        roulettePick = Random::getRealClosed(0, 1);
+        for (specimenPickIdx = 0; roulettePick > rouletteWheel[specimenPickIdx]; ++specimenPickIdx) {}
+        outSelected.emplace_back(population[specimenPickIdx]);
+    }
 }
