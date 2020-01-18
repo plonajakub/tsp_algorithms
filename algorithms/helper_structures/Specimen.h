@@ -15,7 +15,7 @@ public:
 
     Specimen() : targetFunctionValue(std::numeric_limits<int>::max()) {}
 
-    Specimen(std::vector<int> permutation, int targetFunctionValue) : permutation(std::move(permutation)),
+    Specimen(const std::vector<int> &permutation, int targetFunctionValue) : permutation(permutation),
                                                                       targetFunctionValue(targetFunctionValue) {}
 
     // For fitness comparisons

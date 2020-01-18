@@ -16,15 +16,15 @@ public:
     static int geneticAlgorithm(const IGraph *tspInstance, const GeneticAlgorithmParameters &parameters,
                                 std::vector<int> &outSolution);
 
-    using TSelectionFunction = void (*)(std::vector<Specimen> &population, std::vector<Specimen> &selected);
+    using TSelectionFunction = void (*)(const std::vector<Specimen> &population, std::vector<Specimen> &selected);
 
-    void rouletteSelection(const std::vector<Specimen> &population, std::vector<Specimen> &outSelected);
+    static void rouletteSelection(const std::vector<Specimen> &population, std::vector<Specimen> &outSelected);
 
 
 private:
 
     static void
-    createRandomPopulation(const IGraph *tspInstance, int populationSize, Specimen &bestSpecimen,
+    createRandomPopulation(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
                            std::vector<Specimen> &outPopulation);
 
 };

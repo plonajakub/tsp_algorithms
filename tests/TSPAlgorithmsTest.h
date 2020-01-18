@@ -8,6 +8,7 @@
 #include "../algorithms/TSPGreedyAlgorithms.h"
 #include "../algorithms/TSPLocalSearchAlgorithms.h"
 #include "../algorithms/helper_structures/LocalSearchParameters.h"
+#include "../algorithms/helper_structures/GeneticAlgorithmParameters.h"
 
 
 class TSPAlgorithmsTest {
@@ -36,6 +37,8 @@ private:
 
     void tabuSearchTest() const;
 
+    void geneticAlgorithmTest() const;
+
     // instanceFiles: map with paths to the instances in form {<directory of instances>, <vector with instance file names>}
     // first file name in the vector is a name of a solution file for instances in the directory
     void testExactOrGreedyAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,
@@ -45,6 +48,9 @@ private:
     void testLocalSearchAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,
                                     TSPLocalSearchAlgorithms::fLocalSearchAlgorithm fLocalSearchAlgorithm,
                                     const LocalSearchParameters &parameters, const std::string &testName) const;
+
+    void testGeneticAlgorithm(const std::map<std::string, std::vector<std::string>> &instanceFiles,
+                                  const GeneticAlgorithmParameters &parameters, const std::string &testName) const;
 };
 
 
