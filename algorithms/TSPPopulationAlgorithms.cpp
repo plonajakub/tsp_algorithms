@@ -11,7 +11,7 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
 
     TSelectionFunction performSelection = parameters.selectionFunction;
 
-    std::vector<Specimen> population, selected, nextGeneration, elite;
+    std::vector<Specimen> population, selected, nextGeneration, elites;
     Specimen bestSpecimen;
 
     createRandomPopulation(tspInstance, parameters.populationSize, bestSpecimen, population);
@@ -21,10 +21,22 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
                   [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
         selected.clear();
         performSelection(population, selected);
-//        selectElite(population, elite);
+
+        // Save elites
+        for (int eliteIdx = 0; eliteIdx < parameters.nElites; ++eliteIdx) {
+            elites.emplace_back(population[eliteIdx]);
+        }
+
 //        performCrossover(selected, parameters.crossoverProbability, nextGeneration, bestSolution, bestSolutionValue);
 //        performMutation(nextGeneration, parameters.mutationProbability, bestSolution, bestSolutionValue);
         population = nextGeneration;
+
+        // Apply elites
+        std::sort(population.begin(), population.end(),
+                  [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
+        for (int eliteIdx = 0; eliteIdx < parameters.nElites; ++eliteIdx) {
+            population[population.size() - eliteIdx] = elites[eliteIdx];
+        }
     }
 
     outSolution = bestSpecimen.permutation;
