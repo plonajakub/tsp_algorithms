@@ -113,6 +113,35 @@ void TSPPopulationAlgorithms::rouletteSelection(const std::vector<Specimen> &pop
     }
 }
 
+void TSPPopulationAlgorithms::tournamentSelection(const std::vector<Specimen> &population,
+                                                  std::vector<Specimen> &outSelected) {
+    const int nTournamentParticipants = 5;
+
+    std::vector<int> populationIndexes(population.size());
+    for (int i = 0; i < population.size(); ++i) {
+        populationIndexes[i] = i;
+    }
+    std::vector<int> tournamentRound(nTournamentParticipants);
+
+    int randIdx, maxIdx;
+    while (outSelected.size() != population.size()) {
+        for (int &participant : tournamentRound) {
+            randIdx = Random::getInt(0, populationIndexes.size() - 1);
+            participant = populationIndexes[randIdx];
+            populationIndexes.erase(populationIndexes.begin() + randIdx);
+        }
+        maxIdx = tournamentRound[0];
+        for (int k = 1; k < tournamentRound.size(); ++k) {
+            if (population[maxIdx] < population[tournamentRound[k]]) {
+                maxIdx = k;
+            }
+        }
+        outSelected.emplace_back(population[maxIdx]);
+        populationIndexes.insert(populationIndexes.end(), tournamentRound.begin(), tournamentRound.end());
+    }
+
+}
+
 void
 TSPPopulationAlgorithms::performMutation(std::vector<Specimen> &selected, double mutationProbability,
                                          TMutationCore mutationCore) {

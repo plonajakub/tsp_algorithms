@@ -22,6 +22,8 @@ public:
 
     static void rouletteSelection(const std::vector<Specimen> &population, std::vector<Specimen> &outSelected);
 
+    static void tournamentSelection(const std::vector<Specimen> &population, std::vector<Specimen> &outSelected);
+
     static void inversionCore(int i, int j, std::vector<int> &specimenPermutation);
 
     static void insertionCore(int i, int j, std::vector<int> &specimenPermutation);
@@ -41,6 +43,8 @@ private:
 
     static void performCrossover(std::vector<Specimen> &selected, double crossoverProbability,
                                  TCrossoverCore crossoverCore);
+
+
 };
 
 #include "helper_structures/GeneticAlgorithmParameters.h"
