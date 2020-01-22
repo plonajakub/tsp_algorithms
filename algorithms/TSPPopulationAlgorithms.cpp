@@ -34,6 +34,15 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
 
 
         performCrossover(selected, parameters.crossoverProbability, crossoverCore);
+//        for (auto &specimen : selected) {
+//            specimen.targetFunctionValue = TSPUtils::calculateTargetFunctionValue(tspInstance, specimen.permutation);
+//            if (specimen > bestSpecimen) {
+//                bestSpecimen = specimen;
+//            }
+//        }
+
+        performMutation(selected, parameters.mutationProbability, mutationCore);
+
         for (auto &specimen : selected) {
             specimen.targetFunctionValue = TSPUtils::calculateTargetFunctionValue(tspInstance, specimen.permutation);
             if (specimen > bestSpecimen) {
@@ -41,21 +50,13 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
             }
         }
 
-        performMutation(selected, parameters.mutationProbability, mutationCore);
         population = selected;
 
-        for (auto &specimen : population) {
-            specimen.targetFunctionValue = TSPUtils::calculateTargetFunctionValue(tspInstance, specimen.permutation);
-            if (specimen > bestSpecimen) {
-                bestSpecimen = specimen;
-            }
-        }
-
         // Apply elites
-        std::sort(selected.begin(), selected.end(),
+        std::sort(population.begin(), population.end(),
                   [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
         for (int eliteIdx = 0; eliteIdx < parameters.nElites; ++eliteIdx) {
-            selected[selected.size() - 1 - eliteIdx] = elites[eliteIdx];
+            population[population.size() - 1 - eliteIdx] = elites[eliteIdx];
         }
 
         selected.clear();
@@ -224,16 +225,4 @@ void TSPPopulationAlgorithms::OX(std::vector<int> &s1, std::vector<int> &s2) {
 
     s1 = std::vector<int>(c1.begin(), c1.end());
     s2 = std::vector<int>(c2.begin(), c2.end());
-
-//    for (auto x : s1) {
-//        if (x == -1) {
-//            x = -1;
-//        }
-//    }
-//
-//    for (auto x : s2) {
-//        if (x == -1) {
-//            x = -1;
-//        }
-//    }
 }
