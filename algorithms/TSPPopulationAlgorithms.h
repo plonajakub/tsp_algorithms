@@ -17,9 +17,18 @@ public:
                                 std::vector<int> &outSolution);
 
     using TSelectionFunction = void (*)(const std::vector<Specimen> &population, std::vector<Specimen> &selected);
+    using TMutationCore = void (*)(int i, int j, std::vector<int> &specimenPermutation);
+    using TCrossoverCore = void (*)(std::vector<int> &s1, std::vector<int> &s2);
 
     static void rouletteSelection(const std::vector<Specimen> &population, std::vector<Specimen> &outSelected);
 
+    static void inversionCore(int i, int j, std::vector<int> &specimenPermutation);
+
+    static void insertionCore(int i, int j, std::vector<int> &specimenPermutation);
+
+    static void transpositionCore(int i, int j, std::vector<int> &specimenPermutation);
+
+    static void OX(std::vector<int> &s1, std::vector<int> &s2);
 
 private:
 
@@ -27,6 +36,11 @@ private:
     createRandomPopulation(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
                            std::vector<Specimen> &outPopulation);
 
+    static void performMutation(std::vector<Specimen> &selected, double mutationProbability,
+                                TMutationCore mutationCore);
+
+    static void performCrossover(std::vector<Specimen> &selected, double crossoverProbability,
+                                 TCrossoverCore crossoverCore);
 };
 
 #include "helper_structures/GeneticAlgorithmParameters.h"

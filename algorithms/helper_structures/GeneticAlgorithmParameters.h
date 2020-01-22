@@ -12,9 +12,12 @@ public:
     int nElites; // [0, populationSize]
 
     TSPPopulationAlgorithms::TSelectionFunction selectionFunction;
+    TSPPopulationAlgorithms::TMutationCore mutationCoreFunction;
+    TSPPopulationAlgorithms::TCrossoverCore crossoverCoreFunction;
 
     GeneticAlgorithmParameters() : populationSize(-1), nGenerations(-1), crossoverProbability(-1),
-                                   mutationProbability(-1), nElites(-1), selectionFunction(nullptr) {}
+                                   mutationProbability(-1), nElites(-1), selectionFunction(nullptr),
+                                   mutationCoreFunction(nullptr), crossoverCoreFunction(nullptr) {}
 };
 
 

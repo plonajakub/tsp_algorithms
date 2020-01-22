@@ -8,17 +8,23 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
 
     const int INSTANCE_SIZE = tspInstance->getVertexCount();
 
-    TSelectionFunction performSelection = parameters.selectionFunction;
+    if (INSTANCE_SIZE <= 2) {
+        return TSPGreedyAlgorithms::createNaturalPermutation(tspInstance, outSolution);
+    }
 
-    std::vector<Specimen> population, selected, nextGeneration, elites;
+    TSelectionFunction performSelection = parameters.selectionFunction;
+    TMutationCore mutationCore = parameters.mutationCoreFunction;
+    TCrossoverCore crossoverCore = parameters.crossoverCoreFunction;
+
+    std::vector<Specimen> population, selected, elites;
     Specimen bestSpecimen;
 
     createRandomPopulation(tspInstance, parameters.populationSize, bestSpecimen, population);
 
     for (int generation = 0; generation < parameters.nGenerations; ++generation) {
+        // selection
         std::sort(population.begin(), population.end(),
                   [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
-
         performSelection(population, selected);
 
         // Save elites
@@ -26,21 +32,25 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
             elites.emplace_back(population[eliteIdx]);
         }
 
+        performCrossover(selected, parameters.crossoverProbability, crossoverCore);
+        performMutation(selected, parameters.mutationProbability, mutationCore);
+        population = selected;
 
-        nextGeneration = selected; //Test
-//        performCrossover(selected, parameters.crossoverProbability, nextGeneration, bestSolution, bestSolutionValue);
-//        performMutation(nextGeneration, parameters.mutationProbability, bestSolution, bestSolutionValue);
-        population = nextGeneration;
+        for (auto &specimen : population) {
+            specimen.targetFunctionValue = TSPUtils::calculateTargetFunctionValue(tspInstance, specimen.permutation);
+            if (specimen > bestSpecimen) {
+                bestSpecimen = specimen;
+            }
+        }
 
         // Apply elites
-        std::sort(population.begin(), population.end(),
+        std::sort(selected.begin(), selected.end(),
                   [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
         for (int eliteIdx = 0; eliteIdx < parameters.nElites; ++eliteIdx) {
-            population[population.size() - 1 - eliteIdx] = elites[eliteIdx];
+            selected[selected.size() - 1 - eliteIdx] = elites[eliteIdx];
         }
 
         selected.clear();
-        nextGeneration.clear();
         elites.clear();
     }
 
@@ -49,7 +59,8 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
 }
 
 void
-TSPPopulationAlgorithms::createRandomPopulation(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
+TSPPopulationAlgorithms::createRandomPopulation(const IGraph *tspInstance, int populationSize,
+                                                Specimen &outBestSpecimen,
                                                 std::vector<Specimen> &outPopulation) {
     Specimen currentSpecimen;
     int bestSpecimenIdx = -1;
@@ -91,4 +102,79 @@ void TSPPopulationAlgorithms::rouletteSelection(const std::vector<Specimen> &pop
         for (specimenPickIdx = 0; roulettePick > rouletteWheel[specimenPickIdx]; ++specimenPickIdx) {}
         outSelected.emplace_back(population[specimenPickIdx]);
     }
+}
+
+void
+TSPPopulationAlgorithms::performMutation(std::vector<Specimen> &selected, double mutationProbability,
+                                         TMutationCore mutationCore) {
+    const int specimenLastPermIdx = selected.front().permutation.size() - 1;
+
+    int i, j;
+    for (auto &selectedSpecimen : selected) {
+        if (Random::getRealClosed(0, 1) > mutationProbability) {
+            continue;
+        }
+        i = Random::getInt(0, specimenLastPermIdx);
+        j = Random::getInt(0, specimenLastPermIdx);
+        if (i == j) {
+            if (Random::getBool(true, 0.5)) {
+                // Go upward if true
+                if (j != specimenLastPermIdx) {
+                    ++j;
+                } else {
+                    j = 0;
+                }
+            } else {
+                // Go downward if false
+                if (j != 0) {
+                    --j;
+                } else {
+                    j = specimenLastPermIdx;
+                }
+            }
+        }
+        mutationCore(i, j, selectedSpecimen.permutation);
+    }
+}
+
+// region Mutation cores
+
+void TSPPopulationAlgorithms::transpositionCore(int i, int j, std::vector<int> &specimenPermutation) {
+    std::swap(specimenPermutation[i], specimenPermutation[j]);
+}
+
+void TSPPopulationAlgorithms::insertionCore(int i, int j, std::vector<int> &specimenPermutation) {
+    int elementToMove = specimenPermutation[j];
+    specimenPermutation.erase(specimenPermutation.begin() + j);
+    specimenPermutation.insert(specimenPermutation.begin() + i, elementToMove);
+}
+
+void TSPPopulationAlgorithms::inversionCore(int i, int j, std::vector<int> &specimenPermutation) {
+    if (j < i) {
+        std::swap(i, j);
+    }
+
+    for (int lIdx = i, rIdx = j; lIdx < rIdx; ++lIdx, --rIdx) {
+        std::swap(specimenPermutation[lIdx], specimenPermutation[rIdx]);
+    }
+}
+
+// endregion
+
+
+void TSPPopulationAlgorithms::performCrossover(std::vector<Specimen> &selected, double crossoverProbability,
+                                               TCrossoverCore crossoverCore) {
+    const int selectedLastIdx = selected.size() - 1;
+
+    for (int idx = 0; idx < selectedLastIdx; idx += 2) {
+        if (Random::getRealClosed(0, 1) > crossoverProbability) {
+            continue;
+        }
+        crossoverCore(selected[idx].permutation, selected[idx + 1].permutation);
+    }
+
+}
+
+void TSPPopulationAlgorithms::OX(std::vector<int> &s1, std::vector<int> &s2) {
+
 }

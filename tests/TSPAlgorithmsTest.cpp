@@ -914,12 +914,14 @@ void TSPAlgorithmsTest::geneticAlgorithmTest() const {
     filePaths.clear();
 
     GeneticAlgorithmParameters gap;
-    gap.populationSize = 5;
-    gap.nGenerations = 3;
+    gap.populationSize = 50;
+    gap.nGenerations = 10000;
     gap.crossoverProbability = 0.6;
-    gap.mutationProbability = 0.1;
+    gap.mutationProbability = 1;
     gap.nElites = 2;
     gap.selectionFunction = TSPPopulationAlgorithms::rouletteSelection;
+    gap.mutationCoreFunction = TSPPopulationAlgorithms::inversionCore;
+    gap.crossoverCoreFunction = TSPPopulationAlgorithms::OX;
     testGeneticAlgorithm(fileGroups, gap, "GA");
 }
 
