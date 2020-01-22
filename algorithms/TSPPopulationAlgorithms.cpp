@@ -32,7 +32,15 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
             elites.emplace_back(population[eliteIdx]);
         }
 
+
         performCrossover(selected, parameters.crossoverProbability, crossoverCore);
+        for (auto &specimen : selected) {
+            specimen.targetFunctionValue = TSPUtils::calculateTargetFunctionValue(tspInstance, specimen.permutation);
+            if (specimen > bestSpecimen) {
+                bestSpecimen = specimen;
+            }
+        }
+
         performMutation(selected, parameters.mutationProbability, mutationCore);
         population = selected;
 
@@ -176,5 +184,56 @@ void TSPPopulationAlgorithms::performCrossover(std::vector<Specimen> &selected, 
 }
 
 void TSPPopulationAlgorithms::OX(std::vector<int> &s1, std::vector<int> &s2) {
+    const int specimenSize = s1.size();
 
+    int leftLimit = Random::getInt(0, specimenSize - 1);
+    int rightLimit = Random::getInt(0, specimenSize - 1);
+    while (rightLimit == leftLimit) {
+        rightLimit = Random::getInt(0, specimenSize - 1);
+    }
+    if (rightLimit < leftLimit) {
+        std::swap(rightLimit, leftLimit);
+    }
+
+    std::list<int> c1, c2;
+    for (int idx = leftLimit; idx <= rightLimit; ++idx) {
+        c1.push_back(s2[idx]);
+        c2.push_back(s1[idx]);
+    }
+
+    int idx;
+    std::list<int> appendToC1, appendToC2;
+    for (int offset = 1; offset <= specimenSize; ++offset) {
+        idx = (rightLimit + offset) % specimenSize;
+
+        if (std::find(c1.begin(), c1.end(), s1[idx]) == c1.end()) {
+            appendToC1.emplace_back(s1[idx]);
+        }
+
+        if (std::find(c2.begin(), c2.end(), s2[idx]) == c2.end()) {
+            appendToC2.emplace_back(s2[idx]);
+        }
+    }
+    c1.splice(c1.end(), appendToC1);
+    c2.splice(c2.end(), appendToC2);
+
+    for (int i = 0; i < leftLimit; ++i) {
+        std::rotate(c1.rbegin(), std::next(c1.rbegin()), c1.rend());
+        std::rotate(c2.rbegin(), std::next(c2.rbegin()), c2.rend());
+    }
+
+    s1 = std::vector<int>(c1.begin(), c1.end());
+    s2 = std::vector<int>(c2.begin(), c2.end());
+
+//    for (auto x : s1) {
+//        if (x == -1) {
+//            x = -1;
+//        }
+//    }
+//
+//    for (auto x : s2) {
+//        if (x == -1) {
+//            x = -1;
+//        }
+//    }
 }
