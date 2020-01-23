@@ -23,14 +23,11 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
     createRandomPopulation(tspInstance, parameters.populationSize, bestSpecimen, population);
 
     for (int generation = 0; generation < parameters.nGenerations; ++generation) {
-        // selection
-        if (performSelection == TSPPopulationAlgorithms::rouletteSelection) {
-            std::sort(population.begin(), population.end(),
-                      [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
-        }
         performSelection(population, selected);
 
         // Save elites
+        std::sort(population.begin(), population.end(),
+                  [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
         for (int eliteIdx = 0; eliteIdx < parameters.nElites; ++eliteIdx) {
             elites.emplace_back(population[eliteIdx]);
         }

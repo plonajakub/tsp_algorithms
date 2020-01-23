@@ -919,7 +919,7 @@ void TSPAlgorithmsTest::geneticAlgorithmTest() const {
     gap.crossoverProbability = 0.9;
     gap.mutationProbability = 0.1;
     gap.nElites = 5;
-    gap.selectionFunction = TSPPopulationAlgorithms::tournamentSelection;
+    gap.selectionFunction = TSPPopulationAlgorithms::rouletteSelection;
     gap.mutationCoreFunction = TSPPopulationAlgorithms::transpositionCore;
     gap.crossoverCoreFunction = TSPPopulationAlgorithms::OX;
     testGeneticAlgorithm(fileGroups, gap, "GA");
