@@ -38,12 +38,14 @@ private:
     createRandomPopulation(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
                            std::vector<Specimen> &outPopulation);
 
+    static void createPopulationWithSA(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
+                                       std::vector<Specimen> &outPopulation);
+
     static void performMutation(std::vector<Specimen> &selected, double mutationProbability,
                                 TMutationCore mutationCore);
 
     static void performCrossover(std::vector<Specimen> &selected, double crossoverProbability,
                                  TCrossoverCore crossoverCore);
-
 
 };
 

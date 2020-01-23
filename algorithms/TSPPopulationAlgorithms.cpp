@@ -1,6 +1,7 @@
 #include "TSPPopulationAlgorithms.h"
 #include "../utilities/TSPUtils.h"
 #include "../utilities/Random.h"
+#include "helper_structures/LocalSearchParameters.h"
 
 
 int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const GeneticAlgorithmParameters &parameters,
@@ -23,8 +24,10 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
 
     for (int generation = 0; generation < parameters.nGenerations; ++generation) {
         // selection
-        std::sort(population.begin(), population.end(),
-                  [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
+        if (performSelection == TSPPopulationAlgorithms::rouletteSelection) {
+            std::sort(population.begin(), population.end(),
+                      [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
+        }
         performSelection(population, selected);
 
         // Save elites
@@ -87,6 +90,27 @@ TSPPopulationAlgorithms::createRandomPopulation(const IGraph *tspInstance, int p
     outBestSpecimen = outPopulation[bestSpecimenIdx];
 }
 
+void
+TSPPopulationAlgorithms::createPopulationWithSA(const IGraph *tspInstance, int populationSize,
+                                                Specimen &outBestSpecimen,
+                                                std::vector<Specimen> &outPopulation) {
+    Specimen currentSpecimen;
+    LocalSearchParameters lsp;
+    lsp.setSimulatedAnnealingBestParameters();
+    lsp.iterationsNumber = 50;
+    int bestSpecimenIdx = -1;
+    for (int specimenIdx = 0; specimenIdx < populationSize; ++specimenIdx) {
+        currentSpecimen.permutation.clear();
+        currentSpecimen.targetFunctionValue = TSPLocalSearchAlgorithms::simulatedAnnealing(tspInstance, lsp,
+                                                                                           currentSpecimen.permutation);
+        if (bestSpecimenIdx == -1 || currentSpecimen > outPopulation[bestSpecimenIdx]) {
+            bestSpecimenIdx = specimenIdx;
+        }
+        outPopulation.emplace_back(currentSpecimen.permutation, currentSpecimen.targetFunctionValue);
+    }
+    outBestSpecimen = outPopulation[bestSpecimenIdx];
+}
+
 void TSPPopulationAlgorithms::rouletteSelection(const std::vector<Specimen> &population,
                                                 std::vector<Specimen> &outSelected) {
     double fitnessSumOverPopulation = 0;
@@ -117,29 +141,28 @@ void TSPPopulationAlgorithms::tournamentSelection(const std::vector<Specimen> &p
                                                   std::vector<Specimen> &outSelected) {
     const int nTournamentParticipants = 5;
 
-    std::vector<int> populationIndexes(population.size());
+    std::vector<int> specimenInPopIdxs(population.size());
     for (int i = 0; i < population.size(); ++i) {
-        populationIndexes[i] = i;
+        specimenInPopIdxs[i] = i;
     }
     std::vector<int> tournamentRound(nTournamentParticipants);
 
-    int randIdx, maxIdx;
+    int randIdx, bestSpecimenIdx;
     while (outSelected.size() != population.size()) {
         for (int &participant : tournamentRound) {
-            randIdx = Random::getInt(0, populationIndexes.size() - 1);
-            participant = populationIndexes[randIdx];
-            populationIndexes.erase(populationIndexes.begin() + randIdx);
+            randIdx = Random::getInt(0, specimenInPopIdxs.size() - 1);
+            participant = specimenInPopIdxs[randIdx];
+            specimenInPopIdxs.erase(specimenInPopIdxs.begin() + randIdx);
         }
-        maxIdx = tournamentRound[0];
+        bestSpecimenIdx = tournamentRound[0];
         for (int k = 1; k < tournamentRound.size(); ++k) {
-            if (population[maxIdx] < population[tournamentRound[k]]) {
-                maxIdx = k;
+            if (population[tournamentRound[k]] > population[bestSpecimenIdx]) {
+                bestSpecimenIdx = tournamentRound[k];
             }
         }
-        outSelected.emplace_back(population[maxIdx]);
-        populationIndexes.insert(populationIndexes.end(), tournamentRound.begin(), tournamentRound.end());
+        outSelected.emplace_back(population[bestSpecimenIdx]);
+        specimenInPopIdxs.insert(specimenInPopIdxs.end(), tournamentRound.begin(), tournamentRound.end());
     }
-
 }
 
 void
