@@ -16,11 +16,12 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
     TSelectionFunction performSelection = parameters.selectionFunction;
     TMutationCore mutationCore = parameters.mutationCoreFunction;
     TCrossoverCore crossoverCore = parameters.crossoverCoreFunction;
+    TCreatePopulation createPopulation = parameters.createPopulationFunction;
 
     std::vector<Specimen> population, selected, elites;
     Specimen bestSpecimen;
 
-    createRandomPopulation(tspInstance, parameters.populationSize, bestSpecimen, population);
+    createPopulation(tspInstance, parameters.populationSize, bestSpecimen, population);
 
     for (int generation = 0; generation < parameters.nGenerations; ++generation) {
         performSelection(population, selected);
@@ -94,7 +95,7 @@ TSPPopulationAlgorithms::createPopulationWithSA(const IGraph *tspInstance, int p
     Specimen currentSpecimen;
     LocalSearchParameters lsp;
     lsp.setSimulatedAnnealingBestParameters();
-    lsp.iterationsNumber = 50;
+//    lsp.iterationsNumber = 50;
     int bestSpecimenIdx = -1;
     for (int specimenIdx = 0; specimenIdx < populationSize; ++specimenIdx) {
         currentSpecimen.permutation.clear();

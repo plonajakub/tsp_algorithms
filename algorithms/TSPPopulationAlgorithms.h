@@ -19,6 +19,15 @@ public:
     using TSelectionFunction = void (*)(const std::vector<Specimen> &population, std::vector<Specimen> &selected);
     using TMutationCore = void (*)(int i, int j, std::vector<int> &specimenPermutation);
     using TCrossoverCore = void (*)(std::vector<int> &s1, std::vector<int> &s2);
+    using TCreatePopulation = void (*)(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
+                                       std::vector<Specimen> &outPopulation);
+
+    static void
+    createRandomPopulation(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
+                           std::vector<Specimen> &outPopulation);
+
+    static void createPopulationWithSA(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
+                                       std::vector<Specimen> &outPopulation);
 
     static void rouletteSelection(const std::vector<Specimen> &population, std::vector<Specimen> &outSelected);
 
@@ -34,12 +43,6 @@ public:
 
 private:
 
-    static void
-    createRandomPopulation(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
-                           std::vector<Specimen> &outPopulation);
-
-    static void createPopulationWithSA(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
-                                       std::vector<Specimen> &outPopulation);
 
     static void performMutation(std::vector<Specimen> &selected, double mutationProbability,
                                 TMutationCore mutationCore);

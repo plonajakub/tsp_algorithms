@@ -14,10 +14,12 @@ public:
     TSPPopulationAlgorithms::TSelectionFunction selectionFunction;
     TSPPopulationAlgorithms::TMutationCore mutationCoreFunction;
     TSPPopulationAlgorithms::TCrossoverCore crossoverCoreFunction;
+    TSPPopulationAlgorithms::TCreatePopulation createPopulationFunction;
 
     GeneticAlgorithmParameters() : populationSize(-1), nGenerations(-1), crossoverProbability(-1),
                                    mutationProbability(-1), nElites(-1), selectionFunction(nullptr),
-                                   mutationCoreFunction(nullptr), crossoverCoreFunction(nullptr) {}
+                                   mutationCoreFunction(nullptr), crossoverCoreFunction(nullptr),
+                                   createPopulationFunction(nullptr) {}
 };
 
 

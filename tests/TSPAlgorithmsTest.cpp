@@ -852,24 +852,24 @@ void TSPAlgorithmsTest::geneticAlgorithmTest() const {
 
     // ATSP
     filePaths.emplace_back("best.txt");
-//    filePaths.emplace_back("data17.txt");
-//    filePaths.emplace_back("data34.txt");
-//    filePaths.emplace_back("data36.txt");
-//    filePaths.emplace_back("data39.txt");
-//    filePaths.emplace_back("data43.txt");
-//    filePaths.emplace_back("data45.txt");
-//    filePaths.emplace_back("data48.txt");
-//    filePaths.emplace_back("data53.txt");
-//    filePaths.emplace_back("data56.txt");
-//    filePaths.emplace_back("data65.txt");
-//    filePaths.emplace_back("data70.txt");
-//    filePaths.emplace_back("data71.txt");
-//    filePaths.emplace_back("data100.txt");
-//    filePaths.emplace_back("data171.txt");
-//    filePaths.emplace_back("data323.txt");
-//    filePaths.emplace_back("data358.txt");
-//    filePaths.emplace_back("data403.txt");
-//    filePaths.emplace_back("data443.txt");
+    filePaths.emplace_back("data17.txt");
+    filePaths.emplace_back("data34.txt");
+    filePaths.emplace_back("data36.txt");
+    filePaths.emplace_back("data39.txt");
+    filePaths.emplace_back("data43.txt");
+    filePaths.emplace_back("data45.txt");
+    filePaths.emplace_back("data48.txt");
+    filePaths.emplace_back("data53.txt");
+    filePaths.emplace_back("data56.txt");
+    filePaths.emplace_back("data65.txt");
+    filePaths.emplace_back("data70.txt");
+    filePaths.emplace_back("data71.txt");
+    filePaths.emplace_back("data100.txt");
+    filePaths.emplace_back("data171.txt");
+    filePaths.emplace_back("data323.txt");
+    filePaths.emplace_back("data358.txt");
+    filePaths.emplace_back("data403.txt");
+    filePaths.emplace_back("data443.txt");
     fileGroups.insert({"ATSP", filePaths});
     filePaths.clear();
 
@@ -919,9 +919,10 @@ void TSPAlgorithmsTest::geneticAlgorithmTest() const {
     gap.crossoverProbability = 0.9;
     gap.mutationProbability = 0.1;
     gap.nElites = 5;
+    gap.createPopulationFunction = TSPPopulationAlgorithms::createPopulationWithSA;
     gap.selectionFunction = TSPPopulationAlgorithms::rouletteSelection;
-    gap.mutationCoreFunction = TSPPopulationAlgorithms::transpositionCore;
     gap.crossoverCoreFunction = TSPPopulationAlgorithms::OX;
+    gap.mutationCoreFunction = TSPPopulationAlgorithms::transpositionCore;
     testGeneticAlgorithm(fileGroups, gap, "GA");
 }
 
