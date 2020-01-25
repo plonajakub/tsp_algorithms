@@ -23,7 +23,7 @@ private:
     template<class T>
     void
     performGeneticAlgorithmParameterRangeTests(GeneticAlgorithmParameters::GAParameters parameterID, int nRepetitions,
-                                                 T startParameter, T endParameter, int nSteps);
+                                               T startParameter, T endParameter, int nSteps);
 
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getInstancePaths() const;
 
@@ -75,10 +75,8 @@ private:
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getInstancePathsTimeTests() const;
 
     void
-    performTimeBenchmark(GeneticAlgorithmParameters parameters, int nRepetitions);
+    performTimeBenchmark(const std::string &testName, GeneticAlgorithmParameters parameters, int nRepetitions);
 };
-
-
 
 
 #endif //PEA_P1_GAPARAMETERANALYSIS_H

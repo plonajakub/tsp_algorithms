@@ -119,8 +119,12 @@ GAParameterAnalysis::performGeneticAlgorithmParameterRangeTests(GeneticAlgorithm
     std::cout << "GA: " << parameterName << " analysis DONE" << std::endl;
 }
 
-void GAParameterAnalysis::performTimeBenchmark(GeneticAlgorithmParameters parameters, int nRepetitions) {
+void GAParameterAnalysis::performTimeBenchmark(const std::string &testName, GeneticAlgorithmParameters parameters,
+                                               int nRepetitions) {
     std::string algorithmName = "genetic_algorithm";
+    if (!testName.empty()) {
+        algorithmName = algorithmName + '_' + testName;
+    }
 
     std::cout << algorithmName << ": time benchmark START" << std::endl;
     std::vector<std::pair<IGraph *, int>> tspInstances = loadInstances(getInstancePathsTimeTests());
