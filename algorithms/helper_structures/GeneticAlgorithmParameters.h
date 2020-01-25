@@ -10,6 +10,7 @@ public:
     double crossoverProbability; // in [0, 1]
     double mutationProbability; // in [0, 1]
     int nElites; // [0, populationSize]
+    int tournamentSize; // [1, populationSize]
 
     TSPPopulationAlgorithms::TSelectionFunction selectionFunction;
     TSPPopulationAlgorithms::TMutationCore mutationCoreFunction;
@@ -17,9 +18,9 @@ public:
     TSPPopulationAlgorithms::TCreatePopulation createPopulationFunction;
 
     GeneticAlgorithmParameters() : populationSize(-1), nGenerations(-1), crossoverProbability(-1),
-                                   mutationProbability(-1), nElites(-1), selectionFunction(nullptr),
-                                   mutationCoreFunction(nullptr), crossoverCoreFunction(nullptr),
-                                   createPopulationFunction(nullptr) {}
+                                   mutationProbability(-1), nElites(-1), tournamentSize(-1),
+                                   selectionFunction(nullptr), mutationCoreFunction(nullptr),
+                                   crossoverCoreFunction(nullptr), createPopulationFunction(nullptr) {}
 };
 
 

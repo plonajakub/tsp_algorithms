@@ -16,7 +16,8 @@ public:
     static int geneticAlgorithm(const IGraph *tspInstance, const GeneticAlgorithmParameters &parameters,
                                 std::vector<int> &outSolution);
 
-    using TSelectionFunction = void (*)(const std::vector<Specimen> &population, std::vector<Specimen> &selected);
+    using TSelectionFunction = void (*)(const std::vector<Specimen> &population, std::vector<Specimen> &selected,
+                                        int parameter);
     using TMutationCore = void (*)(int i, int j, std::vector<int> &specimenPermutation);
     using TCrossoverCore = void (*)(std::vector<int> &s1, std::vector<int> &s2);
     using TCreatePopulation = void (*)(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
@@ -29,9 +30,11 @@ public:
     static void createPopulationWithSA(const IGraph *tspInstance, int populationSize, Specimen &outBestSpecimen,
                                        std::vector<Specimen> &outPopulation);
 
-    static void rouletteSelection(const std::vector<Specimen> &population, std::vector<Specimen> &outSelected);
+    static void
+    rouletteSelection(const std::vector<Specimen> &population, std::vector<Specimen> &outSelected, int parameter = -1);
 
-    static void tournamentSelection(const std::vector<Specimen> &population, std::vector<Specimen> &outSelected);
+    static void tournamentSelection(const std::vector<Specimen> &population, std::vector<Specimen> &outSelected,
+                                    int nTournamentParticipants);
 
     static void inversionCore(int i, int j, std::vector<int> &specimenPermutation);
 
@@ -42,7 +45,6 @@ public:
     static void OX(std::vector<int> &s1, std::vector<int> &s2);
 
 private:
-
 
     static void performMutation(std::vector<Specimen> &selected, double mutationProbability,
                                 TMutationCore mutationCore);

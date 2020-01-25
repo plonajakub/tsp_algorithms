@@ -24,7 +24,11 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
     createPopulation(tspInstance, parameters.populationSize, bestSpecimen, population);
 
     for (int generation = 0; generation < parameters.nGenerations; ++generation) {
-        performSelection(population, selected);
+        if (performSelection == TSPPopulationAlgorithms::tournamentSelection) {
+            performSelection(population, selected, parameters.tournamentSize);
+        } else {
+            performSelection(population, selected, -1);
+        }
 
         // Save elites
         std::sort(population.begin(), population.end(),
@@ -95,7 +99,7 @@ TSPPopulationAlgorithms::createPopulationWithSA(const IGraph *tspInstance, int p
     Specimen currentSpecimen;
     LocalSearchParameters lsp;
     lsp.setSimulatedAnnealingBestParameters();
-//    lsp.iterationsNumber = 50;
+    lsp.iterationsNumber = 50;
     int bestSpecimenIdx = -1;
     for (int specimenIdx = 0; specimenIdx < populationSize; ++specimenIdx) {
         currentSpecimen.permutation.clear();
@@ -110,7 +114,7 @@ TSPPopulationAlgorithms::createPopulationWithSA(const IGraph *tspInstance, int p
 }
 
 void TSPPopulationAlgorithms::rouletteSelection(const std::vector<Specimen> &population,
-                                                std::vector<Specimen> &outSelected) {
+                                                std::vector<Specimen> &outSelected, int parameter) {
     double fitnessSumOverPopulation = 0;
     // Holds edges of wheel chunks (cumulative values)
     std::vector<double> rouletteWheel(population.size(), 0);
@@ -136,9 +140,7 @@ void TSPPopulationAlgorithms::rouletteSelection(const std::vector<Specimen> &pop
 }
 
 void TSPPopulationAlgorithms::tournamentSelection(const std::vector<Specimen> &population,
-                                                  std::vector<Specimen> &outSelected) {
-    const int nTournamentParticipants = 5;
-
+                                                  std::vector<Specimen> &outSelected, int nTournamentParticipants) {
     std::vector<int> specimenInPopIdxs(population.size());
     for (int i = 0; i < population.size(); ++i) {
         specimenInPopIdxs[i] = i;
