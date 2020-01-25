@@ -13,6 +13,31 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
         return TSPGreedyAlgorithms::createNaturalPermutation(tspInstance, outSolution);
     }
 
+    if (parameters.populationSize < 2
+        || parameters.nGenerations < 1
+        || parameters.crossoverProbability < 0 || parameters.crossoverProbability > 1
+        || parameters.mutationProbability < 0 || parameters.mutationProbability > 1
+        || parameters.nElites < 0 || parameters.nElites > parameters.populationSize
+        || parameters.tournamentSize < 1 || parameters.tournamentSize > parameters.populationSize) {
+        throw std::invalid_argument("Algorithm supplied with invalid numeric parameter(s)");
+    }
+    if (parameters.selectionFunction != TSPPopulationAlgorithms::rouletteSelection
+        && parameters.selectionFunction != TSPPopulationAlgorithms::tournamentSelection) {
+        throw std::invalid_argument("Algorithm supplied with invalid selection function");
+    }
+    if (parameters.mutationCoreFunction != TSPPopulationAlgorithms::inversionCore
+        && parameters.mutationCoreFunction != TSPPopulationAlgorithms::insertionCore
+        && parameters.mutationCoreFunction != TSPPopulationAlgorithms::transpositionCore) {
+        throw std::invalid_argument("Algorithm supplied with invalid mutation core function");
+    }
+    if (parameters.crossoverCoreFunction != TSPPopulationAlgorithms::OX) {
+        throw std::invalid_argument("Algorithm supplied with invalid crossover core function");
+    }
+    if (parameters.createPopulationFunction != TSPPopulationAlgorithms::createRandomPopulation
+        && parameters.createPopulationFunction != TSPPopulationAlgorithms::createPopulationWithSA) {
+        throw std::invalid_argument("Algorithm supplied with invalid population creation function");
+    }
+
     TSelectionFunction performSelection = parameters.selectionFunction;
     TMutationCore mutationCore = parameters.mutationCoreFunction;
     TCrossoverCore crossoverCore = parameters.crossoverCoreFunction;
