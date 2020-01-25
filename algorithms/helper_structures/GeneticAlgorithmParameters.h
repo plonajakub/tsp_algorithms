@@ -12,6 +12,10 @@ public:
     int nElites; // [0, populationSize]
     int tournamentSize; // [1, populationSize]
 
+    enum class GAParameters {
+        PopulationSize, NGenerations, CrossoverProbability, MutationProbability, NElites, TournamentSize
+    };
+
     TSPPopulationAlgorithms::TSelectionFunction selectionFunction;
     TSPPopulationAlgorithms::TMutationCore mutationCoreFunction;
     TSPPopulationAlgorithms::TCrossoverCore crossoverCoreFunction;
@@ -21,6 +25,19 @@ public:
                                    mutationProbability(-1), nElites(-1), tournamentSize(-1),
                                    selectionFunction(nullptr), mutationCoreFunction(nullptr),
                                    crossoverCoreFunction(nullptr), createPopulationFunction(nullptr) {}
+
+    void setDefaultParameters() {
+        populationSize = 100;
+        nGenerations = 1000;
+        crossoverProbability = 0.9;
+        mutationProbability = 0.5;
+        nElites = 20;
+        tournamentSize = 20;
+        createPopulationFunction = TSPPopulationAlgorithms::createPopulationWithSA;
+        selectionFunction = TSPPopulationAlgorithms::rouletteSelection;
+        crossoverCoreFunction = TSPPopulationAlgorithms::OX;
+        mutationCoreFunction = TSPPopulationAlgorithms::transpositionCore;
+    }
 };
 
 

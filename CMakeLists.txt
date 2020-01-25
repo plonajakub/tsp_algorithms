@@ -36,4 +36,13 @@ add_executable(
         tests/TSPAlgorithmsTest.h tests/TSPAlgorithmsTest.cpp
         tests/MiscellaneousTests.h tests/MiscellaneousTests.cpp
         time_tests/TimeMeasurement.h time_tests/TimeMeasurement.cpp
-        parameter_analysis/local_search/LSParameterAnalysis.cpp parameter_analysis/local_search/LSParameterAnalysis.h algorithms/TSPPopulationAlgorithms.cpp algorithms/TSPPopulationAlgorithms.h algorithms/helper_structures/GeneticAlgorithmParameters.h algorithms/helper_structures/Specimen.h)
+
+        parameter_analysis/AnalysisPoint.h
+        parameter_analysis/local_search/LSParameterAnalysis.h parameter_analysis/local_search/LSParameterAnalysis.cpp
+
+        algorithms/helper_structures/GeneticAlgorithmParameters.h
+        algorithms/helper_structures/Specimen.h
+        algorithms/TSPPopulationAlgorithms.h algorithms/TSPPopulationAlgorithms.cpp
+
+        parameter_analysis/populational_algorithms/GAParameterAnalysis.h parameter_analysis/populational_algorithms/GAParameterAnalysis.cpp
+        )

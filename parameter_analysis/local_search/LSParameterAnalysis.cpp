@@ -6,11 +6,6 @@
 #include <vector>
 #include <map>
 
-template<>
-AnalysisPoint<std::string>::AnalysisPoint() : instanceSize(-1), time(0), fileSolution(-1), algorithmBeastSolution(-1),
-                                              algorithmMeanSolution(0),
-                                              parameterName(""),
-                                              parameterValue("") {}
 
 void LSParameterAnalysis::run() {
 //    performSimulatedAnnealingParameterRangeTests<double>(LocalSearchParameters::SAParameters::INITIAL_TEMPERATURE,

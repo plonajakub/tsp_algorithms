@@ -1,38 +1,29 @@
-#ifndef PEA_P1_LSPARAMETERANALYSIS_H
-#define PEA_P1_LSPARAMETERANALYSIS_H
+#ifndef PEA_P1_GAPARAMETERANALYSIS_H
+#define PEA_P1_GAPARAMETERANALYSIS_H
 
 #include <string>
-#include <vector>
 #include <map>
-#include "../../structures/graphs/IGraph.h"
-#include "../../algorithms/TSPLocalSearchAlgorithms.h"
-#include "../AnalysisPoint.h"
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 
+#include "../../algorithms/helper_structures/GeneticAlgorithmParameters.h"
+#include "../AnalysisPoint.h"
+
+using std::cout;
 using std::endl;
 
 
-class LSParameterAnalysis {
+class GAParameterAnalysis {
 
 public:
-
     void run();
 
 private:
-
     template<class T>
-    void performSimulatedAnnealingParameterRangeTests(LocalSearchParameters::SAParameters parameterID, int nRepetitions,
-                                                      T startParameter, T endParameter, int nSteps);
-
     void
-    performSimulatedAnnealingCoolingSchemeParameterTests(
-            TSPLocalSearchAlgorithms::fCoolingScheme coolingSchemeFunction, int nRepetitions, double startParameter,
-            double endParameter, int nSteps);
-
-    void performSimulatedAnnealingInitialSolutionTests(int nRepetitions);
-
-    void performSimulatedAnnealingNeighbourhoodTests(int nRepetitions);
+    performGeneticAlgorithmParameterRangeTests(GeneticAlgorithmParameters::GAParameters parameterID, int nRepetitions,
+                                                 T startParameter, T endParameter, int nSteps);
 
     [[nodiscard]] std::map<std::string, std::vector<std::string>> getInstancePaths() const;
 
@@ -52,7 +43,7 @@ private:
             }
         }
 
-        std::string filePath = "../parameter_analysis/local_search/collected_data/" + algorithm + "/" +
+        std::string filePath = "../parameter_analysis/populational_algorithms/collected_data/" + algorithm + "/" +
                                analysisPoints[0].parameterName + ".csv";
         std::ofstream file(filePath);
         if (!file.is_open()) {
@@ -81,22 +72,13 @@ private:
         file.close();
     }
 
-    template<class T>
-    void
-    performTabuSearchParameterRangeTests(LocalSearchParameters::TSParameter parameterID, int nRepetitions,
-                                         T startParameter,
-                                         T endParameter, int nSteps);
-
-    void performTabuSearchInitialSolutionTests(int nRepetitions);
-
-    void performTabuSearchNeighbourhoodTests(int nRepetitions);
-
-    std::map<std::string, std::vector<std::string>> getInstancePathsTimeTests() const;
+    [[nodiscard]] std::map<std::string, std::vector<std::string>> getInstancePathsTimeTests() const;
 
     void
-    performTimeBenchmark(TSPLocalSearchAlgorithms::fLocalSearchAlgorithm algorithm, LocalSearchParameters parameters,
-                         int nRepetitions);
+    performTimeBenchmark(GeneticAlgorithmParameters parameters, int nRepetitions);
 };
 
 
-#endif //PEA_P1_LSPARAMETERANALYSIS_H
+
+
+#endif //PEA_P1_GAPARAMETERANALYSIS_H
