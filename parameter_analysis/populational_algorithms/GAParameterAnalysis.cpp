@@ -3,9 +3,20 @@
 #include <chrono>
 #include <cmath>
 
+using GAParameters = GeneticAlgorithmParameters::GAParameters;
 
 void GAParameterAnalysis::run() {
+    GeneticAlgorithmParameters gap;
+    gap.setDefaultParameters();
 
+//    performGeneticAlgorithmParameterRangeTests<int>(
+//            GAParameters::PopulationSize, 2, 10, 100, 3);
+//    performGeneticAlgorithmParameterRangeTests<double>(
+//            GAParameters::MutationProbability, 2, 0, 0.5, 10);
+
+    gap.setDefaultParameters();
+    gap.mutationCoreFunction = TSPPopulationAlgorithms::insertionCore;
+    performTimeBenchmark("insertionCore", gap, 2);
 }
 
 template<class T>
@@ -47,7 +58,7 @@ GAParameterAnalysis::performGeneticAlgorithmParameterRangeTests(GeneticAlgorithm
     std::chrono::high_resolution_clock::time_point start, finish;
     std::chrono::duration<double, std::milli> elapsed = std::chrono::duration<double, std::milli>();
 
-    T parameterStep = ceil(static_cast<double>(endParameter - startParameter) / nSteps);
+    T parameterStep = static_cast<double>(endParameter - startParameter) / nSteps;
     int analysedInstances = 0;
     for (const auto &tspInstance : tspInstances) {
         ++analysedInstances;
@@ -122,11 +133,8 @@ GAParameterAnalysis::performGeneticAlgorithmParameterRangeTests(GeneticAlgorithm
 void GAParameterAnalysis::performTimeBenchmark(const std::string &testName, GeneticAlgorithmParameters parameters,
                                                int nRepetitions) {
     std::string algorithmName = "genetic_algorithm";
-    if (!testName.empty()) {
-        algorithmName = algorithmName + '_' + testName;
-    }
 
-    std::cout << algorithmName << ": time benchmark START" << std::endl;
+    std::cout << algorithmName << '_' << testName << ": time benchmark START" << std::endl;
     std::vector<std::pair<IGraph *, int>> tspInstances = loadInstances(getInstancePathsTimeTests());
 
     std::vector<int> tmpSolution;
@@ -164,7 +172,7 @@ void GAParameterAnalysis::performTimeBenchmark(const std::string &testName, Gene
         timePoint.fileSolution = tspInstance.second;
         timePoint.algorithmBeastSolution = bestSolutionValue;
         timePoint.algorithmMeanSolution /= nRepetitions;
-        timePoint.parameterName = algorithmName + "_benchmark";
+        timePoint.parameterName = testName;
         timePoint.parameterValue = '-';
         timePoint.time /= nRepetitions;
         timeAnalysisPoints.emplace_back(timePoint);
@@ -178,7 +186,7 @@ void GAParameterAnalysis::performTimeBenchmark(const std::string &testName, Gene
     for (const auto &item : tspInstances) {
         delete item.first;
     }
-    std::cout << algorithmName << ": time benchmark DONE" << std::endl;
+    std::cout << algorithmName << '_' << testName << ": time benchmark DONE" << std::endl;
 }
 
 std::vector<std::pair<IGraph *, int>>
@@ -207,14 +215,14 @@ std::map<std::string, std::vector<std::string>> GAParameterAnalysis::getInstance
 
     // SMALL
     filePaths.emplace_back("opt.txt");
-    filePaths.emplace_back("data10.txt");
+    filePaths.emplace_back("data10.txt"); //+
 //    filePaths.emplace_back("data11.txt");
 //    filePaths.emplace_back("data12.txt");
 //    filePaths.emplace_back("data13.txt");
 //    filePaths.emplace_back("data14.txt");
 //    filePaths.emplace_back("data15.txt");
 //    filePaths.emplace_back("data16.txt");
-    filePaths.emplace_back("data18.txt");
+    filePaths.emplace_back("data18.txt"); //+
     fileGroups.insert({"../input_data/SMALL", filePaths});
     filePaths.clear();
 
@@ -229,10 +237,10 @@ std::map<std::string, std::vector<std::string>> GAParameterAnalysis::getInstance
 //    filePaths.emplace_back("data48.txt");
 //    filePaths.emplace_back("data53.txt");
 //    filePaths.emplace_back("data56.txt");
-    filePaths.emplace_back("data65.txt");
+//    filePaths.emplace_back("data65.txt"); //+
 //    filePaths.emplace_back("data70.txt");
 //    filePaths.emplace_back("data71.txt");
-    filePaths.emplace_back("data100.txt");
+//    filePaths.emplace_back("data100.txt"); //+
 //    filePaths.emplace_back("data171.txt");
 //    filePaths.emplace_back("data323.txt");
 //    filePaths.emplace_back("data358.txt");
@@ -244,10 +252,10 @@ std::map<std::string, std::vector<std::string>> GAParameterAnalysis::getInstance
     // TSP
     filePaths.emplace_back("best.txt");
 //    filePaths.emplace_back("data21.txt");
-    filePaths.emplace_back("data24.txt");
+//    filePaths.emplace_back("data24.txt"); //+
 //    filePaths.emplace_back("data26.txt");
 //    filePaths.emplace_back("data29.txt");
-    filePaths.emplace_back("data42.txt");
+//    filePaths.emplace_back("data42.txt"); //+
 //    filePaths.emplace_back("data58.txt");
 //    filePaths.emplace_back("data120.txt");
     fileGroups.insert({"../input_data/TSP", filePaths});

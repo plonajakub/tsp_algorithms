@@ -27,16 +27,16 @@ public:
                                    crossoverCoreFunction(nullptr), createPopulationFunction(nullptr) {}
 
     void setDefaultParameters() {
-        populationSize = 100;
+        populationSize = 50;
         nGenerations = 1000;
         crossoverProbability = 0.9;
-        mutationProbability = 0.5;
-        nElites = 20;
-        tournamentSize = 20;
-        createPopulationFunction = TSPPopulationAlgorithms::createPopulationWithSA;
+        mutationProbability = 0.1;
+        nElites = 10;
+        tournamentSize = 5;
+        createPopulationFunction = TSPPopulationAlgorithms::createRandomPopulation;
         selectionFunction = TSPPopulationAlgorithms::rouletteSelection;
         crossoverCoreFunction = TSPPopulationAlgorithms::OX;
-        mutationCoreFunction = TSPPopulationAlgorithms::transpositionCore;
+        mutationCoreFunction = TSPPopulationAlgorithms::insertionCore;
     }
 };
 

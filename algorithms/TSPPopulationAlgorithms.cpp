@@ -17,8 +17,8 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
         || parameters.nGenerations < 1
         || parameters.crossoverProbability < 0 || parameters.crossoverProbability > 1
         || parameters.mutationProbability < 0 || parameters.mutationProbability > 1
-        || parameters.nElites < 0 || parameters.nElites > parameters.populationSize
-        || parameters.tournamentSize < 1 || parameters.tournamentSize > parameters.populationSize) {
+        || parameters.nElites < 0
+        || parameters.tournamentSize < 1) {
         throw std::invalid_argument("Algorithm supplied with invalid numeric parameter(s)");
     }
     if (parameters.selectionFunction != TSPPopulationAlgorithms::rouletteSelection
@@ -43,6 +43,9 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
     TCrossoverCore crossoverCore = parameters.crossoverCoreFunction;
     TCreatePopulation createPopulation = parameters.createPopulationFunction;
 
+    const int nElites = std::min(parameters.nElites, parameters.populationSize);
+    const int nTournamentParticipants = std::min(parameters.tournamentSize, parameters.populationSize);
+
     std::vector<Specimen> population, selected, elites;
     Specimen bestSpecimen;
 
@@ -50,7 +53,7 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
 
     for (int generation = 0; generation < parameters.nGenerations; ++generation) {
         if (performSelection == TSPPopulationAlgorithms::tournamentSelection) {
-            performSelection(population, selected, parameters.tournamentSize);
+            performSelection(population, selected, nTournamentParticipants);
         } else {
             performSelection(population, selected, -1);
         }
@@ -58,7 +61,7 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
         // Save elites
         std::sort(population.begin(), population.end(),
                   [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
-        for (int eliteIdx = 0; eliteIdx < parameters.nElites; ++eliteIdx) {
+        for (int eliteIdx = 0; eliteIdx < nElites; ++eliteIdx) {
             elites.emplace_back(population[eliteIdx]);
         }
 
@@ -85,7 +88,7 @@ int TSPPopulationAlgorithms::geneticAlgorithm(const IGraph *tspInstance, const G
         // Apply elites
         std::sort(population.begin(), population.end(),
                   [](const Specimen &s1, const Specimen &s2) { return s1 > s2; });
-        for (int eliteIdx = 0; eliteIdx < parameters.nElites; ++eliteIdx) {
+        for (int eliteIdx = 0; eliteIdx < nElites; ++eliteIdx) {
             population[population.size() - 1 - eliteIdx] = elites[eliteIdx];
         }
 
