@@ -914,11 +914,11 @@ void TSPAlgorithmsTest::geneticAlgorithmTest() const {
     filePaths.clear();
 
     GeneticAlgorithmParameters gap;
-    gap.populationSize = 100;
-    gap.nGenerations = 2000;
+    gap.populationSize = 50;
+    gap.nGenerations = 1000;
     gap.crossoverProbability = 0.9;
-    gap.mutationProbability = 0.3;
-    gap.nElites = 15;
+    gap.mutationProbability = 0.1;
+    gap.nElites = 10;
     gap.tournamentSize = 5;
     gap.createPopulationFunction = TSPPopulationAlgorithms::createRandomPopulation;
     gap.selectionFunction = TSPPopulationAlgorithms::rouletteSelection;
