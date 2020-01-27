@@ -7,27 +7,27 @@ using GAParameters = GeneticAlgorithmParameters::GAParameters;
 
 void GAParameterAnalysis::run() {
 
-    performGeneticAlgorithmParameterRangeTests<int>(
-            GAParameters::PopulationSize, 10, 2, 200, 25);
+//    performGeneticAlgorithmParameterRangeTests<int>(
+//            GAParameters::PopulationSize, 10, 2, 200, 25);
+//
+//    performGeneticAlgorithmParameterRangeTests<int>(
+//            GAParameters::NGenerations, 7, 1, 2000, 25);
 
-    performGeneticAlgorithmParameterRangeTests<int>(
-            GAParameters::NGenerations, 7, 1, 2000, 25);
+//    performGeneticAlgorithmParameterRangeTests<int>(
+//            GAParameters::NElites, 5, 0, 50, 25);
 
-    performGeneticAlgorithmParameterRangeTests<int>(
-            GAParameters::NElites, 5, 0, 50, 15);
+//    performGeneticAlgorithmParameterRangeTests<int>(
+//            GAParameters::TournamentSize, 5, 1, 50, 25);
 
-    performGeneticAlgorithmParameterRangeTests<int>(
-            GAParameters::TournamentSize, 5, 1, 50, 15);
+//    performGeneticAlgorithmParameterRangeTests<double>(
+//            GAParameters::CrossoverProbability, 10, 0, 1, 50);
+//
+//    performGeneticAlgorithmParameterRangeTests<double>(
+//            GAParameters::MutationProbability, 5, 0, 1, 25);
 
-    performGeneticAlgorithmParameterRangeTests<double>(
-            GAParameters::CrossoverProbability, 10, 0, 1, 50);
-
-    performGeneticAlgorithmParameterRangeTests<double>(
-            GAParameters::MutationProbability, 5, 0, 1, 25);
-
-
-//    gap.mutationCoreFunction = TSPPopulationAlgorithms::insertionCore;
-//    performTimeBenchmark("insertionCore", gap, 2);
+    GeneticAlgorithmParameters gap;
+    gap.setBestParameters();
+    performTimeBenchmark("ga_time_benchmark", gap, 5);
 }
 
 template<class T>
