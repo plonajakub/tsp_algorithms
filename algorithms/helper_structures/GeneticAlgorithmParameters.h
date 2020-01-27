@@ -38,6 +38,19 @@ public:
         crossoverCoreFunction = TSPPopulationAlgorithms::OX;
         mutationCoreFunction = TSPPopulationAlgorithms::insertionCore;
     }
+
+    void setBestParameters() {
+        populationSize = 50;
+        nGenerations = 2000;
+        crossoverProbability = 1.0;
+        mutationProbability = 0.12;
+        nElites = 12;
+        tournamentSize = 1;
+        createPopulationFunction = TSPPopulationAlgorithms::createRandomPopulation;
+        selectionFunction = TSPPopulationAlgorithms::rouletteSelection;
+        crossoverCoreFunction = TSPPopulationAlgorithms::OX;
+        mutationCoreFunction = TSPPopulationAlgorithms::insertionCore;
+    }
 };
 
 
