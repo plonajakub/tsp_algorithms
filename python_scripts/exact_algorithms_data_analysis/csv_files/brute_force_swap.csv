@@ -1,0 +1,4 @@
+Repetitions number,15
+Time unit,millisecond
+Algorithm\Instance size,10,11,12,13
+BF (swap),65.0955,650.54,7534.96,99340.3
